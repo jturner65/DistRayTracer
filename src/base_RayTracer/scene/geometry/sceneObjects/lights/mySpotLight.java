@@ -6,7 +6,7 @@ import base_RayTracer.ray.rayCast;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.geometry.base.GeomObjType;
-import base_RayTracer.scene.geometry.sceneObjects.lights.base.Base_Light;
+import base_RayTracer.scene.geometry.sceneObjects.lights.base.Base_OrientedLight;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_Math_Objects.MyMathUtils;
@@ -21,7 +21,7 @@ import base_Math_Objects.matrixObjs.doubles.myMatrix;
  * Note that the angle to a given point can be calculated based on the dot product between the (normalized) spotlight direction and a (normalized) vector from the light to the point in question. 
 */
 
-public class mySpotLight extends Base_Light{
+public class mySpotLight extends Base_OrientedLight{
 	
 	public double innerThet, outerThet, innerThetRad, outerThetRad, radDiff;
 
@@ -71,7 +71,7 @@ public class mySpotLight extends Base_Light{
 		tmp = tmp.rotMeAroundAxis(orientation,ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI));
 		
 		return new rayCast(scene, CTMara[glblIDX].transformPoint(origin), tmp, 0);
-	}	
+	}//genRndPhtnRay	
 
 	//TODO textured light could give different color light to scene based on location? BATSIGNAL!
 	@Override

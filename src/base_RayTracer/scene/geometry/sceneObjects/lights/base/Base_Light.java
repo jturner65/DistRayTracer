@@ -19,22 +19,18 @@ public abstract class Base_Light extends Base_SceneObject{
 	public int lightID;
 	public int lightDistType;		//TODO support more than just normal light distribution (i.e. gaussian)
 	public Photon_KDTree photonTree;
-	public myVector orientation;
 	
 	//TODO light intensity should fall off by inverse sq dist
 	
 	public Base_Light(Base_Scene _scn, int _lightID, 
 			double _r, double _g, double _b, 
-			double _x, double _y, double _z, 
-			double _dx, double _dy, double _dz, GeomObjType _type) {
+			double _x, double _y, double _z, GeomObjType _type) {
 		super(_scn, _x,_y,_z, _type);
 	    postProcBBox();
 		setIsLight(true);
 		lightColor = new myRTColor(_r,_g,_b);
 		origin.set(_x,_y,_z);
 		lightID = _lightID;
-	    orientation = new myVector(_dx,_dy,_dz); 
-	    orientation._normalize();
 	}	
 	@Override
 	/**
@@ -112,27 +108,12 @@ public abstract class Base_Light extends Base_SceneObject{
 	protected double getAngleProb(double angle, double innerThetRad, double outerThetRad, double radDiff){
 		return (angle < innerThetRad ) ? 1 : (angle > outerThetRad ) ? 0 : (outerThetRad - angle)/radDiff;
 	}	
-	/**
-	 * send direction vector, finds multiplier for penumbra effect
-	 * @param dir
-	 * @param time
-	 * @param innerThetRad
-	 * @param outerThetRad
-	 * @param radDiff
-	 * @return
-	 */
-	protected double calcT_Mult(myVector dir, double time, double innerThetRad, double outerThetRad, double radDiff){
-		double angle = Math.acos(-1*dir._dot(getOrientation(time)));			//intersection pt to light dir is neg light to intersection pt dir - want acos of this to get angle
-		return getAngleProb(angle,innerThetRad,outerThetRad, radDiff);// (angle < innerThetRad ) ? 1 : (angle > outerThetRad ) ? 0 : (outerThetRad - angle)/radDiff;		
-	}
 	
 	/**
 	 * get starting point for photon ray - will vary based on light type
 	 * @return
 	 */
 	public abstract rayCast genRndPhtnRay();
-	
-	public myVector getOrientation(double _t){	return orientation;	}
 
 	public String toString(){  return super.toString() + this.toStrBrf();  }
 	

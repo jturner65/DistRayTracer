@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import base_RayTracer.ray.rayCast;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.geometry.base.GeomObjType;
-import base_RayTracer.scene.geometry.sceneObjects.lights.base.Base_Light;
+import base_RayTracer.scene.geometry.sceneObjects.lights.base.Base_OrientedLight;
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
@@ -16,7 +16,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
  * it should cast a shadow that is soft on the edges. For each shadow ray that is cast at this light source, 
  * select a random position on this disk for the source of the light. 
  */
-public class myDiskLight extends Base_Light{	
+public class myDiskLight extends Base_OrientedLight{	
 	public final double radius;
 	//unit vector tangent to surface of light - randomly rotate around normal and extend from 0->radius to get random position
 	public myVector surfTangent;	
