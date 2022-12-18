@@ -7,6 +7,7 @@ import base_RayTracer.ray.rayCast;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.geometry.base.Base_Geometry;
+import base_RayTracer.scene.geometry.sceneObjects.planar.myPlane;
 import base_RayTracer.ui.base.Base_RayTracerWin;
 import base_RayTracer.utils.myRTColor;
 import base_Math_Objects.MyMathUtils;
@@ -14,8 +15,21 @@ import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
 
 public class myFOVScene extends Base_Scene {
-	//current field of view
+	/**
+	 * current field of view
+	 */
 	public double fov, fovRad, viewZ;			//degrees, radians,distance from eye the current view plane exists at, in -z direction
+
+	/**
+	 * if Depth of Field scene, this is the plane where the lens is in focus
+	 */
+	private myPlane focalPlane;							
+	
+	/**
+	 * Depth of Field lens radius and focal distance
+	 */
+	private double lens_radius, lens_focal_distance;  
+	
 	//public List<Future<Boolean>> callFOVFutures;
 	//public List<myFOVCall> callFOVCalcs;
 
@@ -31,6 +45,20 @@ public class myFOVScene extends Base_Scene {
 		//callFOVCalcs= new ArrayList<myFOVCall>();
 		//callFOVFutures = new ArrayList<Future<Boolean>>(); 
 	}
+	
+	@Override
+	protected final void initVars_Indiv() {
+		focalPlane = new myPlane(this);
+		setFOVVals(fov);
+	}
+	@Override
+	protected final void copyVars_Indiv(Base_Scene _old) {
+		lens_radius = ((myFOVScene)_old).lens_radius;
+		lens_focal_distance = ((myFOVScene)_old).lens_focal_distance;		
+		focalPlane = ((myFOVScene)_old).focalPlane;
+		setFOVVals(fov);
+	}
+	
 
 	/**
 	 * After image size is changed, recalculate essential scene-specific values that depend on image size
@@ -41,6 +69,18 @@ public class myFOVScene extends Base_Scene {
 		setFOVVals(fov);
 	}
 	
+	/**
+	 * Set depth of field values from file read
+	 * @param lRad
+	 * @param lFD
+	 */
+	public void setDpthOfFld(double lRad, double lFD){				//depth of field effect
+		lens_radius = lRad;
+		lens_focal_distance = lFD;
+		setHasDpthOfFld(true);
+		focalPlane.setPlaneVals(0, 0, 1, lens_focal_distance, 1.0);      //needs to be modified so that d = viewZ + lens_focal_distance once FOV has been specified.
+	}
+		
 	private void setFOVVals(double _fov) {
 		fov = _fov;
 		fovRad = MyMathUtils.DEG_TO_RAD*fov;
@@ -53,13 +93,36 @@ public class myFOVScene extends Base_Scene {
 		viewZ = -0.5 * (MyMathUtils.max(sceneRows,sceneCols)/Math.tan(fovRad/2.0f));
 		if(hasDpthOfFld()){//depth of field variables already set from reader - build focal plane
 			focalPlane.setPlaneVals(0, 0, 1,  lens_focal_distance, 1.0);  		
-			System.out.println("View z : " + viewZ  + "\nfocal plane : "+ focalPlane);
-		}		
+			msgObj.dispInfoMessage("myFOVScene","setFOVVals","Depth of Field : FOV : "+ fov + "| View z : " + viewZ  + "| Focal plane : "+ focalPlane);
+		} else {
+			msgObj.dispInfoMessage("myFOVScene","setFOVVals","FOV : "+ fov + "| View z : " + viewZ);		
+		}
+	}
+	
+	/**
+	 * get random location within "lens" for depth of field calculation - consider loc to be center, pick random point in constant z plane within some radius of loc point
+	 * @param loc
+	 * @return
+	 */
+	private myPoint getDpthOfFldEyeLoc(myPoint loc){
+		//myVector tmp = p.rotVecAroundAxis(new myVector(0,1,0),new myVector(0,0,-1),ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI));				//rotate surfTangent by random angle
+		myVector tmp1 = new myVector(0,1,0);
+		myVector tmp = tmp1.rotMeAroundAxis(new myVector(0,0,-1),ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI));				//rotate surfTangent by random angle
+		double mult = ThreadLocalRandom.current().nextDouble(0,lens_radius);			//find displacement radius from origin
+		tmp._mult(mult/tmp.magn);
+		tmp._add(loc);																														//find displacement point on origin
+		return tmp;		
 	}
 
 	//getDpthOfFldEyeLoc()
-	//no anti aliasing for depth of field, instead, first find intersection of ray with focal plane, then 
-	//then find start location of ray via getDpthOfFldEyeLoc(), and build multiple rays 
+	//no anti aliasing for depth of field, instead, first find intersection of ray with focal plane, then find start location of ray via getDpthOfFldEyeLoc(), and build multiple rays 
+	/**
+	 * Handle multiple rays for DepthOfField scene. No anti aliasing for depth of field; instead, first find 
+	 * intersection of ray with focal plane, then find start location of ray via getDpthOfFldEyeLoc(), and build multiple rays
+	 * @param pRayX
+	 * @param pRayY
+	 * @return
+	 */
 	protected myRTColor shootMultiDpthOfFldRays(double pRayX, double pRayY) {
 		myRTColor result,aaResultColor;
 		double redVal = 0, greenVal = 0, blueVal = 0;//, rayYOffset = sceneRows/2.0, rayXOffset = sceneCols/2.0;
@@ -68,15 +131,21 @@ public class myFOVScene extends Base_Scene {
 		rayCast ray = new rayCast(this, eyeOrigin, lensCtrPoint, 0);					//initial ray - find intersection with focal plane
 		//find intersection point with focal plane, use this point to build lens rays
 		rayHit hit = focalPlane.intersectCheck( ray, ray.getTransformedRay(focalPlane.CTMara[Base_Geometry.invIDX]),focalPlane.CTMara);						//should always hit
-		myPoint rayOrigin;
+		myPoint rayOrigin = new myPoint();
 		myPoint focalPt = hit.hitLoc;
-		for(int rayNum = 0; rayNum < numRaysPerPixel; ++rayNum){
-			rayOrigin = this.getDpthOfFldEyeLoc(lensCtrPoint);										//get some random pt within the lens to use as the ray's origin
+		//first ray can be direct hit
+		ray = new rayCast(this, rayOrigin, new myVector(lensCtrPoint, focalPt),0);
+		aaResultColor = reflectRay(ray);
+		redVal += aaResultColor.x; //(aaResultColor >> 16 & 0xFF)/256.0;//gets red value
+		greenVal += aaResultColor.y; // (aaResultColor >> 8 & 0xFF)/256.0;//gets green value
+		blueVal += aaResultColor.z;//(aaResultColor & 0xFF)/256.0;//gets blue value	
+		for(int rayNum = 1; rayNum < numRaysPerPixel; ++rayNum){
+			rayOrigin = getDpthOfFldEyeLoc(lensCtrPoint);										//get some random pt within the lens to use as the ray's origin
 			ray = new rayCast(this, rayOrigin, new myVector(rayOrigin, focalPt),0);
 			aaResultColor = reflectRay(ray);
-			redVal += aaResultColor.x; //(aaResultColor >> 16 & 0xFF)/256.0;//gets red value
-			greenVal += aaResultColor.y; // (aaResultColor >> 8 & 0xFF)/256.0;//gets green value
-			blueVal += aaResultColor.z;//(aaResultColor & 0xFF)/256.0;//gets blue value
+			redVal += aaResultColor.x; 		//gets red value
+			greenVal += aaResultColor.y;	//gets green value
+			blueVal += aaResultColor.z;		//gets blue value
 		}//rayNum
 		result = new myRTColor ( redVal/numRaysPerPixel, greenVal/numRaysPerPixel, blueVal/numRaysPerPixel); 
 		return result;	  
@@ -159,13 +228,13 @@ public class myFOVScene extends Base_Scene {
 	
 	@Override
 	//distribution render
-	public void renderScene(int stepIter, boolean skipPxl, int[] pixels){
+	protected final void renderScene(int stepIter, boolean skipPxl, int[] pixels){
 		if(hasDpthOfFld()){
 			renderDepthOfField(stepIter, skipPxl, pixels); 
 		} else {
 			renderFOVScene(stepIter, skipPxl, pixels);
 		}
-		System.out.println("-");
 	}//renderScene
+
 
 }//myFOVScene

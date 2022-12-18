@@ -27,6 +27,15 @@ public class myFishEyeScene extends Base_Scene{
 		setFishEye(_fishEye);
 	}
 	
+	@Override
+	protected final void initVars_Indiv() {
+		
+	}
+	@Override
+	protected final void copyVars_Indiv(Base_Scene _old) {
+		
+	}
+	
 	/**
 	 * After image size is changed, recalculate essential scene-specific values that depend on image size
 	 */
@@ -79,7 +88,7 @@ public class myFishEyeScene extends Base_Scene{
 	
 	@Override
 	//distribution draw
-	public void renderScene(int stepIter, boolean skipPxl, int[] pixels){
+	protected final void renderScene(int stepIter, boolean skipPxl, int[] pixels){
 		//index of currently written pixel
 		int pixIDX = 0;
 		int progressCount = 0;
@@ -115,6 +124,5 @@ public class myFishEyeScene extends Base_Scene{
 				}//for col
 			}//for row  
 		}//if antialiasing
-		System.out.println("-");
 	}//renderScene
 }//myFishEyeScene

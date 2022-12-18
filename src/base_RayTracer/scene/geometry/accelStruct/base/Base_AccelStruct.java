@@ -12,7 +12,6 @@ import base_Math_Objects.matrixObjs.doubles.myMatrix;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
 
- 
 /**
  * abstract base class for myGeomBase objects that are directly involved in holding other objects for acceleration purposes
  * @author John Turner

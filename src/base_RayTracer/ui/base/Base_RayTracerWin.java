@@ -75,7 +75,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	};
 
 	public String[] gIDX_CurrSceneCLIList = new String[] {
-			"trTrans.cli","plnts3BunInstances.cli","test_2triTxtures.cli","test_QuadTxtures.cli","test_Plane.cli",
+			"trTrans.cli","old_t07.cli","plnts3BunInstances.cli","test_2triTxtures.cli","test_QuadTxtures.cli","test_Plane.cli",
 			"t01.cli","t02.cli","t03.cli","t04.cli","t05.cli","t06.cli","t07.cli","t08.cli","t09.cli","t10.cli","t11.cli",
 			"noiseTxtr_st01.cli","noiseTxtr_st02.cli","noiseTxtr_st03.cli","noiseTxtr_st04.cli","noiseTxtr_st05.cli",
 			"noiseTxtr_st06.cli","noiseTxtr_st07.cli","noiseTxtr_st08.cli","noiseTxtr_st09.cli",
@@ -467,7 +467,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 		myRTColor cDiff = new myRTColor(MyMathUtils.min(1.0f,rVal+.5f), MyMathUtils.min(1.0f,gVal+.5f), MyMathUtils.min(1.0f,bVal+.5f));
 		_s.setHasGlblTxtrdTop(false);
 		_s.setHasGlblTxtrdBtm(false);
-		_s.setSurface(cDiff,new myRTColor(0,0,0),new myRTColor(0,0,0),0,0);
+		_s.setSurface(cDiff,new myRTColor(0,0,0),new myRTColor(0,0,0),0,0,0);
 	}
 
 	private final double s120 = .5*MyMathUtils.SQRT_3, c120 = -.5;

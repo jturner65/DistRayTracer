@@ -93,47 +93,52 @@ public class myRTFileReader {
 		int curNumRaysPerPxl = scene.numRaysPerPixel;
 		//reinitializes the image so that any previous values from other images are not saved
 		//if (str == null) {win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error! Failed to read the file.");}
+		//debug display file
+		if (Base_RayTracerWin.AppMgr.isDebugMode()) {	_debugFileStrings(fileStrings);	}
 		for (int i=0; i<fileStrings.length; ++i) { 
-			if(fileStrings[i].startsWith("#")) {continue;}
+			//Skip comments and empty lines
+			if((fileStrings[i].startsWith("#")) || (fileStrings[i].strip().length() == 0)) {continue;}
 			String[] tokenAra = fileStrings[i].strip().split("\\s+"); // Get a line and parse tokens.
 			//debug
-			//printTokenAra(fileStrings[i], i, token);
+			//_printTokenAra(fileStrings[i], i, tokenAra);
 			if ((tokenAra.length == 0) || (tokenAra[0] == "")) {continue;} // Skip blank line or comments.
 			switch (tokenAra[0].toLowerCase()){
+
 				//determine the kind of scene - needs to be the first component in base scene file
 				case "fov" 	: {	
-					if(!isMainFileScene){win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error - unsupported setting scene type ('FOV') in recursive child scene file"); break;}
+					if(!isMainFileScene){win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error - unsupported setting scene type ('"+tokenAra[0]+"') in recursive child scene file"); break;}
 					Base_Scene tmp = new myFOVScene(scene, Double.parseDouble(tokenAra[1]));
 					scene = tmp;
-					//scene = new myFOVScene(p);
 					scene.setNumRaysPerPxl((curNumRaysPerPxl != 0) ? curNumRaysPerPxl : 1);
 					//scene.setSceneParams(new double[]{Double.parseDouble(tokenAra[1])}); 
 					break;}	
 				//for depth of field -only in FOV scenes - specifies the lens size (radius) and what 
 				//distance in front of the eye is in focus - greater radius should blur more of the image
 			    case "lens" : { 			
-			    	double radius = Double.parseDouble(tokenAra[1]);
+			    	if(!isMainFileScene){win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error - unsupported setting scene value ('"+tokenAra[0]+"') in recursive child scene file"); break;}
+					double radius = Double.parseDouble(tokenAra[1]);
 			    	double focal_distance = Double.parseDouble(tokenAra[2]);
-			    	scene.setDpthOfFld(radius, focal_distance);			    	
+			    	((myFOVScene)scene).setDpthOfFld(radius, focal_distance);			    	
 			    	break;}
 			    
 				//case "fishEye" :
 				case "fisheye" : { 
-					if(!isMainFileScene){win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error - unsupported setting scene type ('fishEye') in recursive child scene file"); break;}					
+					if(!isMainFileScene){win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error - unsupported setting scene type ('"+tokenAra[0]+"') in recursive child scene file"); break;}					
 					Base_Scene tmp = new myFishEyeScene(scene, Double.parseDouble(tokenAra[1]));
 					scene = tmp;
-					//scene = new myFishEyeScene(p);
 					scene.setNumRaysPerPxl((curNumRaysPerPxl != 0) ? curNumRaysPerPxl : 1);
 					//scene.setSceneParams(new double[]{Double.parseDouble(tokenAra[1])}); 
 					break;}	
 				case "ortho" :
 				case "orthographic" : {// width height
-					if(!isMainFileScene){win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error - unsupported setting scene type ('Ortho') in recursive child scene file"); break;}
+					if(!isMainFileScene){win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error - unsupported setting scene type ('"+tokenAra[0]+"') in recursive child scene file"); break;}
 					Base_Scene tmp = new myOrthoScene(scene, Double.parseDouble(tokenAra[1]),Double.parseDouble(tokenAra[2]));
 					scene = tmp;
 					scene.setNumRaysPerPxl((curNumRaysPerPxl != 0) ? curNumRaysPerPxl : 1);
 					//scene.setSceneParams(new double[]{Double.parseDouble(tokenAra[1]),Double.parseDouble(tokenAra[2])}); 
 					break;}				
+				
+				
 				//file save and read subordinate file
 				//NEEDS TO RENDER SCENE and then save it so that rendering can be timed - doesn't work with refine currently
 			    case "write" : {		
@@ -178,6 +183,8 @@ public class myRTFileReader {
 			    	curNumRaysPerPxl = prod;				//doing this because it is being set before FOV, which rebuilds scene
 			    	scene.setNumRaysPerPxl(prod);			    	
 					break;} 			    
+
+				
 				//background texture/color/foreground color
 				case "background" : {//visible background in front of camera - negative infinite z\
 					if (tokenAra[1].equals("texture")) {
@@ -242,7 +249,7 @@ public class myRTFileReader {
 					myRTColor cSpec = new myRTColor(0,0,0);
 					scene.setHasGlblTxtrdTop(false);
 					scene.setHasGlblTxtrdBtm(false);
-					scene.setSurface(cDiff,cAmb,cSpec,0,0);					
+					scene.setSurface(cDiff,cAmb,cSpec,0,0,0);					
 					break;}
 				//use shiny for new refr/refl; use surface for older cli files - handles mix of colors and refr/refl better
 				case "shiny" :{//Cdr Cdg Cdb, Car Cag Cab, Csr Csg Csb, Exp Krefl Ktrans Index 
@@ -267,14 +274,25 @@ public class myRTFileReader {
 					scene.setHasGlblTxtrdTop(false);
 					scene.setHasGlblTxtrdBtm(false);
 					double kRefl = Double.parseDouble(tokenAra[7]);
-					scene.setSurface(cDiff,cAmb,cSpec,0,kRefl);		
+					scene.setSurface(cDiff,cAmb,cSpec,0,kRefl,0);		
 					break;}				
-			    case "perm" : {//load new permiability value - used for refraction
-			    	scene.setRfrIdx(Double.parseDouble(tokenAra[1]));
-			    	try {scene.setRfrIdx(Double.parseDouble(tokenAra[1]),Double.parseDouble(tokenAra[2]),Double.parseDouble(tokenAra[3]),Double.parseDouble(tokenAra[4]));} catch (Exception e){}
-			    	break;}//if perm
 			    case "phong" : {scene.setPhong(Double.parseDouble(tokenAra[1]));	break;}//phong
-			    case "krefl" : {scene.setKRefl(Double.parseDouble(tokenAra[1]));  	break;}//krefl
+			    case "perm" : {//load new permiability value - used for refraction			    	
+			    	double rfrIdx=Double.parseDouble(tokenAra[1]);
+			    	myRTColor permClr = new myRTColor(rfrIdx,rfrIdx,rfrIdx);
+			    	if (tokenAra.length>2) {
+			    		permClr.set(Double.parseDouble(tokenAra[2]), Double.parseDouble(tokenAra[3]),Double.parseDouble(tokenAra[4]));
+			    	} 
+		    		scene.setRfrIdx(rfrIdx,permClr);
+			    	break;}//if perm
+			    case "krefl" : {
+			    	double kRefl = Double.parseDouble(tokenAra[1]);
+			    	myRTColor reflClr = new myRTColor(kRefl,kRefl,kRefl);
+			    	if (tokenAra.length>2) {			    		
+			    		reflClr.set(Double.parseDouble(tokenAra[2]), Double.parseDouble(tokenAra[3]),Double.parseDouble(tokenAra[4]));
+			    	}		    	
+			    	scene.setKRefl(kRefl,reflClr);  	
+			    	break;}//krefl
 				case "depth" : {scene.setDepth(Double.parseDouble(tokenAra[1]));	break;}//depth for subsurface scattering - TODO
 			    case "ktrans" : {scene.setKTrans(Double.parseDouble(tokenAra[1]));	break;}//ktrans - //load new permiability value - used for refraction		
 			    
@@ -283,7 +301,7 @@ public class myRTFileReader {
 			    case "end_list" 	:{	    	scene.endTmpObjList(0);		    	break;}
 			    case "end_accel" 	:{	    	scene.endTmpObjList(1);		    	break;}			//TODO modify to accept multiple accel struct types		 
 			    		    
-			    //layouts
+			    //predefined object layouts
 			    case "sierpinski" :{
 			    	//generate sierpinski tet arrangement of named object
 			    	String objName = tokenAra[1], useShdr="No";
@@ -307,6 +325,9 @@ public class myRTFileReader {
 			    	scene.addInstance(objName, useCurShdr != "");		    	
 			    	break;}	
 			    
+			    
+			    /////////
+			    // Textures
 			    case "image_texture" :
 			    case "texture" : {//load texture to be used for subsequent objects.  will be overridden by a surface command
 			    	//First token could either be the side (top or bottom) or the textureName (in which case it is assumed to be the top texture)
@@ -360,15 +381,15 @@ public class myRTFileReader {
 			    	((Base_PlanarObject) myPoly).setVert(Double.parseDouble(tokenAra[1]),Double.parseDouble(tokenAra[2]),Double.parseDouble(tokenAra[3]), myVertCount);
 			    	myVertCount++;
 			    	break;}
-			    case "end" : {//end shape - reset vars to add new triangle, finalize triangle, add to arraylist of sceneobjects		
-			    	
+			    case "end" : {//end shape - reset vars to add new triangle, finalize triangle, add to arraylist of sceneobjects			    	
 		    		((Base_PlanarObject) myPoly).finalizePoly();
 		    		myPoly.shdr = scene.getCurShader();				//set shader for object <- important! this is where any proc textures used are specified
 		    		scene.addObjectToScene(myPoly);
-
 		    		vertType = "triangle";    //reset default object type as triangle
 			    	myVertCount = 0;      
 			    	break;}
+			    
+			    
 			    
 			    //prims - build in scene code
 			    case "box" : 	    
@@ -397,10 +418,12 @@ public class myRTFileReader {
 			    case "translate" : {
 			    	//builds a translate matrix and adds to current transformation matrix on stack - tx,ty,tz
 			    	scene.gtTranslate(Double.parseDouble(tokenAra[1]), Double.parseDouble(tokenAra[2]), Double.parseDouble(tokenAra[3]));
-			    	break;}		
+			    	break;}	
+			    
+			    
 			    default : {
 			    	win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "When reading "+fileName+" unknown command encountered : '"+tokenAra[0]+"' on line : ["+i+"] : " + fileStrings[i]);
-			    	printTokenAra(fileStrings[i], i, tokenAra);
+			    	_printTokenAra(fileStrings[i], i, tokenAra);
 			    	System.exit(0);
 			    	break;}
 			}//switch on object type from file	
@@ -408,12 +431,29 @@ public class myRTFileReader {
 		if((isMainFileScene) && !finalized){finalizeScene(loadedScenes,fileName, scene);	}	//puts finished scene -- only put in if _scene is null, meaning this is root file, not 2ndary read file
 		return scene;
 	}//parseStringArray
- 
-	private void printTokenAra(String fileString, int i, String[] token) {
+	
+	/**
+	 * Print contents of file and parsed results for each line
+	 * @param fileStrings
+	 */
+	private void _debugFileStrings(String[] fileStrings) {
+		for (int i=0; i<fileStrings.length; ++i) { 
+			//Skip comments and empty lines
+			if((fileStrings[i].startsWith("#")) || (fileStrings[i].strip().length() == 0)) {
+				win.getMsgObj().dispInfoMessage("myRTFileReader", "_debugFileStrings", "\tLine " + i + ": fileString=`" + fileStrings[i] + "` : Comment or empty");
+				continue;
+			}
+			String[] tokenAra = fileStrings[i].strip().split("\\s+"); // Get a line and parse tokens.
+			//debug
+			_printTokenAra(fileStrings[i], i, tokenAra);
+		}
+	}
+	
+	private void _printTokenAra(String fileString, int i, String[] token) {
 		String tmpToken = "";
 		for(String tok : token) {tmpToken += "|"+tok;}
 		tmpToken += "|";
-		win.getMsgObj().dispInfoMessage("myRTFileReader", "parseStringArray", "\tLine " + i + ": fileString=`" + fileString + "` | tokens : "+ token.length + " : "+tmpToken);
+		win.getMsgObj().dispInfoMessage("myRTFileReader", "_printTokenAra", "\tLine " + i + ": fileString=`" + fileString + "` | tokens : "+ token.length + " : "+tmpToken);
 	}//printTokenAra
 	
 	
@@ -496,7 +536,12 @@ public class myRTFileReader {
 	}//readPrimData
 	
 	
-	//build a color value from a string array read in from a cli file.  stIdx is position in array where first color resides
+	/**
+	 * build a color value from a string array read in from a cli file.  stIdx is position in array where first color resides
+	 * @param token
+	 * @param stIdx
+	 * @return
+	 */
 	private myRTColor readColor(String[] token, int stIdx){return new myRTColor(Double.parseDouble(token[stIdx]),Double.parseDouble(token[stIdx+1]),Double.parseDouble(token[stIdx+2]));}
 	
 	public void finalizeScene(TreeMap<String, Base_Scene> loadedScenes, String fileName,Base_Scene scene){
@@ -505,28 +550,37 @@ public class myRTFileReader {
 		loadedScenes.put(fileName, scene);
 	}
 	
-	//handle surface and shiny commands (very similar in layout but slight differences - shiny will use "simple" version of transmittance, not TIR
+	/**
+	 * handle surface and shiny commands (very similar in layout but slight differences - shiny will use "simple" version of transmittance, not TIR
+	 * @param scene
+	 * @param token
+	 * @param useSimple
+	 */
 	public void setSurfaceShiny(Base_Scene scene, String[] token, boolean useSimple){
 		myRTColor cDiff = readColor(token,1);
 		myRTColor cAmb = readColor(token,4);
 		myRTColor cSpec = readColor(token,7);
 		double phongExp = Double.parseDouble(token[10]);
 		double kRefl = Double.parseDouble(token[11]);
-		double kTrans = 0;
-		double rfrIdx = 0;
+		double kTrans =0, rfrIdx=0;
+		myRTColor permClr = new myRTColor();
 		scene.setHasGlblTxtrdTop(false);
 		scene.setHasGlblTxtrdBtm(false);
-		scene.setSurface(cDiff,cAmb,cSpec,phongExp,kRefl);
-		try {//if ktrans value in format file, grab it and re-initialize surfaces
-			kTrans = Double.parseDouble( token[12]);  
-			scene.setSurface(cDiff,cAmb,cSpec,phongExp,kRefl,kTrans);
-			rfrIdx = Double.parseDouble(token[13]);	//perm
-			scene.setSurface(cDiff,cAmb,cSpec,phongExp,kRefl,kTrans,rfrIdx);
-			scene.setRfrIdx(rfrIdx);    	
-    		scene.setRfrIdx(rfrIdx,Double.parseDouble(token[14]),Double.parseDouble(token[15]),Double.parseDouble(token[16]));    	
-		} catch (Exception e) {
-			win.getMsgObj().dispErrorMessage("myRTFileReader", "setSurfaceShiny", "Error : \n"+e.toString());
+		//See if surface description extends to transmission/refraction
+		if (token.length > 12) {
+			kTrans = Double.parseDouble(token[12]);  
+			if (token.length > 13) {
+				rfrIdx = Double.parseDouble(token[13]);	//perm
+				//color of permiability/translucency - if has any will have all 3 values
+				if (token.length > 14) {
+					permClr.set(Double.parseDouble(token[14]),Double.parseDouble(token[15]),Double.parseDouble(token[16]));
+				} else {
+					permClr.set(rfrIdx,rfrIdx,rfrIdx);					
+				}
+			}
 		}
+		scene.setSurface(cDiff,cAmb,cSpec,phongExp,kRefl,kTrans,rfrIdx,permClr);
+
 		if((useSimple) && ((kTrans > 0) || (rfrIdx > 0))){scene.setHasSimpleRefr(true);}			
 	}//setSurfaceShiny
 

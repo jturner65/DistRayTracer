@@ -1,7 +1,7 @@
 # several spheres in orthographic view
 
 #fov 60
-ortho 6 6
+ortho 20 20
 point_light 0 0 0  0.2 0.2 0.2
 point_light 4 4 0    1 1 1
 background 0.3 0.3 0.7

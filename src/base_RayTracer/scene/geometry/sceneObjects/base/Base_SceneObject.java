@@ -92,7 +92,11 @@ public abstract class Base_SceneObject extends Base_Geometry{
 	@Override
 	public myRTColor getColorAtPos(rayHit hit) {	return shdr.getColorAtPos(hit);}
 		
-	//get orthogonal vector to passed vector
+	/**
+	 * get orthogonal vector to passed vector
+	 * @param vec
+	 * @return
+	 */
 	public myVector getOrthoVec(myVector vec){
 		myVector tmpVec = new myVector(1,1,0);
 		tmpVec._normalize();

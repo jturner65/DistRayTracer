@@ -14,7 +14,6 @@ import base_RayTracer.scene.geometry.sceneObjects.base.Base_SceneObject;
 import base_RayTracer.scene.geometry.sceneObjects.implicit.*;
 import base_RayTracer.scene.geometry.sceneObjects.lights.*;
 import base_RayTracer.scene.geometry.sceneObjects.lights.base.Base_Light;
-import base_RayTracer.scene.geometry.sceneObjects.planar.myPlane;
 import base_RayTracer.scene.materials.textures.base.Base_TextureHandler;
 import base_RayTracer.scene.materials.textures.imageTextures.myImageTexture;
 import base_RayTracer.scene.materials.textures.miscTextures.myNoneTexture;
@@ -45,9 +44,10 @@ public abstract class Base_Scene {
 	protected static IRenderInterface pa;
 	//Owning window
 	protected Base_RayTracerWin win;
+	//Message object manages console/log output
 	protected MessageObject msgObj;
 	
-	//multi-threaded stuff
+	//multi-threaded stuff TODO
 	protected ExecutorService th_exec;
 	
 	//max # of prims per leaf of accel structure 
@@ -187,10 +187,9 @@ public abstract class Base_Scene {
 	//end proc & noise txtrs
 	/////////////////////////////	
 	//global values set by surface parameter
-	public myRTColor currDiffuseColor, currAmbientColor, currSpecularColor,globCurPermClr, currKReflClr, backgroundColor;//, foregroundColor;
-	public double currPhongExp, currKRefl,globRfrIdx,currKTrans, currDepth, lens_radius, lens_focal_distance;   //value representing the visible depth of a colloid (i.e. subsurface experiment) 
-	
-	public myPlane focalPlane;							//if Depth of Field scene, this is the plane where the lens is in focus
+	public myRTColor currDiffuseColor, currAmbientColor, currSpecularColor,globCurPermClr, currKReflClr, backgroundColor;
+	//value representing the visible depth of a colloid (i.e. subsurface experiment)
+	public double currPhongExp, currKRefl,globRfrIdx,currKTrans, currDepth;  
 	
 	//replaced by num rays per pixel
 	public int numRaysPerPixel;
@@ -202,9 +201,8 @@ public abstract class Base_Scene {
 	
 	//length of time to render
 	public float renderTime;	
-	
-	public boolean initFlag = false;
-	
+
+	/////////////////////////////	
 	//Matrix stack used to process transformations from file descriptions
 	private myMatStack matrixStack;
 	//current depth in matrix stack - starts at 0;
@@ -262,7 +260,12 @@ public abstract class Base_Scene {
 		matrixStack = _old.matrixStack;
 	}//myScene
 	
-	//scene-wide variables set during loading of scene info from .cli file
+	/**
+	 * scene-wide variables set during loading of scene info from .cli file
+	 * @param _sceneName
+	 * @param _numCols
+	 * @param _numRows
+	 */
 	private void initVars(String _sceneName, int _numCols, int _numRows){
 		setImageSize(_numCols, _numRows);	
 		currTextureTop = null;
@@ -300,10 +303,15 @@ public abstract class Base_Scene {
 		refrRays = 0;
 		globRayCount = 0;
 		numRaysPerPixel = 1;
-		focalPlane = new myPlane(this);
+		initVars_Indiv();
 	}//initVars method
 	
-	//scene-wide variables set during loading of scene info from .cli file
+	protected abstract void initVars_Indiv();
+	
+	/**
+	 * scene-wide variables set during loading of scene info from .cli file
+	 * @param _old
+	 */
 	private void copyVars(Base_Scene _old){
 		setImageSize(_old.sceneCols,_old.sceneRows);
 		currTextureTop = _old.currTextureTop;
@@ -345,11 +353,12 @@ public abstract class Base_Scene {
 		globRayCount = _old.globRayCount;
 		
 		numRaysPerPixel = _old.numRaysPerPixel;
-
-		lens_radius = _old. lens_radius;
-		lens_focal_distance = _old.lens_focal_distance;		
-		focalPlane = _old.focalPlane;		
+		
+		copyVars_Indiv(_old);
+		
 	}//initVars from old scene method	
+	
+	protected abstract void copyVars_Indiv(Base_Scene _old);
 
 	public void startTmpObjList(){
 		tmpObjList = new ArrayList<Base_Geometry>();
@@ -393,8 +402,9 @@ public abstract class Base_Scene {
 		endTmpObjList(1);			//bvh of sierp objs
 		msgObj.dispInfoMessage("Base_Scene ("+fileName+")", "buildSierpinski", "Total Objects : "+((Math.pow(4, depth)-1)/3.0f));
 	}	
+	
 	/**
-	 * remove most recent object from list of objects and instead add to instance object struct.
+	 * remove most recent object from list of objects and instead add to instance object source struct.
 	 * @param name
 	 */
 	public void setObjectAsNamedObject(String name){
@@ -415,7 +425,10 @@ public abstract class Base_Scene {
 		numInstances.put(name, numInstances.get(name)+1);
 	}//
 	
-	// adds a new pointlight to the array of lights :   @params rgb - color, xyz - location
+	/**
+	 * adds a new pointlight to the array of lights :   @params rgb - color, xyz - location
+	 * @param token
+	 */
 	public void addMyPointLight(String[] token){
 		msgObj.dispInfoMessage("Base_Scene ("+fileName+")", "addMyPointLight", "Point Light : current # of lights : " + numLights);
 		myPointLight tmp = new myPointLight(this, numLights, 
@@ -424,7 +437,10 @@ public abstract class Base_Scene {
 		addObjectToScene(tmp);
 	}//addMyPointLight method
 	 
-		// adds a new spotlight to the array of lights :   @params rgb - color, xyz - location, dx,dy,dz direction, innerThet, outerThet - angle bounds
+	/**
+	 * adds a new spotlight to the array of lights :   @params rgb - color, xyz - location, dx,dy,dz direction, innerThet, outerThet - angle bounds
+	 * @param token
+	 */
 	public void addMySpotLight(String[] token){
 		double _inThet = Double.parseDouble(token[7]);
 		double _outThet = Double.parseDouble(token[8]);
@@ -437,7 +453,10 @@ public abstract class Base_Scene {
 		addObjectToScene(tmp);
 	}//addMySpotLight method
 	
-	// adds a new disklight to the array of lights : disk_light x y z radius dx dy dz r g b
+	/**
+	 * adds a new disklight to the array of lights : disk_light x y z radius dx dy dz r g b
+	 * @param token
+	 */
 	public void addMyDiskLight(String[] token){
 		double radius = Double.parseDouble(token[4]);
 		msgObj.dispInfoMessage("Base_Scene ("+fileName+")", "addMyDiskLight", "Disk Light : current # of lights : " + numLights + " radius : " + radius);
@@ -593,6 +612,7 @@ public abstract class Base_Scene {
 			msgObj.dispMultiLineMessage("Base_Scene ("+fileName+")", "addMyPointLight",res, MsgCodes.error1);
 		}	 		
 		noiseColors = tmpAra.toArray(new myRTColor[0]);
+		clrWts = tmpWtAra.toArray(new Double[0]);
 	}//setTxtrColors
 
 	/**
@@ -867,13 +887,6 @@ public abstract class Base_Scene {
 		for(int i =refIDX; i >=0; --i){	RefineIDX[refIDX-i]=Base_RayTracerWin.pow2[i];}
 	}//setRefine
 		
-	public void setDpthOfFld(double lRad, double lFD){				//depth of field effect
-		lens_radius = lRad;
-		lens_focal_distance = lFD;
-		setHasDpthOfFld(true);
-		focalPlane.setPlaneVals(0, 0, 1, lens_focal_distance, 1.0);      //needs to be modified so that d = viewZ + lens_focal_distance once FOV has been specified.
-	}
-	
 	public void setNumRaysPerPxl(int _num){
 		msgObj.dispInfoMessage("Base_Scene ("+fileName+")", "setNumRaysPerPxl", "Num Rays Per Pixel : " + _num);
 		this.numRaysPerPixel = _num;
@@ -885,34 +898,21 @@ public abstract class Base_Scene {
 	 * @param Camb
 	 * @param Cspec
 	 * @param phongExp
-	 * @param newKRefl
+	 * @param KRefl
+	 * @param KTrans
 	 */
-	public void setSurface(myRTColor Cdiff, myRTColor Camb, myRTColor Cspec, double phongExp, double newKRefl){
+	public void setSurface(myRTColor Cdiff, myRTColor Camb, myRTColor Cspec, double phongExp, double KRefl, double KTrans){
 		txtrType = 0;			//set to be no texture
 		currDiffuseColor.set(Cdiff);
 		currAmbientColor.set(Camb);
 		currSpecularColor.set(Cspec);
 		currPhongExp = phongExp;
-		setKRefl(newKRefl,newKRefl,newKRefl,newKRefl);
-		setRfrIdx(0, 0, 0, 0);	
+		setKRefl(KRefl,new myRTColor(KRefl,KRefl,KRefl));
 		currKTrans = 0;
 		globRfrIdx = 0;
 		globCurPermClr.set(0,0,0);
-	}//setSurface method
-	
-	/**
-	 * Set current material surface properties
-	 * @param Cdiff
-	 * @param Camb
-	 * @param Cspec
-	 * @param phongExp
-	 * @param KRefl
-	 * @param KTrans
-	 */
-	public void setSurface(myRTColor Cdiff, myRTColor Camb, myRTColor Cspec, double phongExp, double KRefl, double KTrans){
-		setSurface(Cdiff,Camb, Cspec,phongExp, KRefl);
 		currKTrans = KTrans;
-		setRfrIdx(0, 0, 0, 0);	
+		setRfrIdx(0, new myRTColor());	
 	}//setSurface method with refractance
 	
 	/**
@@ -925,28 +925,29 @@ public abstract class Base_Scene {
 	 * @param KTrans
 	 * @param rfrIdx
 	 */
-	public void setSurface(myRTColor Cdiff, myRTColor Camb, myRTColor Cspec, double phongExp, double KRefl, double KTrans, double rfrIdx){
+	public void setSurface(myRTColor Cdiff, myRTColor Camb, myRTColor Cspec, double phongExp, double KRefl, double KTrans, double rfrIdx, myRTColor permClr){
 		setSurface(Cdiff,Camb, Cspec,phongExp, KRefl, KTrans);
 		//set permiability of object to light
-		setRfrIdx(rfrIdx, rfrIdx, rfrIdx,rfrIdx);
+		setRfrIdx(rfrIdx, permClr);
 	}//setSurface method with refractance
+	
 	public void setDepth(double depth){  currDepth = depth;}//subsurface depth - TODO
 	
 	public void setPhong(double newPhong){ currPhongExp = newPhong;}
 	public void setKTrans(double newKTrans){  currKTrans = newKTrans;}
-	public void setRfrIdx(double rfrIdx){setRfrIdx(rfrIdx, rfrIdx, rfrIdx, rfrIdx);}
-	public void setRfrIdx(double rfrIdx, double pR, double pG, double pB){
+	
+	public void setRfrIdx(double rfrIdx, myRTColor permClr){
 		globRfrIdx = rfrIdx;
 		//can control color "tint" of transmitted ray through object.  for now all the same
-		globCurPermClr.set(pR,pG,pB);
+		globCurPermClr.set(permClr);
 	}
 	
-	public void setKRefl(double newKRefl){setKRefl(newKRefl,newKRefl,newKRefl,newKRefl);}
-	public void setKRefl(double newKRefl, double kr, double kg, double kb){
+	public void setKRefl(double newKRefl, myRTColor reflClr){
 	  currKRefl  = newKRefl;
-	  //can control color "tint" of transmitted ray through object		
-	  currKReflClr.set(kr,kg,kb);
+	  //can control color "tint" of reflected ray through object		
+	  currKReflClr.set(reflClr);
 	}
+	
 	public void setBackgroundColor(double r, double g, double b){  backgroundColor.set(r,g,b);}//initBackground 3 color method
 	////////
 	///end setting values
@@ -955,21 +956,7 @@ public abstract class Base_Scene {
 	///////
 	//RT functionality
 	///////	
-	/**
-	 * get random location within "lens" for depth of field calculation - consider loc to be center, pick random point in constant z plane within some radius of loc point
-	 * @param loc
-	 * @return
-	 */
-	public myPoint getDpthOfFldEyeLoc(myPoint loc){
-		//myVector tmp = p.rotVecAroundAxis(new myVector(0,1,0),new myVector(0,0,-1),ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI));				//rotate surfTangent by random angle
-		myVector tmp1 = new myVector(0,1,0);
-		myVector tmp = tmp1.rotMeAroundAxis(new myVector(0,0,-1),ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI));				//rotate surfTangent by random angle
-		tmp._normalize();
-		double mult = ThreadLocalRandom.current().nextDouble(0,lens_radius);			//find displacement radius from origin
-		tmp._mult(mult);
-		tmp._add(loc);																														//find displacement point on origin
-		return tmp;		
-	}
+
 	//determines if a light source is blocked by another object for shadow detection
 	//currently only returns 1 or 0 if light is blocked
 	
@@ -1369,7 +1356,9 @@ public abstract class Base_Scene {
 			}
 			if(stepIter == 1){setRendered(true);			}
 			//Render specific scene
-			renderScene(stepIter, skipPxl, rndrdImg.pixels);			
+			renderScene(stepIter, skipPxl, rndrdImg.pixels);
+			//final tick of progress bar
+			System.out.println("-");
 			//Finish up
 			//update the display based on the pixels array
 			rndrdImg.updatePixels();
