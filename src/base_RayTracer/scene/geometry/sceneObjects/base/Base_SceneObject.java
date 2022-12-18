@@ -70,19 +70,6 @@ public abstract class Base_SceneObject extends Base_Geometry{
 		return 0;
 	}
 	
-	/**
-	 * interpolate 2 vectors, t==0 == a, t==1 == b
-	 * @param a
-	 * @param t
-	 * @param b
-	 * @return
-	 */
-	public myVector interpVec(myVector a, double t, myVector b){
-		myVector bMa = new myVector(a,b);
-		return new myVector(a.x + t*bMa.x, a.y + t*bMa.y, a.z + t*bMa.z );
-	}
-
-	
 	public String showUV(){
 		String result = "ObjectType : " + type + " ID : " + ID ;//+ "\nMIN u&v :" + minU + " | " + minV + " | MAX u&v " + maxU + " | " + maxV;
 		result += "\ncenter : " + origin ;

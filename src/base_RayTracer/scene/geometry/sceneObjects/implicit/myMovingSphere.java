@@ -13,6 +13,7 @@ public class myMovingSphere extends mySphere{
 	}
 	
 	@Override
-	public myVector getOrigin(double _t){	return interpVec(origin0, _t, origin1);	}
+	public myVector getOrigin(double _t){	return new myVector(origin0, _t, origin1);}
+		//return interpVec(origin0, _t, origin1);	}
 	
 }//myMovingSphere

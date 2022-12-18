@@ -6,7 +6,7 @@ import base_RayTracer.scene.geometry.base.GeomObjType;
 
 public abstract class Base_OrientedLight extends Base_Light{
 	/**
-	 * 
+	 * orientation of this light
 	 */
 	protected myVector orientation;
 
