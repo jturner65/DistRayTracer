@@ -9,6 +9,7 @@ import base_RayTracer.scene.geometry.base.GeomObjType;
 import base_RayTracer.scene.geometry.sceneObjects.base.Base_SceneObject;
 import base_RayTracer.scene.photonMapping.Photon_KDTree;
 import base_RayTracer.utils.myRTColor;
+import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.matrixObjs.doubles.myMatrix;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
@@ -17,7 +18,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 public abstract class Base_Light extends Base_SceneObject{
 	public myRTColor lightColor;            //does not use super's color vals
 	public int lightID;
-	public int lightDistType;		//TODO support more than just normal light distribution (i.e. gaussian)
+	public int lightDistType;			//TODO support more than just normal light distribution (i.e. gaussian)
 	public Photon_KDTree photonTree;
 	
 	//TODO light intensity should fall off by inverse sq dist
@@ -32,10 +33,10 @@ public abstract class Base_Light extends Base_SceneObject{
 		origin.set(_x,_y,_z);
 		lightID = _lightID;
 	}	
-	@Override
 	/**
 	 * assumes that transRay dir is toward light.
 	 */
+	@Override
 	public rayHit intersectCheck(rayCast _ray, rayCast transRay, myMatrix[] _ctAra){  
 		myVector hitNorm = new myVector(transRay.direction);
 		hitNorm._mult(-1);//norm is just neg ray direction
@@ -79,20 +80,30 @@ public abstract class Base_Light extends Base_SceneObject{
 	@Override
 	public final myPoint getMinVec(){return minVals;}
 	
-	//get a random direction for a photon to travel - from jensen photon mapping
+	/**
+	 * get a random direction for a photon to travel - from jensen photon mapping
+	 * @return
+	 */
 	public myVector getRandDir(){
-		double x,y,z, sqmag, mag;
+
+		double phi = ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI);
+		double cosTheta = ThreadLocalRandom.current().nextDouble(-1.0,1.0);
+		//double sinTheta = Math.sin(Math.acos(cosTheta));
+		//sqrt is faster than sin(acos())
+	    double sinTheta = Math.sqrt(1-(cosTheta*cosTheta));
+		myVector res = new myVector(sinTheta*Math.cos(phi), sinTheta*Math.sin(phi),cosTheta);
 		
-		//replace this with better random randomizer
-		do{
-			x = ThreadLocalRandom.current().nextDouble(-1.0,1.0);
-			y = ThreadLocalRandom.current().nextDouble(-1.0,1.0);
-			z = ThreadLocalRandom.current().nextDouble(-1.0,1.0);
-			sqmag = (x*x) + (y*y) + (z*z);
-		}
-		while ((sqmag > 1.0) || (sqmag < epsVal));
-		mag=Math.sqrt(sqmag);
-		myVector res = new myVector(x/mag,y/mag,z/mag);
+//		double x,y,z, sqmag, mag;
+//		//replace this with better random randomizer
+//		do{
+//			x = ThreadLocalRandom.current().nextDouble(-1.0,1.0);
+//			y = ThreadLocalRandom.current().nextDouble(-1.0,1.0);
+//			z = ThreadLocalRandom.current().nextDouble(-1.0,1.0);
+//			sqmag = (x*x) + (y*y) + (z*z);
+//		}
+//		while ((sqmag > 1.0) || (sqmag < epsVal));
+//		mag=Math.sqrt(sqmag);
+//		myVector res = new myVector(x/mag,y/mag,z/mag);
 		//res._normalize();
 		return res;
 	}
