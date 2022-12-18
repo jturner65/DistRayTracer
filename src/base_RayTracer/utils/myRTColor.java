@@ -1,6 +1,5 @@
 package base_RayTracer.utils;
 
-import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 
 /**
@@ -20,8 +19,16 @@ public class myRTColor extends myPoint {
 	public void set(myRTColor _c){										super.set(gate( _c.x), gate(_c.y), gate(_c.z));}// alpha  = Math.min(1,_c.alpha);}
 	public void set(double _r, double _g, double _b){					super.set(gate( _r), gate(_g), gate(_b)); }//alpha  = 1.0;}
 	
-	
-	private static double gate(double val) {return MyMathUtils.max(0, MyMathUtils.min(1.0,val));}
+	/**
+	 * Gate value
+	 * @param val
+	 * @return
+	 */
+	private static double gate(double val) {
+		if (1.0 < val) {return 1.0;	}
+		if (0.0 > val) {return 0.0;	}
+		return val;
+	}
 	
 	public int getInt(){int retVal = ((int)(255) << 24) + ((int)(x * 255) << 16) + ((int)(y * 255) << 8) + (int)(z * 255);return retVal;}
 	public String toString(){	String res = "Color : r : "+ x+" | g : "+y+" | b : "+z;return res;	}
