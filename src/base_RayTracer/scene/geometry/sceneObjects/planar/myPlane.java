@@ -10,7 +10,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * infinite plane object
- * @author 7strb
+ * @author John Turner
  *
  */
 public class myPlane extends Base_PlanarObject{	

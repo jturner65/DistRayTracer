@@ -8,7 +8,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * this class stores information regarding a ray hit - the owning ray, the t value, the object hit, the hit location, the object normal at that hit, the object's transformation matrices array
- * @author 7strb
+ * @author John Turner
  *
  */
 public class rayHit implements Comparable<rayHit>{

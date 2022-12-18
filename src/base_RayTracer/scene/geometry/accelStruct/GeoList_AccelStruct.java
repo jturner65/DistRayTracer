@@ -12,7 +12,7 @@ import base_RayTracer.scene.geometry.base.GeomObjType;
 import base_Math_Objects.matrixObjs.doubles.myMatrix;
 /**
  * Flat list structure 
- * @author 7strb
+ * @author John Turner
  *
  */
 public class GeoList_AccelStruct extends Base_AccelStruct{

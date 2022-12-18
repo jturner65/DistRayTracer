@@ -4,7 +4,7 @@ import base_Utils_Objects.kdTree.KDTree;
 
 /**
  * Specialization of Base_KDTree to provide support for photon map, holds target number of cast photons
- * @author 7strb
+ * @author John Turner
  *
  */
 public class Photon_KDTree extends KDTree<myPhoton>{

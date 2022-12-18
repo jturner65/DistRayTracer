@@ -5,7 +5,7 @@ import base_Utils_Objects.kdTree.base.Base_KDObject;
 
 /**
  * Photon class, holds photon power.  Placed in KDNode upon construction of KDTree
- * @author 7strb
+ * @author John Turner
  *
  */
 public class myPhoton extends Base_KDObject<myPhoton>{

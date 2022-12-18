@@ -7,7 +7,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * class to hold a vertex - will be shared by planar objects, will own it's own normal
- * @author 7strb
+ * @author John Turner
  *
  */
 class BaseVertex implements Comparable<BaseVertex> {

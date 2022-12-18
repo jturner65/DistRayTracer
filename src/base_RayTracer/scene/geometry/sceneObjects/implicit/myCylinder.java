@@ -11,7 +11,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * Class defining a capped cylinder via implicit equation
- * @author 7strb
+ * @author John Turner
  *
  */
 public class myCylinder extends Base_Cylinder{

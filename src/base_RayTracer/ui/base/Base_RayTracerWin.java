@@ -21,7 +21,7 @@ import base_Utils_Objects.io.messaging.MsgCodes;
 
 /**
  * Base class holding display window/UI functionality for Distribution Ray Tracer
- * @author 7strb
+ * @author John Turner
  *
  */
 public abstract class Base_RayTracerWin extends Base_DispWindow {

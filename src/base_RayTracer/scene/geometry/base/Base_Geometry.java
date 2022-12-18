@@ -14,7 +14,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 /**
  * abstract base class from which scene objects, instances, bounding boxes and acceleration structures all inherit.
  * Make this very skinny since we may have thousands of them
- * @author 7strb
+ * @author John Turner
  *
  */
 public abstract class Base_Geometry {

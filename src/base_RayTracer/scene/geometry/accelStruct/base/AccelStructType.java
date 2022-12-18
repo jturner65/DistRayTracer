@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * Enum defining the types of Acceleration Structure objects. Primarily BVH and Flat list now.
- * @author 7strb
+ * @author John Turner
  *
  */
 public enum AccelStructType {	

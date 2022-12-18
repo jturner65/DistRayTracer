@@ -5,7 +5,7 @@ import base_Math_Objects.vectorObjs.doubles.myPoint;
 
 /**
  * Alias for a myPoint to be used for color values.  Will force values to be smaller than 1 and greater than 0
- * @author 7strb
+ * @author John Turner
  *
  */
 public class myRTColor extends myPoint {

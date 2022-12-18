@@ -13,7 +13,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * an instance of an instanced object - used to minimize memory footprint - only have a reference of the object, and then the relevant transformation matrices
- * @author 7strb
+ * @author John Turner
  *
  */
 public class ObjInstance extends Base_Geometry{

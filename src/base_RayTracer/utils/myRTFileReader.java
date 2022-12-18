@@ -13,7 +13,7 @@ import base_RayTracer.scene.geometry.sceneObjects.base.Base_SceneObject;
 import base_RayTracer.scene.geometry.sceneObjects.implicit.*;
 import base_RayTracer.scene.geometry.sceneObjects.planar.*;
 import base_RayTracer.scene.geometry.sceneObjects.planar.base.Base_PlanarObject;
-import base_RayTracer.scene.textures.imageTextures.myImageTexture;
+import base_RayTracer.scene.materials.textures.imageTextures.myImageTexture;
 import base_RayTracer.ui.base.Base_RayTracerWin;
 import base_UI_Objects.my_procApplet;
 

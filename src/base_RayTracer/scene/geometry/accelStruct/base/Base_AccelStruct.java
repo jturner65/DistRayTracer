@@ -15,7 +15,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
  
 /**
  * abstract base class for myGeomBase objects that are directly involved in holding other objects for acceleration purposes
- * @author 7strb
+ * @author John Turner
  *
  */
 public abstract class Base_AccelStruct extends Base_Geometry{

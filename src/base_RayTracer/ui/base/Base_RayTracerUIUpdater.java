@@ -7,7 +7,7 @@ import base_UI_Objects.windowUI.uiData.UIDataUpdater;
 
 /**
  * Hold UI Update functionality for abstract base-class window for Ray Tracer
- * @author 7strb
+ * @author John Turner
  *
  */
 public class Base_RayTracerUIUpdater extends UIDataUpdater {

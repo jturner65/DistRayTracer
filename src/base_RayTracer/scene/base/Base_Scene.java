@@ -15,15 +15,15 @@ import base_RayTracer.scene.geometry.sceneObjects.implicit.*;
 import base_RayTracer.scene.geometry.sceneObjects.lights.*;
 import base_RayTracer.scene.geometry.sceneObjects.lights.base.Base_Light;
 import base_RayTracer.scene.geometry.sceneObjects.planar.myPlane;
+import base_RayTracer.scene.materials.textures.base.Base_TextureHandler;
+import base_RayTracer.scene.materials.textures.imageTextures.myImageTexture;
+import base_RayTracer.scene.materials.textures.miscTextures.myNoneTexture;
+import base_RayTracer.scene.materials.textures.noiseTextures.*;
+import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.myCellularTexture;
 import base_RayTracer.scene.photonMapping.Photon_KDTree;
 import base_RayTracer.scene.photonMapping.myPhoton;
 import base_RayTracer.scene.shaders.myObjShader;
 import base_RayTracer.scene.shaders.mySimpleReflObjShdr;
-import base_RayTracer.scene.textures.base.Base_TextureHandler;
-import base_RayTracer.scene.textures.imageTextures.myImageTexture;
-import base_RayTracer.scene.textures.miscTextures.myNoneTexture;
-import base_RayTracer.scene.textures.noiseTextures.*;
-import base_RayTracer.scene.textures.noiseTextures.cellularTextures.myCellularTexture;
 import base_RayTracer.ui.base.Base_RayTracerWin;
 import base_RayTracer.utils.myRTColor;
 import base_UI_Objects.*;
@@ -38,7 +38,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * class to hold all objects within a desired scene
- * @author 7strb
+ * @author John Turner
  *
  */
 public abstract class Base_Scene {
@@ -237,7 +237,6 @@ public abstract class Base_Scene {
 	}
 	
 	public Base_Scene(Base_Scene _old){//copy ctor, for when scene type is being set - only use when old scene is being discarded (shallow copy)
-		//pa = _old.pa;
 		win = _old.win;
 		msgObj = _old.msgObj;
 		folderName = _old.folderName;

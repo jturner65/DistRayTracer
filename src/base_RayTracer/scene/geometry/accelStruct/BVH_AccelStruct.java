@@ -16,7 +16,7 @@ import base_Math_Objects.matrixObjs.doubles.myMatrix;
 
 /**
  * bvh structure 
- * @author 7strb
+ * @author John Turner
  *
  */
 public class BVH_AccelStruct extends Base_AccelStruct{

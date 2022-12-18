@@ -11,7 +11,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * a scene object representing a box - basically a bounding box + a shader
- * @author 7strb
+ * @author John Turner
  *
  */
 public class myRndrdBox extends Base_SceneObject{

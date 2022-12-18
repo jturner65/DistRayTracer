@@ -4,7 +4,7 @@ import java.util.*;
 
 /**
  * Enum used to specify type of myGeomBase object
- * @author 7strb
+ * @author John Turner
  *
  */
 public enum GeomObjType {

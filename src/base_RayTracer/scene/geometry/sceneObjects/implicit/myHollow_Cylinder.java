@@ -11,7 +11,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * Class defining a hollow tube via implicit equation
- * @author 7strb
+ * @author John Turner
  *
  */
 public class myHollow_Cylinder extends Base_Cylinder{

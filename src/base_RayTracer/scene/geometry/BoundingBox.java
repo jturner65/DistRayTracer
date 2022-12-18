@@ -13,7 +13,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * use this just to enclose other objects - make a myRndrdBox to render a box
- * @author 7strb
+ * @author John Turner
  *
  */
 public class BoundingBox extends Base_Geometry {

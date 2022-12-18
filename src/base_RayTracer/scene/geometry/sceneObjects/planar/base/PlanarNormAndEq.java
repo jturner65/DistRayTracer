@@ -9,7 +9,7 @@ import base_RayTracer.ray.rayCast;
  * Contains data used for planar object normals, vertices and txture coords. 
  * Moved to a separate class to more efficiently organize values. We will have 
  * standard normal and inverted normal based structures for each planar object.
- * @author 7strb
+ * @author John Turner
  *
  */
 public class PlanarNormAndEq {

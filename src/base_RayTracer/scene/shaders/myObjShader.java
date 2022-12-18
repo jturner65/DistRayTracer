@@ -7,9 +7,9 @@ import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.geometry.ObjInstance;
 import base_RayTracer.scene.geometry.base.Base_Geometry;
 import base_RayTracer.scene.geometry.sceneObjects.lights.base.Base_Light;
+import base_RayTracer.scene.materials.textures.base.Base_TextureHandler;
+import base_RayTracer.scene.materials.textures.imageTextures.myImageTexture;
 import base_RayTracer.scene.photonMapping.myPhoton;
-import base_RayTracer.scene.textures.base.Base_TextureHandler;
-import base_RayTracer.scene.textures.imageTextures.myImageTexture;
 import base_RayTracer.utils.myRTColor;
 
 import java.util.PriorityQueue;
@@ -20,7 +20,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * 
- * @author 7strb
+ * @author John Turner
  *
  */
 public class myObjShader {
