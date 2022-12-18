@@ -1,0 +1,12 @@
+# small floor with 2 triangles w/texture coords
+
+push
+
+translate 0 -1 -4
+scale 6 6 6
+rotate 90  1 0 0
+
+# read quad with texture coords
+read txturedQuad.cli
+
+pop
