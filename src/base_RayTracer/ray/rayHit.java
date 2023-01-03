@@ -11,7 +11,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
  * @author John Turner
  *
  */
-public class rayHit implements Comparable<rayHit>{
+public class rayHit{
 	public rayCast transRay;
 	public Base_Geometry obj;
 	public myVector objNorm;
@@ -63,10 +63,7 @@ public class rayHit implements Comparable<rayHit>{
 		objNorm = new myVector(newNormDir);
 		objNorm._normalize();
 	}
-	
-	//compared by t value - lower t means hit gets higher precedence in a map
-	@Override
-	public int compareTo(rayHit _rh) {	return Double.compare(t, _rh.t);}
+
 	@Override
 	public String toString(){
 		String res = "Hit : "+transRay+" hits object : " + obj.ID + " at location : " + hitLoc + " with ray t = :"+String.format("%.2f",t) + " and normal @ loc : " + objNorm + "\n";

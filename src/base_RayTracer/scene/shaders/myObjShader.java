@@ -352,8 +352,7 @@ public class myObjShader {
 		rayCast[] resultAra = _calcTransReflRays(hit, transRflRatio);
 		if (transRflRatio[0] > MyMathUtils.EPS) {  			return resultAra[0]; 		}
 		return resultAra[1];
-	}
-	
+	}	
   	
   	/**
   	 * calc reflected color - simple reflection

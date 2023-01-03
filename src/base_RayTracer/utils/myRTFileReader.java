@@ -69,8 +69,7 @@ public class myRTFileReader {
 			//build the scene described in the cli file
 			scene = buildBaseScene(strAra, fileName);
 		}
-		//populate the scene with the appropriate data from the scene list
-		
+		//populate the scene with the appropriate data from the scene list		
 		scene = parseStringArray(loadedScenes, strAra, scene, isMainFileScene, filePath, fileName);
 		return scene;
 	}//interpreter method
@@ -129,9 +128,11 @@ public class myRTFileReader {
 		return scene;
 	}
 	
-	protected int getTime() {
-		return ((my_procApplet)pa).millis();
-	}
+	/**
+	 * TODO use window time manager
+	 * @return
+	 */
+	protected int getTime() {return ((my_procApplet)pa).millis();}
 	
 	/**
 	 * build the objects in a scene
@@ -165,7 +166,7 @@ public class myRTFileReader {
 				case "fov":
 				case "fisheye":
 				case "ortho":
-				case "orthographic": {break;}	//scene already built before here, ignore these
+				case "orthographic": {break;}	//scene already built before this method was called, ignore these elements in file string array
 				
 				//for depth of field -only in FOV scenes - specifies the lens size (radius) and what 
 				//distance in front of the eye is in focus - greater radius should blur more of the image
@@ -176,7 +177,7 @@ public class myRTFileReader {
 			    	((myFOVScene)scene).setDpthOfFld(radius, focal_distance);			    	
 			    	break;}				
 				
-				//file save and read subordinate file
+				//file IO : save and read subordinate file
 				//NEEDS TO RENDER SCENE and then save it so that rendering can be timed - doesn't work with refine currently
 			    case "write" : {		
 			    	scene.setSaveName(tokenAra[1]);			    	
@@ -210,7 +211,6 @@ public class myRTFileReader {
 			    case "rays_per_pixel" : {	//how many rays should be shot per pixel.
 			    	int rays = Integer.parseInt(tokenAra[1]);
 			    	win.getMsgObj().dispInfoMessage("myRTFileReader", "parseStringArray","Num Rays Per Pixel : " + rays);
-			    	//curNumRaysPerPxl = rays;				//doing this because it is being set before FOV, which rebuilds scene
 			    	scene.setNumRaysPerPxl(rays);			    	
 			    	break;}			
 			    
@@ -219,10 +219,8 @@ public class myRTFileReader {
 					int aaDepthCol = Integer.parseInt(tokenAra[2]);
 					int prod = aaDepthRow * aaDepthCol;
 					win.getMsgObj().dispInfoMessage("myRTFileReader", "parseStringArray", "Anti Alias depth r/c " + aaDepthRow + "|" + aaDepthCol +" -> convert to numRays per pixel " + prod);
-			    	//curNumRaysPerPxl = prod;				//doing this because it is being set before FOV, which rebuilds scene
 			    	scene.setNumRaysPerPxl(prod);			    	
-					break;} 			    
-
+					break;} 	
 				
 				//background texture/color/foreground color
 				case "background" : {//visible background in front of camera - negative infinite z\
@@ -281,7 +279,7 @@ public class myRTFileReader {
 					scene.setFinalGather(tokenAra);
 					break;}
 			
-			//material/color commands
+				//material/color commands
 				case "diffuse" : {//new assignment requirements
 					myRTColor cDiff = readColor(tokenAra,1);//new myColor(Double.parseDouble(token[1]),Double.parseDouble(token[2]),Double.parseDouble(token[3]));
 					myRTColor cAmb = readColor(tokenAra,4);//new myColor(Double.parseDouble(token[4]),Double.parseDouble(token[5]),Double.parseDouble(token[6]));
@@ -298,7 +296,7 @@ public class myRTFileReader {
 					setSurfaceShiny(scene, tokenAra, false);
 					break;}
 				//reflective Cdr Cdg Cdb Car Cag Cab k_refl 
-//				This command describes a new kind of surface material. Just as with the 
+				//This command describes a new kind of surface material. Just as with the 
 				//diffuse command, this command defines the diffuse and ambient color components of a surface. 
 				//In addition, however, it also defines a reflectance coefficient k_refl. This value should be in the 
 				//range of zero to one. When it is non-zero, k_refl indicates how much of the light that strikes the 
@@ -307,8 +305,8 @@ public class myRTFileReader {
 				//a reflective surface, this should cause the caustic photon to "bounce", and to travel in a new direction. 
 				//Caustic photons only stop bouncing when they hit a diffuse surface. 				
 				case "reflective" : {//reflective Cdr Cdg Cdb Car Cag Cab k_refl 
-					myRTColor cDiff = readColor(tokenAra,1);//new myColor(Double.parseDouble(token[1]),Double.parseDouble(token[2]),Double.parseDouble(token[3]));
-					myRTColor cAmb = readColor(tokenAra,4);//new myColor(Double.parseDouble(token[4]),Double.parseDouble(token[5]),Double.parseDouble(token[6]));
+					myRTColor cDiff = readColor(tokenAra,1);
+					myRTColor cAmb = readColor(tokenAra,4);
 					myRTColor cSpec = new myRTColor(0,0,0);
 					scene.setHasGlblTxtrdTop(false);
 					scene.setHasGlblTxtrdBtm(false);
@@ -317,19 +315,15 @@ public class myRTFileReader {
 					break;}				
 			    case "phong" : {scene.setPhong(Double.parseDouble(tokenAra[1]));	break;}//phong
 			    case "perm" : {//load new permiability value - used for refraction			    	
-			    	double rfrIdx=Double.parseDouble(tokenAra[1]);
+			    	double rfrIdx = Double.parseDouble(tokenAra[1]);
 			    	myRTColor permClr = new myRTColor(rfrIdx,rfrIdx,rfrIdx);
-			    	if (tokenAra.length>2) {
-			    		permClr.set(Double.parseDouble(tokenAra[2]), Double.parseDouble(tokenAra[3]),Double.parseDouble(tokenAra[4]));
-			    	} 
+			    	if (tokenAra.length>2) {   		permClr = readColor(tokenAra,2);} 
 		    		scene.setRfrIdx(rfrIdx,permClr);
 			    	break;}//if perm
 			    case "krefl" : {
 			    	double kRefl = Double.parseDouble(tokenAra[1]);
 			    	myRTColor reflClr = new myRTColor(kRefl,kRefl,kRefl);
-			    	if (tokenAra.length>2) {			    		
-			    		reflClr.set(Double.parseDouble(tokenAra[2]), Double.parseDouble(tokenAra[3]),Double.parseDouble(tokenAra[4]));
-			    	}		    	
+			    	if (tokenAra.length>2) {   		reflClr = readColor(tokenAra,2);}		    	
 			    	scene.setKRefl(kRefl,reflClr);  	
 			    	break;}//krefl
 				case "depth" : {scene.setDepth(Double.parseDouble(tokenAra[1]));	break;}//depth for subsurface scattering - TODO
@@ -363,7 +357,6 @@ public class myRTFileReader {
 			    	try {	    		useCurShdr = tokenAra[2];			    	} catch (Exception e){	        			    	}			    	
 			    	scene.addInstance(objName, useCurShdr != "");		    	
 			    	break;}	
-			    
 			    
 			    /////////
 			    // Textures
@@ -427,9 +420,7 @@ public class myRTFileReader {
 		    		vertType = "triangle";    //reset default object type as triangle
 			    	myVertCount = 0;      
 			    	break;}
-			    
-			    
-			    
+			    			    
 			    //prims - build in scene code
 			    case "box" : 	    
 			    case "plane" : 
@@ -458,8 +449,7 @@ public class myRTFileReader {
 			    	//builds a translate matrix and adds to current transformation matrix on stack - tx,ty,tz
 			    	scene.gtTranslate(Double.parseDouble(tokenAra[1]), Double.parseDouble(tokenAra[2]), Double.parseDouble(tokenAra[3]));
 			    	break;}	
-			    
-			    
+			    			    
 			    default : {
 			    	win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "When reading "+fileName+" unknown command encountered : '"+tokenAra[0]+"' on line : ["+i+"] : " + fileStrings[i]);
 			    	_printTokenAra(fileStrings[i], i, tokenAra);
@@ -609,7 +599,8 @@ public class myRTFileReader {
 		if (token.length > 12) {
 			kTrans = Double.parseDouble(token[12]);  
 			if (token.length > 13) {
-				rfrIdx = Double.parseDouble(token[13]);	//perm
+				//perm
+				rfrIdx = Double.parseDouble(token[13]);	
 				//color of permiability/translucency - if has any will have all 3 values
 				if (token.length > 14) {
 					permClr.set(Double.parseDouble(token[14]),Double.parseDouble(token[15]),Double.parseDouble(token[16]));
