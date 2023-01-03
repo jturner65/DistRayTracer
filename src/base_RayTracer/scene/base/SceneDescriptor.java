@@ -2,6 +2,8 @@ package base_RayTracer.scene.base;
 
 /**
  * This struct-type object will hold all the pertinent values describing a scene.  It is built by the rtxFilleReader
+ * 
+ * TODO
  * @author John Turner
  *
  */

@@ -45,20 +45,17 @@ public class myRTFileReader {
 		curNumRows = _numRows;
 		curNumCols = _numCols;
 		
-		Base_Scene scene = null;
-		boolean isMainFileScene = true;			//whether this is primary scene's file or secondary/recursive read call; whether scene has been named and finalized yet
-		if(_scene != null){//recursively being passed into readRTFile - will have different file name
-			scene =  _scene;				
-			isMainFileScene = false;			//set this so that scene info is not put into
-		} else {
+		Base_Scene scene = _scene;	
+		boolean isMainFileScene = _scene == null;			//whether this is primary scene's file or secondary/recursive read call; whether scene has been named and finalized yet
+		if(isMainFileScene){
+			//first see if scene exists and has been loaded already (don't reload/remake)
 			scene = loadedScenes.get(fileName);
 			if(scene != null){
-				//if scene exists but is not the same size, do not reload, just re-render
+				//if scene exists but is not the same size, do not reload, just re-render with new size
 				if(!scene.isSameSize(_numCols, _numRows)) {scene.setNewSize(curNumCols, curNumRows);}				
 				return scene;
-			}//if scene exists, don't read in again
-			scene = new myFOVScene(pa, win, fileName, curNumCols, curNumRows, 60.0);
-			//scene.setSceneParams(new double[]{60}); 	//set default scene to be FOV with width 60 degrees
+			}
+			//by here we still have null scene (scene was not found in loaded scene map), we load it after we load the file
 		}
 		String[] strAra = null;
 		try{
@@ -66,10 +63,71 @@ public class myRTFileReader {
 			strAra = win.loadRTStrings(filePath + File.separator+fileName);
 			win.getMsgObj().dispInfoMessage("myRTFileReader", "readRTFile", "File path : "+filePath + "|File name : " + fileName + " Size : " + strAra.length);
 		} catch (Exception e) {	win.getMsgObj().dispErrorMessage("myRTFileReader", "readRTFile", "File Read Error : File name : " + fileName + " not found."); return null;		}	 
-	
+		
+		//if we make it this far and this is the main scene, read through strAra to build scene.		
+		if(isMainFileScene){
+			//build the scene described in the cli file
+			scene = buildBaseScene(strAra, fileName);
+		}
+		//populate the scene with the appropriate data from the scene list
+		
 		scene = parseStringArray(loadedScenes, strAra, scene, isMainFileScene, filePath, fileName);
 		return scene;
 	}//interpreter method
+	
+	/**
+	 * Build the scene described in the .cli file.  
+	 * @param fileStrings
+	 * @param fileName
+	 * @return
+	 */
+	private Base_Scene buildBaseScene(String[] fileStrings, String fileName) {
+		//default scene, if not specified in file
+		Base_Scene scene = new myFOVScene(pa, win, fileName, curNumCols, curNumRows, 60.0);
+		if (Base_RayTracerWin.AppMgr.isDebugMode()) {	_debugFileStrings(fileStrings);	}
+		boolean done = false;
+		String sceneType = "fov";
+		for(int i=0;i<fileStrings.length;++i){ 
+			//Skip comments and empty lines
+			if((fileStrings[i].startsWith("#")) || (fileStrings[i].strip().length() == 0)) {continue;}
+			String[] tokenAra = fileStrings[i].strip().split("\\s+"); // Get a line and parse tokens.
+			//debug
+			//_printTokenAra(fileStrings[i], i, tokenAra);
+			if ((tokenAra.length == 0) || (tokenAra[0] == "")) {continue;} // Skip blank line or comments.
+			switch (tokenAra[0].toLowerCase()){
+				//determine the kind of scene
+				case "fov" 	: {
+					sceneType = tokenAra[0];
+					scene = new myFOVScene(pa, win, fileName, curNumCols, curNumRows, Double.parseDouble(tokenAra[1]));
+					done = true;
+					break;
+				}
+				case "fisheye" : {
+					sceneType = tokenAra[0];
+					scene = new myFishEyeScene(pa, win, fileName, curNumCols, curNumRows, Double.parseDouble(tokenAra[1]));
+					done = true;
+					break;
+				}				
+				case "ortho" :
+				case "orthographic" : {
+					sceneType = tokenAra[0];
+					scene = new myOrthoScene(pa, win, fileName, curNumCols, curNumRows, Double.parseDouble(tokenAra[1]),Double.parseDouble(tokenAra[2]));
+					done = true;
+					break;
+				}
+			}//build scene
+			if (done) {
+				break;
+			}
+		}//while not end of list and not done
+		if(!done) {
+			win.getMsgObj().dispWarningMessage("myRTFileReader", "buildBaseScene", "Warning! No scene type specified in scene file `" + fileName + "` so defaulting to FOV scene with FOV == "+((myFOVScene) scene).getFOV());
+		} else {
+			win.getMsgObj().dispInfoMessage("myRTFileReader", "buildBaseScene", "Built " + sceneType +" scene for file `" + fileName + "`");
+			
+		}
+		return scene;
+	}
 	
 	protected int getTime() {
 		return ((my_procApplet)pa).millis();
@@ -90,7 +148,7 @@ public class myRTFileReader {
 		int myVertCount = 0;		
 		//temp objects intended to hold 
 		Base_SceneObject myPoly = null;
-		int curNumRaysPerPxl = scene.numRaysPerPixel;
+		//int curNumRaysPerPxl = scene.numRaysPerPixel;
 		//reinitializes the image so that any previous values from other images are not saved
 		//if (str == null) {win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error! Failed to read the file.");}
 		//debug display file
@@ -103,15 +161,12 @@ public class myRTFileReader {
 			//_printTokenAra(fileStrings[i], i, tokenAra);
 			if ((tokenAra.length == 0) || (tokenAra[0] == "")) {continue;} // Skip blank line or comments.
 			switch (tokenAra[0].toLowerCase()){
-
-				//determine the kind of scene - needs to be the first component in base scene file
-				case "fov" 	: {	
-					if(!isMainFileScene){win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error - unsupported setting scene type ('"+tokenAra[0]+"') in recursive child scene file"); break;}
-					Base_Scene tmp = new myFOVScene(scene, Double.parseDouble(tokenAra[1]));
-					scene = tmp;
-					scene.setNumRaysPerPxl((curNumRaysPerPxl != 0) ? curNumRaysPerPxl : 1);
-					//scene.setSceneParams(new double[]{Double.parseDouble(tokenAra[1])}); 
-					break;}	
+				//skip scene specifications (already processed)
+				case "fov":
+				case "fisheye":
+				case "ortho":
+				case "orthographic": {break;}	//scene already built before here, ignore these
+				
 				//for depth of field -only in FOV scenes - specifies the lens size (radius) and what 
 				//distance in front of the eye is in focus - greater radius should blur more of the image
 			    case "lens" : { 			
@@ -119,25 +174,7 @@ public class myRTFileReader {
 					double radius = Double.parseDouble(tokenAra[1]);
 			    	double focal_distance = Double.parseDouble(tokenAra[2]);
 			    	((myFOVScene)scene).setDpthOfFld(radius, focal_distance);			    	
-			    	break;}
-			    
-				//case "fishEye" :
-				case "fisheye" : { 
-					if(!isMainFileScene){win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error - unsupported setting scene type ('"+tokenAra[0]+"') in recursive child scene file"); break;}					
-					Base_Scene tmp = new myFishEyeScene(scene, Double.parseDouble(tokenAra[1]));
-					scene = tmp;
-					scene.setNumRaysPerPxl((curNumRaysPerPxl != 0) ? curNumRaysPerPxl : 1);
-					//scene.setSceneParams(new double[]{Double.parseDouble(tokenAra[1])}); 
-					break;}	
-				case "ortho" :
-				case "orthographic" : {// width height
-					if(!isMainFileScene){win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error - unsupported setting scene type ('"+tokenAra[0]+"') in recursive child scene file"); break;}
-					Base_Scene tmp = new myOrthoScene(scene, Double.parseDouble(tokenAra[1]),Double.parseDouble(tokenAra[2]));
-					scene = tmp;
-					scene.setNumRaysPerPxl((curNumRaysPerPxl != 0) ? curNumRaysPerPxl : 1);
-					//scene.setSceneParams(new double[]{Double.parseDouble(tokenAra[1]),Double.parseDouble(tokenAra[2])}); 
-					break;}				
-				
+			    	break;}				
 				
 				//file save and read subordinate file
 				//NEEDS TO RENDER SCENE and then save it so that rendering can be timed - doesn't work with refine currently
@@ -150,8 +187,9 @@ public class myRTFileReader {
 			    	else{win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Can't render unknown/incomplete scene with empty fileName");}
 			    	break;}		
 			    case "read" : {//read another scene file - nested to load multiple files
-			    	readRTFile(loadedScenes, filePath, tokenAra[1],scene, curNumCols, curNumRows);
-			    	break;}		
+			    	readRTFile(loadedScenes, filePath, tokenAra[1], scene, curNumCols, curNumRows);
+			    	break;}					    
+			    
 			    //timer stuff
 			    case "reset_timer" : {//Reset a global timer that will be used to determine how long it takes to render a scene. 
 			    	timer = getTime();
@@ -165,13 +203,14 @@ public class myRTFileReader {
 			    	win.getMsgObj().dispInfoMessage("myRTFileReader", "parseStringArray", "Timer = " + seconds);
 			    	break;
 			    }			    
+			    
 			    //global modifications to alg
 			    case "refine" : {    	scene.setRefine(tokenAra[1]); break;}//user iterative refinement when rendering scene - start at (int)log2 of dim, then decrease by 2 every iteration			    
 
 			    case "rays_per_pixel" : {	//how many rays should be shot per pixel.
 			    	int rays = Integer.parseInt(tokenAra[1]);
 			    	win.getMsgObj().dispInfoMessage("myRTFileReader", "parseStringArray","Num Rays Per Pixel : " + rays);
-			    	curNumRaysPerPxl = rays;				//doing this because it is being set before FOV, which rebuilds scene
+			    	//curNumRaysPerPxl = rays;				//doing this because it is being set before FOV, which rebuilds scene
 			    	scene.setNumRaysPerPxl(rays);			    	
 			    	break;}			
 			    
@@ -180,7 +219,7 @@ public class myRTFileReader {
 					int aaDepthCol = Integer.parseInt(tokenAra[2]);
 					int prod = aaDepthRow * aaDepthCol;
 					win.getMsgObj().dispInfoMessage("myRTFileReader", "parseStringArray", "Anti Alias depth r/c " + aaDepthRow + "|" + aaDepthCol +" -> convert to numRays per pixel " + prod);
-			    	curNumRaysPerPxl = prod;				//doing this because it is being set before FOV, which rebuilds scene
+			    	//curNumRaysPerPxl = prod;				//doing this because it is being set before FOV, which rebuilds scene
 			    	scene.setNumRaysPerPxl(prod);			    	
 					break;} 			    
 
@@ -231,7 +270,7 @@ public class myRTFileReader {
 //				final_gather num_rays
 //				This command indicates how the diffuse photons for global illumination will be used to create 
 //				the final image. If num_rays is set to zero, then your renderer should directly use the diffuse 
-//				photons stored on each surface. This is quite similar to how you render using caustic photons. 
+//				photons stored on each surface, similar to how you render using caustic photons. 
 //				This should be fairly fast, but unfortunately this will create noisy images. If num_rays is non-zero, 
 //				then you will estimate the indirect illumination using a "final gather" step. To calculate the indirect 
 //				illumination at a surface point, you will shoot num_rays rays in random directions on the hemisphere 
@@ -239,7 +278,7 @@ public class myRTFileReader {
 //				this to determine how much light should reach the point in question from this surface. This will produce 
 //				much better images, but will also be significantly slower.
 				case "final_gather" : {//final_gather num_rays
-					scene.setPhotonHandling(tokenAra);
+					scene.setFinalGather(tokenAra);
 					break;}
 			
 			//material/color commands
@@ -475,33 +514,33 @@ public class myRTFileReader {
 		    	tmp = new myRndrdBox(scn,ctrX, ctrY, ctrZ, new myVector(xAra[0], yAra[0], zAra[0]),	new myVector(xAra[1], yAra[1], zAra[1]));
 		    	break;}			    
 		    case "plane" : {			//infinite plane shape tkns 1-4 are A-D for plane equation (Ax + By + Cz + D = 0), token[5] is scale value to use for points (if not present default to 1)
-		    	tmp = new myPlane(scn);
 		    	double scaleVal =  (tokens.length > 5) ? Double.parseDouble(tokens[5]) : 1.0;
-		    	((myPlane)tmp).setPlaneVals(Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]),Double.parseDouble(tokens[3]),Double.parseDouble(tokens[4]), scaleVal);
+		    	tmp = new myPlane(scn, Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]),Double.parseDouble(tokens[3]),Double.parseDouble(tokens[4]), scaleVal);
 		    	break;}
-		    case "cyl" : {//old cylinder code
+		    case "cyl" : {//old cylinder code : cyl radius height center_x center_y center_z (orient_x orient_y orient_z : orientation is optional)
 		    	double rad = Double.parseDouble(tokens[1]), hght = Double.parseDouble(tokens[2]);
 		    	double xC = Double.parseDouble(tokens[3]), yC = Double.parseDouble(tokens[4]),zC = Double.parseDouble(tokens[5]);
+		    	//check if orientation vector is given. Assume up (y==1)
 		    	double xO = 0, yO = 1, zO = 0;
-		    	try {
+		    	if(tokens.length > 6) {
 		    		xO = Double.parseDouble(tokens[6]);yO = Double.parseDouble(tokens[7]);zO = Double.parseDouble(tokens[8]);
-		    	} catch (Exception e){	        			    	}
+		    	}
 		    	tmp = new myCylinder(scn, rad,hght,xC,yC,zC,xO,yO,zO);
 		    	break;}			   
-		    case "cylinder" : { //new reqs : cylinder radius x z ymin ymax
+		    case "cylinder" : { //alternative cylinder : cylinder radius x z ymin ymax  aligned on y axis
 		    	double rad = Double.parseDouble(tokens[1]), xC = Double.parseDouble(tokens[2]), zC = Double.parseDouble(tokens[3]);
 		    	double yMin  = Double.parseDouble(tokens[4]), yMax = Double.parseDouble(tokens[5]);
 		    	double hght = yMax - yMin;
-		    	
+		    	//no given orientation vector. Assume up (y==1)
 		    	double xO = 0,yO = 1,zO = 0;
 		    	tmp = new myCylinder(scn, rad,hght,xC,yMin,zC,xO,yO,zO);
 		    	break;}			    
 
-		    case "hollow_cylinder" : {//hollow_cylinder radius x z ymin ymax
+		    case "hollow_cylinder" : {//hollow_cylinder radius x z ymin ymax aligned on y axis
 		    	double rad = Double.parseDouble(tokens[1]), xC = Double.parseDouble(tokens[2]), zC = Double.parseDouble(tokens[3]);
 		    	double yMin  = Double.parseDouble(tokens[4]), yMax = Double.parseDouble(tokens[5]);
 		    	double hght = yMax - yMin;
-		    	
+		    	//no given orientation vector. Assume up (y==1)
 		    	double xO = 0,yO = 1,zO = 0;
 		    	tmp = new myHollow_Cylinder(scn, rad,hght,xC,yMin,zC,xO,yO,zO);		    	
 		    	break;}

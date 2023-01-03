@@ -192,7 +192,7 @@ public abstract class Base_Scene {
 	public double currPhongExp, currKRefl,globRfrIdx,currKTrans, currDepth;  
 	
 	//replaced by num rays per pixel
-	public int numRaysPerPixel;
+	public int numRaysPerPixel = 1;
 	
 	//constant color for mask of fisheye
 	public myRTColor blkColor = new myRTColor(0,0,0);
@@ -233,32 +233,6 @@ public abstract class Base_Scene {
 		tmpObjList = new ArrayList<Base_Geometry>();										//list to hold objects being built to be put into acceleration structure	
 		initVars(_sceneName,_numCols, _numRows);
 	}
-	
-	public Base_Scene(Base_Scene _old){//copy ctor, for when scene type is being set - only use when old scene is being discarded (shallow copy)
-		win = _old.win;
-		msgObj = _old.msgObj;
-		folderName = _old.folderName;
-		
-		initFlags();
-		for(int i=0;i<scFlags.length;++i) {	scFlags[i] = _old.scFlags[i];}
-		
-		gtInitialize();       															 //sets up matrix stack
-		
-		allObjsToFind = new ArrayList<Base_Geometry>(_old.allObjsToFind);
-		lightList = new ArrayList<Base_Geometry>(_old.lightList);
-		objList = new ArrayList<Base_Geometry>(_old.objList);
-		
-		srcFileNames = _old.srcFileNames;
-		eyeOrigin = new myVector(0,0,0);
-		eyeOrigin.set(_old.eyeOrigin);
-		namedObjs = new TreeMap<String,Base_Geometry>(_old.namedObjs);
-		numInstances = new TreeMap<String,Integer>(_old.numInstances);
-
-		tmpObjList = new ArrayList<Base_Geometry>(_old.tmpObjList);
-
-		copyVars(_old);	
-		matrixStack = _old.matrixStack;
-	}//myScene
 	
 	/**
 	 * scene-wide variables set during loading of scene info from .cli file
@@ -307,58 +281,6 @@ public abstract class Base_Scene {
 	}//initVars method
 	
 	protected abstract void initVars_Indiv();
-	
-	/**
-	 * scene-wide variables set during loading of scene info from .cli file
-	 * @param _old
-	 */
-	private void copyVars(Base_Scene _old){
-		setImageSize(_old.sceneCols,_old.sceneRows);
-		currTextureTop = _old.currTextureTop;
-		currTextureBottom = _old.currTextureBottom;
-		currBkgTexture = _old.currBkgTexture;
-		saveName = _old.saveName;
-
-		fileName = _old.fileName;
-		txtrType = _old.txtrType;
-		noiseScale = _old.noiseScale;
-		
-		numGatherRays = _old.numGatherRays;
-		photonTree = _old.photonTree;	
-		numPhotons = _old.numPhotons;
-		kNhood = _old.kNhood;
-		photonMaxNearDist = _old.photonMaxNearDist;
-		
-		numNonLights = _old.numNonLights;
-		numLights = _old.numLights;
-		objCount = _old.objCount;
-		numNamedObjs = _old.numNamedObjs;
-		
-		backgroundColor = _old.backgroundColor;
-//		foregroundColor = _old.foregroundColor;
-		currDiffuseColor = _old.currDiffuseColor;
-		currAmbientColor = _old.currAmbientColor;
-		currSpecularColor = _old.currSpecularColor;
-		currPhongExp = _old.currPhongExp;
-		currKRefl = _old.currKRefl;
-		currKReflClr = _old.currKReflClr;
-		currDepth = _old.currDepth;		 
-		currKTrans = _old.currKTrans;
-		globRfrIdx = _old.globRfrIdx;
-		globCurPermClr = _old.globCurPermClr;
-
-		curRefineStep = _old.curRefineStep;
-		reflRays = _old.reflRays;
-		refrRays = _old.refrRays;
-		globRayCount = _old.globRayCount;
-		
-		numRaysPerPixel = _old.numRaysPerPixel;
-		
-		copyVars_Indiv(_old);
-		
-	}//initVars from old scene method	
-	
-	protected abstract void copyVars_Indiv(Base_Scene _old);
 
 	public void startTmpObjList(){
 		tmpObjList = new ArrayList<Base_Geometry>();
@@ -968,26 +890,48 @@ public abstract class Base_Scene {
 		return 0;
 	}//findLight method
 	
-	//eventually multithread/shdr per object?
+	/**
+	 * Find closest hit to origin of ray cast.  Eventually multithread/shdr per object?
+	 * @param _ray
+	 * @return
+	 */
 	public rayHit findClosestRayHit(rayCast _ray){
 		//objList does not hold lights - no need to check pointlights - TODO need to check lights for non-point lights- ?	
-		TreeMap<rayHit, Base_Geometry>objsAtRayHits = new TreeMap<rayHit,Base_Geometry>();
-		objsAtRayHits.put(new rayHit(false), null);
-		//myRay transRay;
+		double minT = Double.MAX_VALUE; 
+		rayHit minHit = new rayHit(false);
 		for (Base_Geometry obj : objList){	
-//			rayHit _hit = null;
-//			try{
-			rayHit _hit = obj.intersectCheck(_ray,_ray.getTransformedRay(obj.CTMara[Base_Geometry.invIDX]),obj.CTMara);		
-//			} catch (Exception e){
-//				msgObj.dispErrorMessage("Base_Scene ("+fileName+")", "findClosestRayHit", "exception :\n"+e);
-//			}
-			if(_hit.isHit){			objsAtRayHits.put(_hit, _hit.obj);		}
+			rayHit _hit = obj.intersectCheck(_ray,_ray.getTransformedRay(obj.CTMara[Base_Geometry.invIDX]),obj.CTMara);
+			if ((_hit.isHit) && (_hit.t < minT)) {
+				minT = _hit.t;
+				minHit = _hit;
+			}
 		}//for obj in scenelist
-		return objsAtRayHits.firstKey();
+		return minHit;
 	}//findClosestRayHit
 	
+//	//eventually multithread/shdr per object?
+//	public rayHit findClosestRayHit_old(rayCast _ray){
+//		//objList does not hold lights - no need to check pointlights - TODO need to check lights for non-point lights- ?	
+//		TreeMap<rayHit, Base_Geometry>objsAtRayHits = new TreeMap<rayHit,Base_Geometry>();
+//		objsAtRayHits.put(new rayHit(false), null);
+//		//myRay transRay;
+//		for (Base_Geometry obj : objList){	
+////			rayHit _hit = null;
+////			try{
+//			rayHit _hit = obj.intersectCheck(_ray,_ray.getTransformedRay(obj.CTMara[Base_Geometry.invIDX]),obj.CTMara);
+////			} catch (Exception e){
+////				msgObj.dispErrorMessage("Base_Scene ("+fileName+")", "findClosestRayHit", "exception :\n"+e);
+////			}
+//			if(_hit.isHit){			objsAtRayHits.put(_hit, _hit.obj);		}
+//		}//for obj in scenelist
+//		return objsAtRayHits.firstKey();
+//	}//findClosestRayHit
 	
-	//determine color of a reflected ray - careful with recursive depth  
+	/**
+	 * determine color of a reflected ray - careful with recursive depth  
+	 * @param _ray
+	 * @return
+	 */
 	public myRTColor reflectRay(rayCast _ray){
 		rayHit hitChk = findClosestRayHit(_ray);
 		//if ((hitChk.isHit)) {										return(hitChk.obj.getColorAtPos(hitChk));}//to debug BVH use this - displays colors of leaf boxes (red/blue)
@@ -1104,7 +1048,7 @@ public abstract class Base_Scene {
 		myPhoton phn;
 		//random instance		
   		myVector _p = new myVector(),_q = new myVector(); 
-  		
+  		ThreadLocalRandom rnd = ThreadLocalRandom.current();
   		//TODO scale # of photons sent into scene by light intensity
 		for(Base_Geometry light : lightList){//either a light or an instance of a light
 			tmpLight = (light instanceof Base_Light) ? tmpLight = (Base_Light)light : ((Base_Light)((ObjInstance)light).obj);
@@ -1124,7 +1068,7 @@ public abstract class Base_Scene {
 						if(!firstDiff){//don't store first
 							phn = new myPhoton(photonTree, hitChk.phtnPwr, hitChk.fwdTransHitLoc.x,  hitChk.fwdTransHitLoc.y,  hitChk.fwdTransHitLoc.z); 	
 							photonTree.addKDObject(phn);
-							prob = ThreadLocalRandom.current().nextDouble(0,1.0);//russian roulette to see if casting
+							prob = rnd.nextDouble(0,1.0);//russian roulette to see if casting
 						}
 						firstDiff = false;
 						if(prob < hitChk.shdr.avgDiffClr){	//reflect in new random dir, scale phtn power by diffClr/avgClr
@@ -1133,8 +1077,8 @@ public abstract class Base_Scene {
 					  		//first calc random x,y,z
 					  		double x=0,y=0,z=0, sqmag;
 							do{
-								x = ThreadLocalRandom.current().nextDouble(-1.0,1.0);
-								y = ThreadLocalRandom.current().nextDouble(-1.0,1.0);			
+								x = rnd.nextDouble(-1.0,1.0);
+								y = rnd.nextDouble(-1.0,1.0);			
 								sqmag = (x*x) + (y*y);
 							}
 							while ((sqmag >= 1.0) || (sqmag < MyMathUtils.EPS));

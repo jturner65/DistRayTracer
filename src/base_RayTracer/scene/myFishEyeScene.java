@@ -22,19 +22,8 @@ public class myFishEyeScene extends Base_Scene{
 		setFishEye(_fishEye);
 	}
 	
-	public myFishEyeScene(Base_Scene _s, double _fishEye){
-		super(_s);
-		setFishEye(_fishEye);
-	}
-	
 	@Override
-	protected final void initVars_Indiv() {
-		
-	}
-	@Override
-	protected final void copyVars_Indiv(Base_Scene _old) {
-		
-	}
+	protected final void initVars_Indiv() {}
 	
 	/**
 	 * After image size is changed, recalculate essential scene-specific values that depend on image size

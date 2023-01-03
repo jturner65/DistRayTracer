@@ -14,8 +14,9 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
  *
  */
 public class myPlane extends Base_PlanarObject{	
-	public myPlane(Base_Scene _scn){
+	public myPlane(Base_Scene _scn, double _a, double _b, double _c, double _d, double _scale){
 		super(_scn, 4, GeomObjType.Plane);
+		setPlaneVals(_a, _b, _c, _d, _scale);
 	}
 	/**
 	 * Given a planar equation's coefficients, derive 4 vertices for the plane using coplanar orthogonal vectors
@@ -25,7 +26,7 @@ public class myPlane extends Base_PlanarObject{
 	 * @param _d
 	 * @param scale how far apart the vertices should be
 	 */
-	public void setPlaneVals(double _a, double _b, double _c, double _d, double scale){
+	public void setPlaneVals(double _a, double _b, double _c, double _d, double _scale){
 		myVector tmpNorm = new myVector( _a, _b, _c);
 		double mag = tmpNorm.magn;
 		tmpNorm._normalize();	
@@ -40,9 +41,9 @@ public class myPlane extends Base_PlanarObject{
 		myVector inPlaneU = tmpNorm._cross(rotVec),//any vector perp to N will be in plane
 		inPlaneV = tmpNorm._cross(inPlaneU);		//in other direction 
 		//Scale basis vectors to spread planar points apart
-		if (scale != 1.0) {
-			inPlaneU._mult(scale);
-			inPlaneV._mult(scale);
+		if (_scale != 1.0) {
+			inPlaneU._mult(_scale);
+			inPlaneV._mult(_scale);
 		}
 		int idx = 7;//x,y,z
 		double sum = pEqA + pEqB + pEqC;					//potential point coords

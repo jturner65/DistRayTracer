@@ -21,15 +21,9 @@ public class myOrthoScene extends Base_Scene{
 		super(_p,_win,_sceneName,_numCols,_numRows);
 		setOrthoVals(_orthoWidth,_orthoHeight);	
 	}
-	public myOrthoScene(Base_Scene _s, double _orthoWidth, double _orthoHeight){
-		super(_s);
-		setOrthoVals(_orthoWidth,_orthoHeight);	
-	}
 	
 	@Override
 	protected final void initVars_Indiv() {}
-	@Override
-	protected final void copyVars_Indiv(Base_Scene _old) {}
 	
 	/**
 	 * After image size is changed, recalculate essential scene-specific values that depend on image size

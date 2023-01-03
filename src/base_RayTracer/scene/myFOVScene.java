@@ -18,7 +18,7 @@ public class myFOVScene extends Base_Scene {
 	/**
 	 * current field of view
 	 */
-	public double fov, fovRad, viewZ;			//degrees, radians,distance from eye the current view plane exists at, in -z direction
+	private double fov, fovRad, viewZ;			//degrees, radians,distance from eye the current view plane exists at, in -z direction
 
 	/**
 	 * if Depth of Field scene, this is the plane where the lens is in focus
@@ -39,26 +39,12 @@ public class myFOVScene extends Base_Scene {
 		//callFOVCalcs= new ArrayList<myFOVCall>();
 		//callFOVFutures = new ArrayList<Future<Boolean>>(); 
 	}
-	public myFOVScene(Base_Scene _scene, double _fov) {
-		super( _scene);
-		setFOVVals(_fov);
-		//callFOVCalcs= new ArrayList<myFOVCall>();
-		//callFOVFutures = new ArrayList<Future<Boolean>>(); 
-	}
 	
 	@Override
 	protected final void initVars_Indiv() {
-		focalPlane = new myPlane(this);
+		focalPlane = new myPlane(this, 0, 0, 1, 1.0, 1.0);
 		setFOVVals(fov);
-	}
-	@Override
-	protected final void copyVars_Indiv(Base_Scene _old) {
-		lens_radius = ((myFOVScene)_old).lens_radius;
-		lens_focal_distance = ((myFOVScene)_old).lens_focal_distance;		
-		focalPlane = ((myFOVScene)_old).focalPlane;
-		setFOVVals(fov);
-	}
-	
+	}	
 
 	/**
 	 * After image size is changed, recalculate essential scene-specific values that depend on image size
@@ -236,5 +222,5 @@ public class myFOVScene extends Base_Scene {
 		}
 	}//renderScene
 
-
+	public double getFOV() {return fov;}
 }//myFOVScene
