@@ -3,7 +3,7 @@ package base_RayTracer.scene.base;
 import java.util.*;
 import java.util.concurrent.*;
 
-import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IRenderInterface;
 import base_RayTracer.ray.rayCast;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.geometry.ObjInstance;

@@ -3,7 +3,7 @@ package base_RayTracer.utils;
 import java.io.File;
 import java.util.*;
 
-import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IRenderInterface;
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.scene.*;

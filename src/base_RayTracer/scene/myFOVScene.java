@@ -2,7 +2,7 @@ package base_RayTracer.scene;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IRenderInterface;
 import base_RayTracer.ray.rayCast;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.base.Base_Scene;
