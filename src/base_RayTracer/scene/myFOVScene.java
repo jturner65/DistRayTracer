@@ -181,10 +181,10 @@ public class myFOVScene extends Base_Scene {
 		redVal += aaResultColor.x; //(aaResultColor >> 16 & 0xFF)/256.0;//gets red value
 		greenVal += aaResultColor.y; // (aaResultColor >> 8 & 0xFF)/256.0;//gets green value
 		blueVal += aaResultColor.z;//(aaResultColor & 0xFF)/256.0;//gets blue value
-	
+		ThreadLocalRandom rand = ThreadLocalRandom.current();
 		for(int rayNum = 1; rayNum < numRaysPerPixel; ++rayNum){//vary by +/- .5
-			rayY = yBseVal + ThreadLocalRandom.current().nextDouble(-.5,.5);
-			rayX = xBseVal + ThreadLocalRandom.current().nextDouble(-.5,.5);
+			rayY = yBseVal + rand.nextDouble(-.5,.5);
+			rayX = xBseVal + rand.nextDouble(-.5,.5);
 			aaResultColor = reflectRay(new rayCast(this, this.eyeOrigin, new myVector(rayX,rayY,viewZ),0));
 			redVal += aaResultColor.x; //(aaResultColor >> 16 & 0xFF)/256.0;//gets red value
 			greenVal += aaResultColor.y; // (aaResultColor >> 8 & 0xFF)/256.0;//gets green value

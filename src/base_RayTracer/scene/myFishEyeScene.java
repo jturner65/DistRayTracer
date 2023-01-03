@@ -71,9 +71,10 @@ public class myFishEyeScene extends Base_Scene{
 			greenVal += aaResultColor.y; // (aaResultColor >> 8 & 0xFF)/256.0;//gets green value
 			blueVal += aaResultColor.z;//(aaResultColor & 0xFF)/256.0;//gets blue value
 		}
+		ThreadLocalRandom rand = ThreadLocalRandom.current();
 		for(int rayNum = 1; rayNum < numRaysPerPixel; ++rayNum){//vary by +/- .5
-			yVal = (yBseVal + ThreadLocalRandom.current().nextDouble(-.5,.5)) *fishMult;
-			xVal = (xBseVal + ThreadLocalRandom.current().nextDouble(-.5,.5)) *fishMult; 
+			yVal = (yBseVal + rand.nextDouble(-.5,.5)) *fishMult;
+			xVal = (xBseVal + rand.nextDouble(-.5,.5)) *fishMult; 
 			rSqTmp = yVal*yVal + xVal*xVal;
 			if(rSqTmp <= 1){
 				aaResultColor = getColorFromRayCast(xVal, yVal, rSqTmp);

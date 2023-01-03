@@ -47,7 +47,7 @@ public class myOrthoScene extends Base_Scene{
 	}
 		
 	private void setOrthoPerPxlVals() {
-		double div = MyMathUtils.min(orthoWidth, orthoHeight) * MyMathUtils.min(sceneCols,sceneRows)/ orthoScale;
+		double div = MyMathUtils.min(orthoWidth, orthoHeight) * MyMathUtils.min(sceneCols,sceneRows)/orthoScale;
 		orthoPerRow = orthoHeight/div;
 		orthoPerCol = orthoWidth/div;		
 	}
@@ -61,10 +61,10 @@ public class myOrthoScene extends Base_Scene{
 		redVal += aaResultColor.x; //(aaResultColor >> 16 & 0xFF)/256.0;//gets red value
 		greenVal += aaResultColor.y; // (aaResultColor >> 8 & 0xFF)/256.0;//gets green value
 		blueVal += aaResultColor.z;//(aaResultColor & 0xFF)/256.0;//gets blue value	      
-		
+		ThreadLocalRandom rand = ThreadLocalRandom.current();
 		for(int rayNum = 1; rayNum < numRaysPerPixel; ++rayNum){//vary by +/- .5
-			rayY = yBseVal + (orthoPerRow*ThreadLocalRandom.current().nextDouble(-.5,.5));
-			rayX = xBseVal + (orthoPerCol*ThreadLocalRandom.current().nextDouble(-.5,.5));				
+			rayY = yBseVal + (orthoPerRow*rand.nextDouble(-.5,.5));
+			rayX = xBseVal + (orthoPerCol*rand.nextDouble(-.5,.5));				
 			aaResultColor = reflectRay(new rayCast(this, new myVector(rayX,rayY,0), new myVector(0,0,-1),0));
 			redVal += aaResultColor.x; //(aaResultColor >> 16 & 0xFF)/256.0;//gets red value
 			greenVal += aaResultColor.y; // (aaResultColor >> 8 & 0xFF)/256.0;//gets green value
