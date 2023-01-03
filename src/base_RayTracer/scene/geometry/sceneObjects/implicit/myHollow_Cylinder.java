@@ -17,7 +17,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 public class myHollow_Cylinder extends Base_Cylinder{
 
 	public myHollow_Cylinder(Base_Scene _p, double _myRadius, double _myHeight, double x, double y, double z, double xO,double yO, double zO) {
-		super(_p, _myRadius, _myHeight, x, y, z, xO, yO, zO, GeomObjType.Hollow_Cylinder);
+		super(_p, _myRadius, _myHeight, x, y, z, GeomObjType.Hollow_Cylinder);
 		postProcBBox();				//cnstrct and define bbox
 	}
 	 

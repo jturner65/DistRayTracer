@@ -18,7 +18,7 @@ public class myCylinder extends Base_Cylinder{
 	private double[][] capEqs;
   
 	public myCylinder(Base_Scene _p, double _myRadius, double _myHeight, double x, double y, double z, double xO,double yO, double zO){
-		super(_p, _myRadius, _myHeight, x, y, z, xO, yO, zO, GeomObjType.Cylinder);		
+		super(_p, _myRadius, _myHeight, x, y, z, GeomObjType.Cylinder);		
 		//cap eqs are planar equations for endcaps of cylinder - treat xO,yO,zO (orientation vector) as direction of top cap 
 		double [] topCapEq = new double[4], btmCapEq = new double[4];		//ax + by + cz + d = 0 : a,b,c are normal, d is -distance from origin
 		topCapEq[0] = xO;    topCapEq[1] = yO; 	topCapEq[2] = zO;

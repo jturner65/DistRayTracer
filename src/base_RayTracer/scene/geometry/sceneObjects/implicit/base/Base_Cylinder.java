@@ -14,7 +14,7 @@ public abstract class Base_Cylinder extends Base_ImplicitObject {
 
 	public Base_Cylinder(
 			Base_Scene _scn, double _myRadius, double _myHeight, 
-			double _x, double _y, double _z, double _xO,double _yO, double _zO, 
+			double _x, double _y, double _z, 
 			GeomObjType _type) {
 		super(_scn, _x, _y, _z, _type);
 		radX= _myRadius;
