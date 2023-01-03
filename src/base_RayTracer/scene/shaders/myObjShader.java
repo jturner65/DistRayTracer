@@ -199,15 +199,13 @@ public class myObjShader {
   		return new double[]{r,g,b};
   	}//calcShadowColor
   	
- 	
+  	
   	/**
-  	 * calculate transparent/transmitted color and reflected color at surface
+  	 * Calculate the reflected and transmitted rays.  Refracted ray is idx0, reflected ray is idx1
   	 * @param hit
-  	 * @param permClr
   	 * @return
   	 */
-  	protected double[] calcTransClr(rayHit hit, myPoint permClr){
-  		double r=0,g=0,b=0;  		
+  	private rayCast[] _calcTransReflRays(rayHit hit, double[] transReflRatios) {
   		myPoint hitLoc = hit.fwdTransHitLoc;
   		myVector backToEyeDir = new myVector(hit.fwdTransRayDir);
   		backToEyeDir._mult(-1);
@@ -219,18 +217,16 @@ public class myObjShader {
   		double thetaIncident = 0, thetaCrit = 0, //thetaExit = 0, 
   				n = 1, n1 = 0, n2 = 0;
   		
+  		transReflRatios[1] = 0;				//ratio of resulting transmission vs reflection at surface point - 0 means complete refraction, 1 means complete reflection
+  		transReflRatios[0] = 1;				//1 minus reflection ratio -> refraction
+  		
   		double rPerp = 0, rPar = 0, 		//constant multipliers for reflection perp and parallel - average of rperp and rpar = transreflratio
-  				transReflRatio = 0, 		//ratio of resulting transmission vs reflection at surface point - 0 means complete refraction, 1 means complete reflection
-  				oneMTransReflRatio = 1,   				
-  				exitMaterialTrans = 1, 		//eventually want to implement a method to handle exiting one material to another with a non-unity index of refraction (this is exitMaterialTrans)	
+   				exitMaterialTrans = 1, 		//eventually want to implement a method to handle exiting one material to another with a non-unity index of refraction (this is exitMaterialTrans)	
   				refractNormMult = 1.0;		//1 if refrDotProd is positive, -1 if refrDotProd is negative
   	
-  		//dot product gives cos of angle of incidence 
-  		//cross gives sine of angle - need both to verify normal direction
+  		//dot product gives cos of angle of incidence; cross gives sine of angle - need both to verify normal direction
   		myVector N = new myVector(hit.objNorm);		//need to copy normal incase direction flips
   		double cosTheta1 = backToEyeDir._dot(N), cosTheta2 = 0;//calculated below
-  		//thetaIncident = scene.pa._angleBetween(backToEyeDir, N);
-  		thetaIncident = backToEyeDir.angleWithMe(N);
   		//the only way the ray doting the normal would be less than 0 is if the incident ray was coming from behind the normal (pointing in the same direction
   		//then the "eye"dir would form an angle greater than 90 degrees.  the only way this can happen is from inside the object
   		//this means the normal is pointing the same direction as the refrsurfdir (i.e. we are leaving a transparent object)
@@ -239,14 +235,12 @@ public class myObjShader {
   			//flip direction of normal used for detecting reflection if theta incident greater than 90 degrees - use this to reverse the direction of the final refracted vector
   			refractNormMult = -1.0; 
   			N._mult(-1);
+  	  		//recalculate since N switched directions
+  	  		cosTheta1 = backToEyeDir._dot(N);
   		}
-  		//recalculate in case N switched directions
-  		cosTheta1 = backToEyeDir._dot(N);
-  		//thetaIncident = scene.pa._angleBetween(backToEyeDir, N);
   		thetaIncident = backToEyeDir.angleWithMe(N);
   		//now find ratio of reflected to transmitted light using fresnel equations
-  		//refractNormMult < 0 means we swapped direction of normal, means we're leaving an object          
-  		//TODO : handle exiting to non-air (non-1 external ktrans)
+  		//refractNormMult < 0 means we swapped direction of normal, means we're leaving an object
   		boolean TIR = false;
   		if (refractNormMult < 0){//exit
   			//means ray is in direction of normal, so we had to flip normal for calculations - leaving object, entering air
@@ -260,8 +254,8 @@ public class myObjShader {
   				if (tmpResultC2 < 0){System.out.println("\tdanger #1 : refraction bad : " +  tmpResultC2);}
   				cosTheta2 = Math.pow(tmpResultC2,.5);
   			} else {//total internal reflection
-  				transReflRatio = 1;
-  				oneMTransReflRatio = 1 - transReflRatio;
+  				transReflRatios[1] = 1;
+  				transReflRatios[0] = 0;
   				TIR = true;
   				cosTheta2 = 0;
   			}          
@@ -280,14 +274,15 @@ public class myObjShader {
   			double sinAcos = (Math.sin(Math.acos(cosTheta1))),  resCosThetT = Math.pow(1.0 - ((n1/n2) * sinAcos * sinAcos),.5);					
   			rPerp = calcFresPerp(n1, n2, cosTheta1,resCosThetT);
   			rPar = calcFresPlel(n1, n2, cosTheta1,resCosThetT);
-  			transReflRatio = (rPerp + rPar)/2.0;    
-  			oneMTransReflRatio = 1 - transReflRatio;
-  			if (oneMTransReflRatio < MyMathUtils.EPS) { System.out.println("one minus tr = 1");}      
+  			transReflRatios[1] = (rPerp + rPar)/2.0;    
+  			transReflRatios[0] = 1 - transReflRatios[1];
+  			if (transReflRatios[0] < MyMathUtils.EPS) { System.out.println("one minus tr = 1");}      
   		}        
   		//sanity check
-  		if (transReflRatio > 1){ System.out.println("impossible result - treflRat, rPerp, rPar : " + transReflRatio + " | " + rPerp + " | " + rPar);}
-      
-  		if (oneMTransReflRatio > MyMathUtils.EPS){//if 1 then no refraction
+  		//if (transReflRatios[1] > 1){ System.out.println("impossible result - treflRat, rPerp, rPar : " + transReflRatios[1] + " | " + rPerp + " | " + rPar);}
+  		rayCast[] resultAra = new rayCast[] {null,null};
+  		//1 minus transReflRatio - refraction 
+  		if (transReflRatios[0] > MyMathUtils.EPS){//if 0 then no refraction
   			//incident ray is in direction u, normal is in direction n, 
   			//refracted direction is (ni/nr) u + ((ni/nr)cos(incident angle) - cos(refelcted angle))n
   			//Rr = (n * V) + (n * c1 - c2) * N 
@@ -299,37 +294,73 @@ public class myObjShader {
   	      	uVec._add(nVec);
   	      	myVector refractDir = new myVector(uVec);
   	      	refractDir._normalize();    
-  	      	rayCast refrRay = new rayCast(scene, hitLoc, refractDir, hit.transRay.gen+1);  	      	
-  	      	refrRay.setCurrKTrans(KTrans, currPerm, curPermClr);//need to set ktrans for the material this ray is in
-  	      	//color where ray hits
-  	      	myRTColor refractColor = scene.reflectRay(refrRay);
-  	      	r += (oneMTransReflRatio) * permClr.x * (refractColor.x);
-  	      	g += (oneMTransReflRatio) * permClr.y * (refractColor.y);
-  	      	b += (oneMTransReflRatio) * permClr.z * (refractColor.z);
-  	      
-  	      	scene.refrRays++;
+  	      	resultAra[0] = new rayCast(scene, hitLoc, refractDir, hit.transRay.gen+1);  	      	
+  	      	resultAra[0].setCurrKTrans(KTrans, currPerm, curPermClr);//need to set ktrans for the material this ray is in
   		}//if refracting
-      
-  		if (transReflRatio > MyMathUtils.EPS) {         
-  			//reflecting ray off surface
-  			//add more than 1 for ray generation to decrease number of internal reflection rays
-  	  		reflDir = compReflDir(backToEyeDir, N);
- 			reflDir._mult(refractNormMult);		//for leaving material
-  			rayCast reflRay = new rayCast(scene, hitLoc, reflDir, hit.transRay.gen+1);
-  			reflRay.setCurrKTrans(KTrans, currPerm, curPermClr);  	      	
+  		
+  		//transReflRatio
+  		//reflecting ray off surface
+		//add more than 1 for ray generation to decrease number of internal reflection rays
+  		reflDir = compReflDir(backToEyeDir, N);
+		reflDir._mult(refractNormMult);		//for leaving material
+		resultAra[1] = new rayCast(scene, hitLoc, reflDir, hit.transRay.gen+1);
+		resultAra[1].setCurrKTrans(KTrans, currPerm, curPermClr);  	   
+  		return resultAra;
+  	}//_calcTransReflRays
+  
+  	
+  	/**
+  	 * calculate transparent/transmitted color and reflected color at surface
+  	 * @param hit
+  	 * @param permClr
+  	 * @return
+  	 */
+  	protected double[] calcTransClr(rayHit hit, myPoint permClr){
+  		double[] transRflRatio = new double[2];
+  		rayCast[] resultAra = _calcTransReflRays(hit, transRflRatio);
+  		double r=0,g=0,b=0;  		
+  		if(transRflRatio[0]>MyMathUtils.EPS) {
+  	      	//color where ray hits
+  	      	myRTColor refractColor = scene.reflectRay(resultAra[0]);
+  	      	r += (transRflRatio[0]) * permClr.x * (refractColor.x);
+  	      	g += (transRflRatio[0]) * permClr.y * (refractColor.y);
+  	      	b += (transRflRatio[0]) * permClr.z * (refractColor.z);  	      
+  	      	scene.refrRays++;  			
+  		}
+  		
+  		if(transRflRatio[1]>MyMathUtils.EPS) {
   			//color where ray hits
-  			myRTColor reflectColor = scene.reflectRay(reflRay);
+  			myRTColor reflectColor = scene.reflectRay(resultAra[1]);
   			//println("internal reflection color r g b : " + red(reflectColor) + "|" + green(reflectColor) + "|" + blue(reflectColor));
   			//added color component for reflection
-  			r += (transReflRatio) *  permClr.x * (reflectColor.x);
-  			g += (transReflRatio) *  permClr.y * (reflectColor.y);
-  			b += (transReflRatio) *  permClr.z * (reflectColor.z);          
-  			scene.reflRays++;
-  		}	
-  		
-  		return new double[]{r,g,b};		
-  	}//calcTransClr()	
-  	//calc reflected color - simple reflection
+  			r += (transRflRatio[1]) *  permClr.x * (reflectColor.x);
+  			g += (transRflRatio[1]) *  permClr.y * (reflectColor.y);
+  			b += (transRflRatio[1]) *  permClr.z * (reflectColor.z);          
+  			scene.reflRays++;  			
+  		}
+  		  		
+  		return new double[]{r,g,b};	
+  	}//calcTransClr
+	 	
+	/**
+	 * calculate transmitted ray
+	 * @param hit
+	 * @return
+	 */  	
+	protected rayCast calcTransRay(rayHit hit) {
+		double[] transRflRatio = new double[2];
+		rayCast[] resultAra = _calcTransReflRays(hit, transRflRatio);
+		if (transRflRatio[0] > MyMathUtils.EPS) {  			return resultAra[0]; 		}
+		return resultAra[1];
+	}
+	
+  	
+  	/**
+  	 * calc reflected color - simple reflection
+  	 * @param hit
+  	 * @param reflClrVec
+  	 * @return
+  	 */
   	protected double[] calcReflClr(rayHit hit, myPoint reflClrVec){
  		double r=0,g=0,b=0;
   		myPoint hitLoc = hit.fwdTransHitLoc;
@@ -348,118 +379,12 @@ public class myObjShader {
   		}//reflections from behind can't happen
   		return new double[]{r,g,b};	
   	}//calcReflClr
- 	
-	/**
-	 * calculate transmitted ray
-	 * @param hit
-	 * @return
-	 */
-  	protected rayCast calcTransRay(rayHit hit){
-  		myPoint hitLoc = hit.fwdTransHitLoc;
-  		myVector backToEyeDir = new myVector(hit.fwdTransRayDir);
-  		backToEyeDir._mult(-1);
-  		
-  		myVector reflDir ;//= compReflDir(backToEyeDir, objRayN);		  
-  		
-  		//incoming angle in radians, critical angle,ray angle upon exiting material
-  		//n is ratio of refraction indicies for current material/new material (n1/n2)-use n1 and n2 to denote material refraction indicies - n1 is source material, n2 is destination refraction material
-  		double thetaIncident = 0, thetaCrit = 0, //thetaExit = 0, 
-  				n = 1, n1 = 0, n2 = 0;
-  		
-  		double rPerp = 0, rPar = 0, 		//constant multipliers for reflection perp and parallel - average of rperp and rpar = transreflratio
-  				transReflRatio = 0, 		//ratio of resulting transmission vs reflection at surface point - 0 means complete refraction, 1 means complete reflection
-  				oneMTransReflRatio = 1,   				
-  				exitMaterialTrans = 1, 		//eventually want to implement a method to handle exiting one material to another with a non-unity index of refraction (this is exitMaterialTrans)	
-  				refractNormMult = 1.0;		//1 if refrDotProd is positive, -1 if refrDotProd is negative
-  	
-  		//dot product gives cos of angle of incidence 
-  		//cross gives sine of angle - need both to verify normal direction
-  		myVector N = new myVector(hit.objNorm);		//need to copy normal incase direction flips
-  		double cosTheta1 = backToEyeDir._dot(N), cosTheta2 = 0;//calculated below
-  		//thetaIncident = scene.pa._angleBetween(backToEyeDir, N);
-  		thetaIncident = backToEyeDir.angleWithMe(N);
- 		//the only way the ray doting the normal would be less than 0 is if the incident ray was coming from behind the normal (pointing in the same direction
-  		//then the "eye"dir would form an angle greater than 90 degrees.  the only way this can happen is from inside the object
-  		//this means the normal is pointing the same direction as the refrsurfdir (i.e. we are leaving a transparent object)
-  		//we need to reverse the direction of the normal in this case
-  		if (cosTheta1 < MyMathUtils.EPS){
-  			//flip direction of normal used for detecting reflection if theta incident greater than 90 degrees - use this to reverse the direction of the final refracted vector
-  			refractNormMult = -1.0; 
-  			N._mult(-1);
-  		}
-  		//recalculate in case N switched directions
-  		cosTheta1 = backToEyeDir._dot(N);
-  		//thetaIncident = scene.pa._angleBetween(backToEyeDir, N);
-  		thetaIncident = backToEyeDir.angleWithMe(N);
-  		//now find ratio of reflected to transmitted light using fresnel equations
-  		//refractNormMult < 0 means we swapped direction of normal, means we're leaving an object          
-  		//TODO : handle exiting to non-air (non-1 external ktrans)
-  		boolean TIR = false;
-  		if (refractNormMult < 0){//exit
-  			//means ray is in direction of normal, so we had to flip normal for calculations - leaving object, entering air
-  			thetaCrit = Math.asin(exitMaterialTrans/KTrans);
-  			if (thetaIncident < thetaCrit){//determine refracting exit angle
-  				n1 = KTrans;
-  				n2 = exitMaterialTrans;
-  				n = (n1/n2); 
-  				//thetaExit = Math.asin(n * Math.sin(thetaIncident));
-  				double tmpResultC2 = 1.0 - (n*n) * (1.0 - (cosTheta1*cosTheta1));
-  				if (tmpResultC2 < 0){System.out.println("\tdanger #1 : refraction bad : " +  tmpResultC2);}
-  				cosTheta2 = Math.pow(tmpResultC2,.5);
-  			} else {//total internal reflection
-  				transReflRatio = 1;
-  				oneMTransReflRatio = 1 - transReflRatio;
-  				TIR = true;
-  				cosTheta2 = 0;
-  			}          
-  		} else {//entering this new material - determine refraction angle
-  			n1 = hit.transRay.currKTrans[0];
-  			n2 = KTrans;
-  			//println("  entering material : " + n2);
-  			n = (n1/n2);
-  			//thetaExit = Math.asin(n  * Math.sin(thetaIncident)); 
-  			double tmpResultC2 = 1.0 - (n*n) * (1.0 - (cosTheta1*cosTheta1));
-  			if (tmpResultC2 < 0){System.out.println("\tdanger #2 :  refraction bad : " +  tmpResultC2 + " ray cur ktrans : " + hit.transRay.currKTrans[0]);}
-  			cosTheta2 = Math.pow(tmpResultC2,.5);
-  		}       
-  		//if not tir, calculate transreflratio to determine how much is transmitted, how much is reflected ala fresnel
-  		if (!TIR){					
-  			double sinAcos = (Math.sin(Math.acos(cosTheta1))),  resCosThetT = Math.pow(1.0 - ((n1/n2) * sinAcos * sinAcos),.5);					
-  			rPerp = calcFresPerp(n1, n2, cosTheta1,resCosThetT);
-  			rPar = calcFresPlel(n1, n2, cosTheta1,resCosThetT);
-  			transReflRatio = (rPerp + rPar)/2.0;    
-  			oneMTransReflRatio = 1 - transReflRatio;
-  			if (oneMTransReflRatio < MyMathUtils.EPS) { System.out.println("one minus tr = 1");}      
-  		}        
-  		//sanity check
-  		if (transReflRatio > 1){ System.out.println("impossible result - treflRat, rPerp, rPar : " + transReflRatio + " | " + rPerp + " | " + rPar);}
-      
-  		if (oneMTransReflRatio > MyMathUtils.EPS){//if transReflRatio = 1 then no refraction
-  			//incident ray is in direction u, normal is in direction n, 
-  			//refracted direction is (ni/nr) u + ((ni/nr)cos(incident angle) - cos(refelcted angle))n
-  			//Rr = (n * V) + (n * c1 - c2) * N 
-  			myVector uVec = new myVector(backToEyeDir);
-  			//mult by -1 to account for using to-eye dir - equation we are using 
-  			uVec._mult(n * -1);       
-  			myVector nVec = new myVector(N);
-  	      	nVec._mult((n * cosTheta1) - cosTheta2);
-  	      	uVec._add(nVec);
-  	      	myVector refractDir = new myVector(uVec);
-  	      	refractDir._normalize();    
-  	      	rayCast refrRay = new rayCast(scene, hitLoc, refractDir, hit.transRay.gen+1);  	      	
-  	      	refrRay.setCurrKTrans(KTrans, currPerm, curPermClr);//need to set ktrans for the material this ray is in
-  	      	return refrRay;
-  		}//if refracting
-			//reflecting ray off surface
-		//add more than 1 for ray generation to decrease number of internal reflection rays
-  		reflDir = compReflDir(backToEyeDir, N);
-		reflDir._mult(refractNormMult);		//for leaving material
-		rayCast reflRay = new rayCast(scene, hitLoc, reflDir, hit.transRay.gen+1);
-		reflRay.setCurrKTrans(KTrans, currPerm, curPermClr);  	      	
-		return reflRay;
-  	}//calcTransRay()	
-  	
-  	//calc reflected color - simple reflection
+  	  	
+  	/**
+  	 * calc reflected color - simple reflection
+  	 * @param hit
+  	 * @return
+  	 */
   	protected rayCast calcReflRay(rayHit hit){
   		myPoint hitLoc = hit.fwdTransHitLoc;
   		myVector backEyeDir = new myVector(hit.fwdTransRayDir);  		
@@ -479,6 +404,7 @@ public class myObjShader {
   		if((KRefl == 0.0) && getUsePhotonMap()){
  			//r += diffuseColor.x * phtnIrr[0]; 		g += diffuseColor.y * phtnIrr[1]; 		b += diffuseColor.z * phtnIrr[2]; 
   			phtnIrr = getIrradianceFromPhtnTree(hit);
+  			// TODO here is where finalGather would occur- cast some # of rays and scale photon power by aggregate of what is found
   			if(getIsCausticPtn()){//visualize photons directly for caustics
   				r += phtnIrr[0]; 		g += phtnIrr[1]; 		b += phtnIrr[2];
   			} else {					// indirect illumination effects
@@ -515,7 +441,6 @@ public class myObjShader {
 		if ((hoodSize == 0) || (hood.peek() == null)){return res;}
 		double rSq = hood.peek().getSqDist();				//furthest photon is first element of hood, sqdist is distance this photon is from ray hit
 		double area = MyMathUtils.PI * rSq;// * Math.sqrt(rSq) * 1.33333;//vol of differential hemi-sphere
-		
 		for(myPhoton phtn : hood) {
 			//myPhoton phtn = hood[i];
 			res[0] += phtn.pwr[0];
@@ -526,7 +451,7 @@ public class myObjShader {
 		return res;
 	}//getIrradianceFromPhtnTree   	
   	
-  	//call this when a caustic-generating object is hit, it will return the ray hit of the reflected/refracted ray
+  	//call this when a caustic-generating object is hit, it will return the ray hit from the reflected/refracted ray
   	public rayCast findCausticRayHit(rayHit hit, double[] phtn_pwr){ 
   		rayCast res = null;
  		if ((hit.transRay.gen < scene.numPhotonRays) && getHasCaustic()){
@@ -590,7 +515,6 @@ public class myObjShader {
 		}				
 	}//setFlags
   	
-
 	public String toString(){
 		String result = "Shader type : " + shType +  " |\t ray hits on obj : " + dbgRayHits;
 		result += "\n\tDiffuse " + diffuseColor.toStrBrf() + " | Ambient " + ambientColor.toStrBrf() + " | Specular " + specularColor.toStrBrf();
