@@ -243,10 +243,7 @@ public class myRTFileReader {
 						scene.txtrType = 0;
 					}
 					break;}
-//				case "foreground" : {//visible foreground behind camera - positive infinite z - rgb - modify this to also allow for textures as in background, but mapped to billboard behind viewer?
-//					scene.setForegroundColor(Double.parseDouble(token[1]),Double.parseDouble(token[2]),Double.parseDouble(token[3]));
-//					break;}	
-				
+			
 				//lights
 				case "point_light" : {
 					scene.addMyPointLight(tokenAra);	      
@@ -265,16 +262,16 @@ public class myRTFileReader {
 					scene.setPhotonHandling(tokenAra);
 					break;}
 				//
-//				final_gather num_rays
-//				This command indicates how the diffuse photons for global illumination will be used to create 
-//				the final image. If num_rays is set to zero, then your renderer should directly use the diffuse 
-//				photons stored on each surface, similar to how you render using caustic photons. 
-//				This should be fairly fast, but unfortunately this will create noisy images. If num_rays is non-zero, 
-//				then you will estimate the indirect illumination using a "final gather" step. To calculate the indirect 
-//				illumination at a surface point, you will shoot num_rays rays in random directions on the hemisphere 
-//				surrounding this point. You will then query the kD-tree at each surface that such a ray hit, and use 
-//				this to determine how much light should reach the point in question from this surface. This will produce 
-//				much better images, but will also be significantly slower.
+				//final_gather num_rays
+				//This command indicates how the diffuse photons for global illumination will be used to create 
+				//the final image. If num_rays is set to zero, then your renderer should directly use the diffuse 
+				//photons stored on each surface, similar to how you render using caustic photons. 
+				//This should be fairly fast, but unfortunately this will create noisy images. If num_rays is non-zero, 
+				//then you will estimate the indirect illumination using a "final gather" step. To calculate the indirect 
+				//illumination at a surface point, you will shoot num_rays rays in random directions on the hemisphere 
+				//surrounding this point. You will then query the kD-tree at each surface that such a ray hit, and use 
+				//this to determine how much light should reach the point in question from this surface. This will produce 
+				//much better images, but will also be significantly slower.
 				case "final_gather" : {//final_gather num_rays
 					scene.setFinalGather(tokenAra);
 					break;}
@@ -331,8 +328,8 @@ public class myRTFileReader {
 			    
 			    //accel structs
 			    case "begin_list" :{	    	scene.startTmpObjList();		    break;}
-			    case "end_list" 	:{	    	scene.endTmpObjList(0);		    	break;}
-			    case "end_accel" 	:{	    	scene.endTmpObjList(1);		    	break;}			//TODO modify to accept multiple accel struct types		 
+			    case "end_list" :{		    	scene.endTmpObjList(0);		    	break;}
+			    case "end_accel" :{		    	scene.endTmpObjList(1);		    	break;}			//TODO modify to accept multiple accel struct types		 
 			    		    
 			    //predefined object layouts
 			    case "sierpinski" :{
