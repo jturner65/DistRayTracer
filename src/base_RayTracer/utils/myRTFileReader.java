@@ -327,9 +327,9 @@ public class myRTFileReader {
 			    case "ktrans" : {scene.setKTrans(Double.parseDouble(tokenAra[1]));	break;}//ktrans - //load new permiability value - used for refraction		
 			    
 			    //accel structs
-			    case "begin_list" :{	    	scene.startTmpObjList();		    break;}
-			    case "end_list" :{		    	scene.endTmpObjList(0);		    	break;}
-			    case "end_accel" :{		    	scene.endTmpObjList(1);		    	break;}			//TODO modify to accept multiple accel struct types		 
+			    case "begin_list" : {	    	scene.startTmpObjList();		    break;}
+			    case "end_list" : {		    	scene.endTmpObjList(0);		    	break;}
+			    case "end_accel" : {		   	scene.endTmpObjList(1);		    	break;}			//TODO modify to accept multiple accel struct types		 
 			    		    
 			    //predefined object layouts
 			    case "sierpinski" :{
@@ -347,11 +347,11 @@ public class myRTFileReader {
 			    	String objName = tokenAra[1];
 			    	scene.setObjectAsNamedObject(objName);			    	
 			    	break;}
-			    	//instance <name>
 			    case "instance" : {
+			    	//instance <name> <use current shader>
 			    	String objName = tokenAra[1];
 			    	String useCurShdr = "";				//whether to use the currently set shader for this instance, instead of the default shader for the named object
-			    	try {	    		useCurShdr = tokenAra[2];			    	} catch (Exception e){	        			    	}			    	
+			    	if(tokenAra.length>2) {					useCurShdr = tokenAra[2];		    	}
 			    	scene.addInstance(objName, useCurShdr != "");		    	
 			    	break;}	
 			    

@@ -215,7 +215,7 @@ public class myObjShader {
   		//incoming angle in radians, critical angle,ray angle upon exiting material
   		//n is ratio of refraction indicies for current material/new material (n1/n2)-use n1 and n2 to denote material refraction indicies - n1 is source material, n2 is destination refraction material
   		double thetaIncident = 0, thetaCrit = 0, //thetaExit = 0, 
-  				n = 1, n1 = 0, n2 = 0;
+  				n = 1, n1 = 0, n2 = 1;
   		
   		transReflRatios[1] = 0;				//ratio of resulting transmission vs reflection at surface point - 0 means complete refraction, 1 means complete reflection
   		transReflRatios[0] = 1;				//1 minus reflection ratio -> refraction
@@ -271,7 +271,7 @@ public class myObjShader {
   		}       
   		//if not tir, calculate transreflratio to determine how much is transmitted, how much is reflected ala fresnel
   		if (!TIR){					
-  			double sinAcos = (Math.sin(Math.acos(cosTheta1))),  resCosThetT = Math.pow(1.0 - ((n1/n2) * sinAcos * sinAcos),.5);					
+  			double sinAcos = (Math.sin(Math.acos(cosTheta1))),  resCosThetT = Math.pow(1.0 - (n * sinAcos * sinAcos),.5);					
   			rPerp = calcFresPerp(n1, n2, cosTheta1,resCosThetT);
   			rPar = calcFresPlel(n1, n2, cosTheta1,resCosThetT);
   			transReflRatios[1] = (rPerp + rPar)/2.0;    

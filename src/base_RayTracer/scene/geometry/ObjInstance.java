@@ -41,13 +41,14 @@ public class ObjInstance extends Base_Geometry{
 	/**
 	 * base class flags init
 	 */
-	private final void initFlags(){instFlags = new int[1 + numFlags/32];for(int i =0; i<numFlags;++i){setFlags(i,false);}}			
+	private final void initFlags(){instFlags = new int[1 + numFlags/32];for(int i =0; i<numFlags;++i){setFlags(i,false);}}
+	
 	/**
 	 * get baseclass flag
 	 * @param idx
 	 * @return
 	 */
-	private final boolean getFlags(int idx){int bitLoc = 1<<(idx%32);return (instFlags[idx/32] & bitLoc) == bitLoc;}	
+	private final boolean getFlags(int idx){int bitLoc = 1<<(idx%32);return (instFlags[idx/32] & bitLoc) == bitLoc;}
 		
 	public final boolean doUseShader() {return getFlags(useShaderIDX);}
 	public final boolean isAccleStruct() {return getFlags(isAccelStructIDX);}
@@ -65,7 +66,7 @@ public class ObjInstance extends Base_Geometry{
 		int flIDX = idx/32, mask = 1<<(idx%32);
 		instFlags[flIDX] = (val ?  instFlags[flIDX] | mask : instFlags[flIDX] & ~mask);
 		switch(idx){
-			case useShaderIDX			:{break;}		
+			case useShaderIDX			:{break;}
 			case isAccelStructIDX		:{break;}
 		}				
 	}//setFlags
@@ -85,9 +86,9 @@ public class ObjInstance extends Base_Geometry{
 	@Override
 	public rayHit intersectCheck(rayCast _ray, rayCast transRay, myMatrix[] _ctAra) {
 		//copy trans ray over so that ctm-transformed accel structs will still register hits appropriately TODO make this better
-		rayHit _hit = obj.intersectCheck(transRay, transRay, _ctAra);		
+		rayHit _hit = obj.intersectCheck(transRay, transRay, _ctAra);
 		if(doUseShader()){_hit.shdr = shdr;}
-		return _hit;	
+		return _hit;
 	}
 	@Override
 	public myVector getNormalAtPoint(myPoint point, int[] args) {		return obj.getNormalAtPoint(point, args);		}	

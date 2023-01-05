@@ -331,12 +331,12 @@ public abstract class Base_Scene {
 	 */
 	public void setObjectAsNamedObject(String name){
 		Base_Geometry _obj = allObjsToFind.remove(allObjsToFind.size()-1);
-		objCount--;
-		if(_obj instanceof Base_Light){												lightList.remove(lightList.size()-1);	numLights--;	} 
-		else { 																		objList.remove(objList.size()-1); 		numNonLights--;	}	
+		--objCount;
+		if(_obj instanceof Base_Light){												lightList.remove(lightList.size()-1);	--numLights;	} 
+		else { 																		objList.remove(objList.size()-1); 		--numNonLights;	}	
 		namedObjs.put(name, _obj);
 		numInstances.put(name, 0);			//keep count of specific instances
-		numNamedObjs++;
+		++numNamedObjs;
 	}//setObjectAsNamedObject
 	
 	public void addInstance(String name, boolean addShdr){
@@ -1220,10 +1220,20 @@ public abstract class Base_Scene {
 			else {if(obj instanceof ObjInstance && ((ObjInstance)obj).obj instanceof Base_SceneObject){((Base_SceneObject)((ObjInstance)obj).obj).setIsInverted(doFlipNorms());}}
 		}
 	}//flipNormal	
-	//return abs vals of vector as vector
+	/**
+	 * return abs vals of vector as vector
+	 * @param _v
+	 * @return
+	 */
 	public myVector absVec(myVector _v){return new myVector(Math.abs(_v.x),Math.abs(_v.y),Math.abs(_v.z));}
-
+	
+	/**
+	 * Derive Perlin noise value at a particular location
+	 * @param pt location for noise
+	 * @return
+	 */
 	public double perlinNoise3D(myPoint pt){return win.perlinNoise3D((float)pt.x, (float)pt.y, (float)pt.z);}
+	
 	/**
 	 * Derive Perlin noise value at a particular location
 	 * @param x
@@ -1231,10 +1241,11 @@ public abstract class Base_Scene {
 	 * @param z
 	 * @return
 	 */
-	public float perlinNoise3D(float x, float y, float z) {return win.perlinNoise3D(x,y,z);}//noise_3d
-
+	public float perlinNoise3D(float x, float y, float z) {return win.perlinNoise3D(x,y,z);}
 	
+	//////////////////////
 	//utility functions
+	
 	/**
 	 * find signed area of enclosed poly, with given points and normal N
 	 * @param _pts
@@ -1249,7 +1260,7 @@ public abstract class Base_Scene {
 	        for (int i=1, j=2, k=0; i<_pts.length; ++i, ++j, ++k){     res += (_pts[i].y * (_pts[(j%_pts.length)].z - _pts[k].z));}
 	        res += (_pts[0].y * (_pts[1].z - _pts[_pts.length-1].z));	     
 	        return (res / (2.0f * N.x));    		    	
-	    } else if ((absN.y > absN.x) && (absN.x > absN.z)){//y is max coord
+	    } else if ((absN.y > absN.x) && (absN.y > absN.z)){//y is max coord
 	    	for (int i=1, j=2, k=0; i<_pts.length; ++i, ++j, ++k){     res += (_pts[i].z * (_pts[(j%_pts.length)].x - _pts[k].x));}
 	        res += (_pts[0].z * (_pts[1].x - _pts[_pts.length-1].x));
 	        return (res / (2.0f * N.y));
