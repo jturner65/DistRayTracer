@@ -165,7 +165,12 @@ public class BoundingBox extends Base_Geometry {
 		return 0;
 	}//
 	
+	/**
+	 * Whether the display normals should be flipped - not used for bounding boxes
+	 * @param flipNorms
+	 */
 	@Override
+	public final void setInvertNormals(boolean flipNorms) {}
 	
 	/**
 	 * args : 
@@ -173,6 +178,7 @@ public class BoundingBox extends Base_Geometry {
 	 * (low const x plane, low const y plane, low const z plane, high const x plane, high const y plane, high const z plane). 
 	 * low planes have neg normal high planes have pos normal
 	 */
+	@Override
 	public myVector getNormalAtPoint(myPoint point, int[] args) {
 		//System.out.print(args[1]);
 		switch (args[1]){

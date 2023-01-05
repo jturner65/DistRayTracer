@@ -71,6 +71,13 @@ public abstract class Base_AccelStruct extends Base_Geometry{
 		return idxOfMaxSpan;
 	}//getIDXofMaxSpan
 	
+	/**
+	 * Whether the display normals should be flipped - not used for accel structs
+	 * @param flipNorms
+	 */
+	@Override
+	public final void setInvertNormals(boolean flipNorms) {}	
+	
 	@Override
 	protected final double findTextureU(myPoint isctPt, double v, int textureH, int textureW, double time){ return 0.0; }
 	@Override

@@ -1216,8 +1216,9 @@ public abstract class Base_Scene {
 		globRayCount = 0;
 		rebuildPhotonTree();
 		for (Base_Geometry obj : objList){//set for all scene objects or instances of sceneobjects
-			if(obj instanceof Base_SceneObject){((Base_SceneObject)obj).setIsInverted(doFlipNorms());}//either a scene object or an instance of a scene object
-			else {if(obj instanceof ObjInstance && ((ObjInstance)obj).obj instanceof Base_SceneObject){((Base_SceneObject)((ObjInstance)obj).obj).setIsInverted(doFlipNorms());}}
+//			if(obj instanceof Base_SceneObject){((Base_SceneObject)obj).setIsInverted(doFlipNorms());}//either a scene object or an instance of a scene object
+//			else {if(obj instanceof ObjInstance && ((ObjInstance)obj).obj instanceof Base_SceneObject){((Base_SceneObject)((ObjInstance)obj).obj).setIsInverted(doFlipNorms());}}
+			obj.setInvertNormals(doFlipNorms());
 		}
 	}//flipNormal	
 	/**

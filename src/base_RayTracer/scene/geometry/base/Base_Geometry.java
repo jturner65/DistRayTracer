@@ -171,6 +171,12 @@ public abstract class Base_Geometry {
 	 */
 	public BoundingBox getBBox() {return _bbox;}
 	
+	/**
+	 * Whether the display normals should be flipped
+	 * @param flipNorms
+	 */
+	public abstract void setInvertNormals(boolean flipNorms);
+	
 	
 	public String toString(){
 		String result = "Object Type : " + type.toStrBrf() + " ID:"+ID+" origin : " + origin;

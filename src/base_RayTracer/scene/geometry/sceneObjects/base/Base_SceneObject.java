@@ -48,6 +48,14 @@ public abstract class Base_SceneObject extends Base_Geometry{
 	public final void setIsLight(boolean _val) {setFlags(isLightIDX, _val);}
 	
 	/**
+	 * Whether the display normals should be flipped - not used for accel structs
+	 * @param flipNorms
+	 */
+	@Override
+	public final void setInvertNormals(boolean flipNorms) {setFlags(invertedIDX, flipNorms);}
+	
+	
+	/**
 	 * set baseclass flags  //setFlags(showIDX, 
 	 * @param idx
 	 * @param val

@@ -55,10 +55,15 @@ public class ObjInstance extends Base_Geometry{
 	
 	public final void setUseShader(boolean _val) {setFlags(useShaderIDX, _val);}
 	public final void setAccleStruct(boolean _val) {setFlags(isAccelStructIDX, _val);}
-	
+	/**
+	 * Whether the display normals should be flipped - not used for accel structs
+	 * @param flipNorms
+	 */
+	@Override
+	public final void setInvertNormals(boolean flipNorms) {obj.setInvertNormals(flipNorms);}
 	
 	/**
-	 * set baseclass flags  //setFlags(showIDX, 
+	 * set baseclass flags
 	 * @param idx
 	 * @param val
 	 */
