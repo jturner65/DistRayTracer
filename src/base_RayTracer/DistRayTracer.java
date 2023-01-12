@@ -3,6 +3,9 @@ package base_RayTracer;
 ///		Final ray tracer from cs7490 - supports distribution RT, acceleration structure(BVH), perlin and worley-noise-based textures, photon mapping (caustic and diffuse) in KD tree
 /////
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import base_RayTracer.ui.RayTracer2DWin;
 import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
@@ -13,8 +16,9 @@ import base_UI_Objects.windowUI.sidebar.SidebarMenu;
 //this file can act as a stub for the ray tracer and can launch it
 public class DistRayTracer extends GUI_AppManager {
 	//project-specific variables
-	public String prjNmLong = "Testbed for base ray tracer", prjNmShrt = "RayTracerBaseExp";
-	
+	public final String prjNmLong = "Testbed for base ray tracer";
+	public final String prjNmShrt = "RayTracerBaseExp";
+	public final String projDesc = "Testbed for distribution base ray tracer";
 	//don't use sphere background for this program
 	private final int
 		showUIMenu 			= 0,
@@ -31,10 +35,19 @@ public class DistRayTracer extends GUI_AppManager {
 		DistRayTracer me = new DistRayTracer();
 		DistRayTracer.invokeProcessingMain(me, passedArgs);		    
 	}//main
-
+	
+	protected DistRayTracer(){super();}
+	
+	/**
+	 * Set various relevant runtime arguments in argsMap
+	 * @param _passedArgs command-line arguments
+	 */
 	@Override
-	protected void setRuntimeArgsVals(String[] _passedArgs) {
+	protected TreeMap<String,Object> setRuntimeArgsVals(Map<String, Object> _passedArgsMap) {
+
+		return (TreeMap<String, Object>) _passedArgsMap;
 	}
+	
 	/**
 	 * whether or not we want to restrict window size on widescreen monitors
 	 * 
@@ -43,11 +56,14 @@ public class DistRayTracer extends GUI_AppManager {
 	 * 			2+ - TBD
 	 */
 	@Override
-	protected int setAppWindowDimRestrictions() {	return 1;}	
+	protected int setAppWindowDimRestrictions() {	return 1;}		
+	
 	@Override
-	protected String getPrjNmLong() {return prjNmLong;}
+	public String getPrjNmShrt() {		return prjNmShrt;}
 	@Override
-	protected String getPrjNmShrt() {return prjNmShrt;}
+	public String getPrjNmLong() {		return prjNmLong;}
+	@Override
+	public String getPrjDescr() {		return projDesc;}
 	
 	@Override
 	public void setup_Indiv() {
