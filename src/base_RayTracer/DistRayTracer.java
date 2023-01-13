@@ -77,12 +77,12 @@ public class DistRayTracer extends GUI_AppManager {
 	 * determine which main flags to show at upper left of menu 
 	 */
 	@Override
-	protected void initMainFlags_Indiv() {
-		setMainFlagToShow_debugMode(true);
-		setMainFlagToShow_saveAnim(true); 
-		setMainFlagToShow_runSim(false);
-		setMainFlagToShow_singleStep(false);
-		setMainFlagToShow_showRtSideMenu(true);
+	protected void initBaseFlags_Indiv() {
+		setBaseFlagToShow_debugMode(true);
+		setBaseFlagToShow_saveAnim(true); 
+		setBaseFlagToShow_runSim(false);
+		setBaseFlagToShow_singleStep(false);
+		setBaseFlagToShow_showRtSideMenu(true);
 	}
 
 	
@@ -92,14 +92,15 @@ public class DistRayTracer extends GUI_AppManager {
 		int numWins = numVisFlags;//includes 1 for menu window (never < 1)
 		//titles and descs, need to be set before sidebar menu is defined
 		String[] _winTitles = new String[]{"","2D Ray Tracer"},
-				_winDescr = new String[] {"", "2D ray tracing environment for probability experiments"};
+				_winDescr = new String[] {"", "2D ray tracing renderer."};
 		initWins(numWins,_winTitles, _winDescr);
 
 		//call for menu window
-		buildInitMenuWin(showUIMenu);
+		buildInitMenuWin();
 		//instanced window dimensions when open and closed - only showing 1 open at a time
-		float[] _dimOpen  =  new float[]{menuWidth, 0, pa.getWidth()-menuWidth,  pa.getHeight()}, _dimClosed  =  new float[]{menuWidth, 0, hideWinWidth,  pa.getHeight()};	
-		System.out.println("Width : " + pa.getWidth() + " | Height : " +  pa.getHeight());
+		float[] _dimOpen  = getDefaultWinDimOpen(), 
+				_dimClosed  = getDefaultWinDimClosed();	
+		
 		//application-wide menu button bar titles and button names
 		String[] menuBtnTitles = new String[]{"Special Functions 1","Special Functions 2"};
 		String[][] menuBtnNames = new String[][] { // each must have literals for every button defined in side bar menu, or ignored
