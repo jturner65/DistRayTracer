@@ -17,7 +17,7 @@ public enum AccelStructType {
 	BVHLeafList(5);
 	private int value;
 	
-	private String[] _typeExplanation = new String[] {
+	private final String[] _typeExplanation = new String[] {
 		"Unknown Acceleration Structure",
 		"Flat List of Objects",
 		"Bounding Volume Hierarchy Tree",
@@ -25,7 +25,7 @@ public enum AccelStructType {
 		"Bounding Volume Hierarchy Right Child",
 		"Bounding Volume Hierarchy Leaf List"			
 	};
-	private static String[] _typeName = new String[] {
+	private static final String[] _typeName = new String[] {
 		"Unknown","Flat Object List","BVH Tree","BVH Left Child","BVH Right Child","BVH Leaf List"		
 	};
 	
@@ -38,6 +38,7 @@ public enum AccelStructType {
 	public static int getNumVals(){return map.size();}						//get # of values in enum
 	public String getName() {return _typeName[value];}
 	@Override
-    public String toString() { return ""+value + ":"+_typeExplanation[value]; }
+    public String toString() { return ""+_typeExplanation[value] + "("+value+")"; }	
+    public String toStrBrf() { return ""+_typeExplanation[value]; }	
 	
 }//enum AccelStructType

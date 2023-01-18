@@ -15,7 +15,7 @@ public enum GeomObjType {
 	AccelFlatList(14),AccelBVH(15);	
 	private int value; 
 
-	private String[] _typeExplanation = new String[] {
+	private final String[] _typeExplanation = new String[] {
 			"Non-object or unknown",
 			"Bounding Box",
 			"Renderable Bounding Box",
@@ -33,7 +33,7 @@ public enum GeomObjType {
 			"Flat List of Objects",
 			"Bounding Volume Hierarchy Structure Holding Objects"};
 	
-	private static String[] _typeName = new String[] {
+	private static final String[] _typeName = new String[] {
 			"None","Bounding Box","Rendered BBox", "Object Instance",
 			"Point Light","Spot Light","Disk Light",
 			"Triangle","Quad","Plane","Sphere","Capped Cylinder","Cylindrical Tube","Torus",

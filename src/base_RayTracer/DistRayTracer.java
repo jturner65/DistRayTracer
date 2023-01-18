@@ -3,8 +3,7 @@ package base_RayTracer;
 ///		Final ray tracer from cs7490 - supports distribution RT, acceleration structure(BVH), perlin and worley-noise-based textures, photon mapping (caustic and diffuse) in KD tree
 /////
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 import base_RayTracer.ui.RayTracer2DWin;
 import base_UI_Objects.GUI_AppManager;
@@ -43,9 +42,8 @@ public class DistRayTracer extends GUI_AppManager {
 	 * @param _passedArgs command-line arguments
 	 */
 	@Override
-	protected TreeMap<String,Object> setRuntimeArgsVals(Map<String, Object> _passedArgsMap) {
-
-		return (TreeMap<String, Object>) _passedArgsMap;
+	protected HashMap<String,Object> setRuntimeArgsVals(HashMap<String, Object> _passedArgsMap) {
+		return  _passedArgsMap;
 	}
 	
 	/**
@@ -136,8 +134,6 @@ public class DistRayTracer extends GUI_AppManager {
 		setVisFlag(showUIMenu, true);					//show input UI menu	
 		setVisFlag(show2DRayTracerIDX, true);
 	}
-	@Override
-	protected void initVisProg_Indiv() {}
 	@Override
 	protected void initProgram_Indiv() {}	
 	
