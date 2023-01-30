@@ -618,8 +618,9 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 					break;}	
 			}
 			break;}//row 2 of menu side bar buttons
-		default :{
-			
+		default : {
+			msgObj.dispWarningMessage(className,"launchMenuBtnHndlr","Clicked Unknown Btn row : " + funcRow +" | Btn : " + btn);
+			break;
 		}
 		}		
 	}//launchMenuBtnHndlr	
