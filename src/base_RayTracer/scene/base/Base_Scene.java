@@ -1306,6 +1306,7 @@ public abstract class Base_Scene {
 			if(useGlblRefine()){
 				stepIter = RefineIDX[curRefineStep++];
 				skipPxl = curRefineStep != 1;			//skip 0,0 pxl on all sub-images except the first pass
+				//Using system.out to make single line for progress
 				System.out.print("Render Scene Iteration " +curRefineStep +" Progress : ");
 			} else {
 				System.out.print("Render Scene Progress : ");
@@ -1370,7 +1371,7 @@ public abstract class Base_Scene {
 			dispStr += "\nBackground : " + mySkyDome.showUV() + "\n";  
 		}
 		dispStr += "Total # of rays : " + globRayCount + " | refl/refr rays " + reflRays +"/" + refrRays + "\n\nImage rendered from file name : " + saveName;
-		msgObj.dispMultiLineInfoMessage("Base_Scene ("+fileName+")", "finishImage", dispStr);
+		msgObj.dispMultiLineDebugMessage("Base_Scene ("+fileName+")", "finishImage", dispStr);
 	}
 	
 	protected final int dispProgressBar(float pixIDX, int progressCount) {
@@ -1482,7 +1483,7 @@ public abstract class Base_Scene {
 	///////
 	//transformation stack stuff - uses "gt" prefix instead of "gl" because cute.
 	//
-	 public void gtDebugStack(String caller){ msgObj.dispMultiLineInfoMessage("Base_Scene ("+fileName+")", "gtDebugStack", "Caller : "+caller + "\nCurrent stack status : \n"+matrixStack.toString()); }//gtdebugStack method
+	 public void gtDebugStack(String caller){ msgObj.dispMultiLineDebugMessage("Base_Scene ("+fileName+")", "gtDebugStack", "Caller : "+caller + "\nCurrent stack status : \n"+matrixStack.toString()); }//gtdebugStack method
 
 	 private void gtInitialize() {
 		 currMatrixDepthIDX = 0;

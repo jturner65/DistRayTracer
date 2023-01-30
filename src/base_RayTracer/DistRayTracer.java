@@ -9,10 +9,13 @@ import base_RayTracer.ui.RayTracer2DWin;
 import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_UI_Objects.windowUI.sidebar.SidebarMenu;
+import base_Utils_Objects.io.messaging.MsgCodes;
 
-//TODO this needs to instance a window - cannot use this method anymore with just the single processing window
-
-//this file can act as a stub for the ray tracer and can launch it
+/**
+ * this file can act as a stub for the ray tracer and can launch it
+ * @author John Turner
+ *
+ */
 public class DistRayTracer extends GUI_AppManager {
 	//project-specific variables
 	public final String prjNmLong = "Testbed for base ray tracer";
@@ -62,6 +65,19 @@ public class DistRayTracer extends GUI_AppManager {
 	public String getPrjNmLong() {		return prjNmLong;}
 	@Override
 	public String getPrjDescr() {		return projDesc;}
+
+	/**
+	 * Set minimum level of message object console messages to display for this application. If null then all messages displayed
+	 * @return
+	 */
+	@Override
+	protected final MsgCodes getMinConsoleMsgCodes() {return MsgCodes.info1;}
+	/**
+	 * Set minimum level of message object log messages to save to log for this application. If null then all messages saved to log.
+	 * @return
+	 */
+	@Override
+	protected final MsgCodes getMinLogMsgCodes() {return null;}
 	
 	@Override
 	public void setup_Indiv() {

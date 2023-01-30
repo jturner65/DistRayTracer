@@ -571,62 +571,6 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	
 	@Override
 	public final void handleSideMenuMseOvrDispSel(int btn, boolean val) {	}
-	
-	@Override
-	public final void handleSideMenuDebugSelEnable(int btn) {
-		msgObj.dispMessage(className, "handleSideMenuDebugSelEnable","Click Debug functionality on in " + name + " : btn : " + btn, MsgCodes.info4);
-		switch (btn) {
-			case 0: {				break;			}
-			case 1: {				break;			}
-			case 2: {				break;			}
-			case 3: {				break;			}
-			case 4: {				break;			}
-			case 5: {				break;			}
-			default: {
-				msgObj.dispMessage(className, "handleSideMenuDebugSelEnable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
-				break;
-			}
-		}
-		msgObj.dispMessage(className, "handleSideMenuDebugSelEnable", "End Debug functionality on selection.",MsgCodes.info4);
-	}
-	
-	@Override
-	public final void handleSideMenuDebugSelDisable(int btn) {
-		msgObj.dispMessage(className, "handleSideMenuDebugSelDisable","Click Debug functionality off in " + name + " : btn : " + btn, MsgCodes.info4);
-		switch (btn) {
-			case 0: {				break;			}
-			case 1: {				break;			}
-			case 2: {				break;			}
-			case 3: {				break;			}
-			case 4: {				break;			}
-			case 5: {				break;			}
-		default: {
-			msgObj.dispMessage(className, "handleSideMenuDebugSelDisable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
-			break;
-			}
-		}
-		msgObj.dispMessage(className, "handleSideMenuDebugSelDisable", "End Debug functionality off selection.",MsgCodes.info4);
-	}
-
-	/**
-	 * Load the ray tracer file into a string array
-	 * @param fileName
-	 * @return
-	 */
-	public String[] loadRTStrings(String fileName) {
-		String[] res = fileIO.loadFileIntoStringAra(fileName, "Successfully loaded CLI file", "Failed to load CLI file");
-		return res;
-	}
-	
-	@Override
-	protected final void setCameraIndiv(float[] camVals){		
-		//, float rx, float ry, float dz are now member variables of every window
-		pa.setCameraWinVals(camVals);//(camVals[0],camVals[1],camVals[2],camVals[3],camVals[4],camVals[5],camVals[6],camVals[7],camVals[8]);      
-		// puts origin of all drawn objects at screen center and moves forward/away by dz
-		pa.translate(camVals[0],camVals[1],(float)dz); 
-	    setCamOrient();	
-	}//setCameraIndiv
-
 	/**
 	 * type is row of buttons (1st idx in curCustBtn array) 2nd idx is btn
 	 * @param funcRow idx for button row
@@ -635,7 +579,6 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	 */
 	@Override
 	protected final void launchMenuBtnHndlr(int funcRow, int btn, String label){
-		msgObj.dispMessage(className, "launchMenuBtnHndlr", "Begin requested action : Click '" + label +"' (Row:"+(funcRow+1)+"|Col:"+btn+") in " + name, MsgCodes.info4);
 		switch(funcRow) {
 		case 0 : {
 			msgObj.dispInfoMessage(className,"launchMenuBtnHndlr","Clicked Btn row : Aux Func 1 | Btn : " + btn);
@@ -675,9 +618,64 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 					break;}	
 			}
 			break;}//row 2 of menu side bar buttons
-
+		default :{
+			
+		}
 		}		
-	}//launchMenuBtnHndlr
+	}//launchMenuBtnHndlr	
+	
+	@Override
+	protected final void handleSideMenuDebugSelEnable(int btn) {
+		switch (btn) {
+			case 0: {				break;			}
+			case 1: {				break;			}
+			case 2: {				break;			}
+			case 3: {				break;			}
+			case 4: {				break;			}
+			case 5: {				break;			}
+			default: {
+				msgObj.dispMessage(className, "handleSideMenuDebugSelEnable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
+				break;
+			}
+		}
+	}
+	
+	@Override
+	protected final void handleSideMenuDebugSelDisable(int btn) {
+		switch (btn) {
+			case 0: {				break;			}
+			case 1: {				break;			}
+			case 2: {				break;			}
+			case 3: {				break;			}
+			case 4: {				break;			}
+			case 5: {				break;			}
+		default: {
+			msgObj.dispMessage(className, "handleSideMenuDebugSelDisable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
+			break;
+			}
+		}
+	}
+
+	/**
+	 * Load the ray tracer file into a string array
+	 * @param fileName
+	 * @return
+	 */
+	public String[] loadRTStrings(String fileName) {
+		String[] res = fileIO.loadFileIntoStringAra(fileName, "Successfully loaded CLI file", "Failed to load CLI file");
+		return res;
+	}
+	
+	@Override
+	protected final void setCameraIndiv(float[] camVals){		
+		//, float rx, float ry, float dz are now member variables of every window
+		pa.setCameraWinVals(camVals);//(camVals[0],camVals[1],camVals[2],camVals[3],camVals[4],camVals[5],camVals[6],camVals[7],camVals[8]);      
+		// puts origin of all drawn objects at screen center and moves forward/away by dz
+		pa.translate(camVals[0],camVals[1],(float)dz); 
+	    setCamOrient();	
+	}//setCameraIndiv
+
+
 	
 	//return strings for directory names and for individual file names that describe the data being saved.  used for screenshots, and potentially other file saving
 	//first index is directory suffix - should have identifying tags based on major/archtypical component of sim run
