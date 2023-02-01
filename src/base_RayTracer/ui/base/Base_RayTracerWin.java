@@ -146,11 +146,11 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	@Override
 	protected final void initMe() {
 		//this window is runnable
-		setFlags(isRunnable, true);
+		dispFlags.setIsRunnable(true);
 		//this window uses a customizable camera
-		setFlags(useCustCam, true);
-		//this window uses right side info window
-		setFlags(drawRightSideMenu, true);
+		dispFlags.setUseCustCam(true);
+		// capable of using right side menu
+		dispFlags.setDrawRtSideMenu(true);
 		//set offset to use for custom menu objects
 		custMenuOffset = uiClkCoords[3];		
 		//instance-specific init
