@@ -237,13 +237,26 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	 * @return
 	 */
 	protected abstract Base_RayTracerUIUpdater buildUIDataUpdateObject_Indiv();
-
+	/**
+	 * UI code-level Debug mode functionality. Called only from flags structure
+	 * @param val
+	 */
 	@Override
-	public final void setPrivFlags(int idx, boolean val) {
-		boolean curVal = getPrivFlags(idx);
-		if(val == curVal) {return;}
-		int flIDX = idx/32, mask = 1<<(idx%32);
-		privFlags[flIDX] = (val ?  privFlags[flIDX] | mask : privFlags[flIDX] & ~mask);
+	public void handleDebugMode(boolean val) {}
+	
+	/**
+	 * Application-specific Debug mode functionality (application-specific). Called only from privflags structure
+	 * @param val
+	 */
+	@Override
+	public void handlePrivFlagsDebugMode(boolean val) {	}
+	
+	/**
+	 * Handle application-specific flag setting
+	 */
+	@Override
+	public void handlePrivFlags_Indiv(int idx, boolean val, boolean oldVal){
+		if(val == oldVal) {return;}
 		switch(idx){
 			case shootRaysIDX : {//build new image
 				if (val) {
@@ -429,7 +442,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	private void initPermTable() { 
 		for(int i=0; i<255; ++i) {perm[i] = pValAra[i];}
 		for(int i=256; i<512; ++i) {perm[i] = pValAra[i & 255];}
-		setPrivFlags(initPerlinNoiseIDX, true);
+		privFlags.setFlag(initPerlinNoiseIDX, true);
 	}
 
 	/**
