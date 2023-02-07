@@ -237,19 +237,6 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	 * @return
 	 */
 	protected abstract Base_RayTracerUIUpdater buildUIDataUpdateObject_Indiv();
-	/**
-	 * UI code-level Debug mode functionality. Called only from flags structure
-	 * @param val
-	 */
-	@Override
-	public void handleDebugMode(boolean val) {}
-	
-	/**
-	 * Application-specific Debug mode functionality (application-specific). Called only from privflags structure
-	 * @param val
-	 */
-	@Override
-	public void handlePrivFlagsDebugMode(boolean val) {	}
 	
 	/**
 	 * Handle application-specific flag setting

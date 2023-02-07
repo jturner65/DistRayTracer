@@ -61,6 +61,19 @@ public class RayTracer2DWin extends Base_RayTracerWin {
 	@Override
 	protected final void updateCalcObjUIVals() {}
 
+	/**
+	 * UI code-level Debug mode functionality. Called only from flags structure
+	 * @param val
+	 */
+	@Override
+	protected final void handleDispFlagsDebugMode_Indiv(boolean val) {}
+	
+	/**
+	 * Application-specific Debug mode functionality (application-specific). Called only from privflags structure
+	 * @param val
+	 */
+	@Override
+	protected final void handlePrivFlagsDebugMode_Indiv(boolean val) {	}
 
 	@Override
 	protected boolean setUI_IntValsCustom_Indiv(int UIidx, int ival, int oldVal) {	return false;}
@@ -104,9 +117,7 @@ public class RayTracer2DWin extends Base_RayTracerWin {
 	}
 
 	@Override
-	protected void drawRightSideInfoBarPriv_Indiv(float modAmtMillis) {
-		// TODO Auto-generated method stub
-		
+	protected void drawRightSideInfoBarPriv_Indiv(float modAmtMillis) {		
 	}
 
 	@Override
