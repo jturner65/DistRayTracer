@@ -43,10 +43,11 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	//////////////////////////////////////
 	//private child-class flags - window specific
 	protected static final int 
-		shootRaysIDX		 		= 0,					//shoot rays
-		flipNormsIDX				= 1,
-		initPerlinNoiseIDX			= 2;
-	protected static final int numPrivFlags = 3;
+		//debug is idx 1
+		shootRaysIDX		 		= 1,					//shoot rays
+		flipNormsIDX				= 2,
+		initPerlinNoiseIDX			= 3;
+	protected static final int numPrivFlags = 4;
 	
 	//idxs - need one per object
 	public final static int
@@ -143,14 +144,21 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 		loadedScenes = new TreeMap<String, Base_Scene>();	
 	}
 
+	/**
+	 * Initialize any UI control flags appropriate for all boids window application
+	 */
 	@Override
-	protected final void initMe() {
+	protected final void initDispFlags() {
 		//this window is runnable
 		dispFlags.setIsRunnable(true);
 		//this window uses a customizable camera
 		dispFlags.setUseCustCam(true);
 		// capable of using right side menu
-		dispFlags.setDrawRtSideMenu(true);
+		dispFlags.setDrawRtSideMenu(true);	
+	}
+	
+	@Override
+	protected final void initMe() {
 		//set offset to use for custom menu objects
 		custMenuOffset = uiClkCoords[3];		
 		//instance-specific init
@@ -160,6 +168,8 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 		//call first ray trace
 		startRayTrace();
 	}
+	
+	
 	/**
 	 * Instance-class specific init
 	 */
@@ -551,7 +561,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected abstract void drawRightSideInfoBarPriv_Indiv(float modAmtMillis);	
 	
 	@Override
-	protected final void drawCustMenuObjs() {
+	protected final void drawCustMenuObjs(float animTimeMod) {
 		pa.pushMatState();
 		//all sub menu drawing within push mat call
 		pa.translate(5,custMenuOffset+yOff);
