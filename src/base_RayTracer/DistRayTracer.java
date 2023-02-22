@@ -25,6 +25,11 @@ public class DistRayTracer extends GUI_AppManager {
 	public final int numVisFlags = 2;		//must only be used for visible windows
 	//idx's in dispWinFrames for each window - 0 is always left side menu window
 	private static final int disp2DRayTracerIDX = 1;
+	
+	//don't use sphere background for this program
+	private boolean useSphereBKGnd = false;	
+	
+	private String bkSkyBox = "bkgrndTex.jpg";
 
 	private final int[] bground = new int[]{244,244,244,255};		//bground color
 
@@ -44,6 +49,28 @@ public class DistRayTracer extends GUI_AppManager {
 	protected HashMap<String,Object> setRuntimeArgsVals(HashMap<String, Object> _passedArgsMap) {
 		return  _passedArgsMap;
 	}
+	
+	/**
+	 * Called in pre-draw initial setup, before first init
+	 * potentially override setup variables on per-project basis.
+	 * Do not use for setting background color or Skybox anymore.
+	 *  	(Current settings in my_procApplet) 	
+	 *  	strokeCap(PROJECT);
+	 *  	textSize(txtSz);
+	 *  	textureMode(NORMAL);			
+	 *  	rectMode(CORNER);	
+	 *  	sphereDetail(4);	 * 
+	 */
+	@Override
+	protected void setupAppDims_Indiv() {}
+	@Override
+	protected boolean getUseSkyboxBKGnd(int winIdx) {	return useSphereBKGnd;}
+	@Override
+	protected String getSkyboxFilename(int winIdx) {	return bkSkyBox;}
+	@Override
+	protected int[] getBackgroundColor(int winIdx) {return bground;}
+	@Override
+	protected int getNumDispWindows() {	return numVisFlags;	}
 	
 	/**
 	 * whether or not we want to restrict window size on widescreen monitors
@@ -75,14 +102,6 @@ public class DistRayTracer extends GUI_AppManager {
 	@Override
 	protected final MsgCodes getMinLogMsgCodes() {return null;}
 	
-	@Override
-	public void setup_Indiv() {
-		setBkgrnd();
-	}
-
-	@Override
-	protected void setBkgrnd() {pa.setRenderBackground(bground[0],bground[1],bground[2],bground[3]);}	
-	
 	/**
 	 * determine which main flags to show at upper left of menu 
 	 */
@@ -99,11 +118,10 @@ public class DistRayTracer extends GUI_AppManager {
 	@Override
 	protected void initAllDispWindows() {
 		showInfo = true;
-		int numWins = numVisFlags;//includes 1 for menu window (never < 1)
 		//titles and descs, need to be set before sidebar menu is defined
 		String[] _winTitles = new String[]{"","2D Ray Tracer"},
 				_winDescr = new String[] {"", "2D ray tracing renderer."};
-		initWins(numWins,_winTitles, _winDescr);
+		setWinTitlesAndDescs(_winTitles, _winDescr);
 
 		//call for menu window
 		buildInitMenuWin();
@@ -134,7 +152,7 @@ public class DistRayTracer extends GUI_AppManager {
 		//ray tracer window
 		wIdx = disp2DRayTracerIDX; fIdx = show2DRayTracerIDX;
 		setInitDispWinVals(wIdx, _dimOpen, _dimClosed,new boolean[]{false,false,false,false}, new int[]{20,30,10,255}, new int[]{255,255,255,255},new int[]{180,180,180,255},new int[]{100,100,100,255}); 
-		dispWinFrames[wIdx] = new RayTracer2DWin(pa, this, wIdx, fIdx);
+		dispWinFrames[wIdx] = new RayTracer2DWin(ri, this, wIdx, fIdx);
 
 		//specify windows that cannot be shown simultaneously here
 		initXORWins(
@@ -240,7 +258,7 @@ public class DistRayTracer extends GUI_AppManager {
 	}
 
 	@Override
-	protected void setSmoothing() {		pa.setSmoothing(0);		}
+	protected void setSmoothing() {		ri.setSmoothing(0);		}
 
 
 }//DistRayTracer class
