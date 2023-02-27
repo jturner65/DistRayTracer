@@ -17,15 +17,16 @@ import base_RayTracer.scene.materials.textures.imageTextures.myImageTexture;
 import base_RayTracer.ui.base.Base_RayTracerWin;
 import base_UI_Objects.my_procApplet;
 
+
 public class myRTFileReader {
 	public IRenderInterface pa;
 	private Base_RayTracerWin win;
 	public final String textureDir;
 	private int timer;
 	private int curNumRows, curNumCols;
-	public myRTFileReader(IRenderInterface _pa, Base_RayTracerWin _win, String _txtrDirs) {
-		pa = _pa;
+	public myRTFileReader(Base_RayTracerWin _win, String _txtrDirs) {
 		win=_win;
+		pa = Base_RayTracerWin.ri;
 		textureDir = _txtrDirs;		
 	}
 	

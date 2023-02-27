@@ -22,11 +22,11 @@ public class RayTracer2DWin extends Base_RayTracerWin {
 	////////////
 
 		
-	public RayTracer2DWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx, int _flagIdx) {
-		super(_p, _AppMgr, _winIdx, _flagIdx);
+	public RayTracer2DWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx) {
+		super(_p, _AppMgr, _winIdx);
 		super.initThisWin(false);
-		guiObjs[gIDX_SceneCols].setVal(600);setUIWinVals(gIDX_SceneCols);
-		guiObjs[gIDX_SceneRows].setVal(600);setUIWinVals(gIDX_SceneRows);
+		setNewUIValue(gIDX_SceneCols, 600);setUIWinVals(gIDX_SceneCols);
+		setNewUIValue(gIDX_SceneRows, 600);setUIWinVals(gIDX_SceneRows);
 		startRayTrace();
 	}//ctor
 			
@@ -105,15 +105,15 @@ public class RayTracer2DWin extends Base_RayTracerWin {
 
 	@Override
 	protected void drawMe_Indiv(float animTimeMod) {
-		pa.pushMatState();
+		ri.pushMatState();
 		float[] loc = getLocUpperCrnr();
-		pa.translate(loc[0],loc[1],0);
-		pa.pushMatState();
-		pa.disableLights();
+		ri.translate(loc[0],loc[1],0);
+		ri.pushMatState();
+		ri.disableLights();
 		Base_Scene s = getCurrScene();
 		if(s!=null) {s.draw();}	
-		pa.popMatState();
-		pa.popMatState();
+		ri.popMatState();
+		ri.popMatState();
 	}
 
 	@Override

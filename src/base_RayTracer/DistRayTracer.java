@@ -17,15 +17,17 @@ public class DistRayTracer extends GUI_AppManager {
 	public final String prjNmLong = "Testbed for base ray tracer";
 	public final String prjNmShrt = "RayTracerBaseExp";
 	public final String projDesc = "Testbed for distribution base ray tracer";
-	//don't use sphere background for this program
-	private final int
-		showUIMenu 			= 0,
-		show2DRayTracerIDX	= 1;			//whether to show 1st window
 
-	public final int numVisFlags = 2;		//must only be used for visible windows
-	//idx's in dispWinFrames for each window - 0 is always left side menu window
+
+	/**
+	 * idx's in dispWinFrames for each window - 0 is always left side menu window
+	 * Side menu is dispMenuIDX == 0
+	 */
 	private static final int disp2DRayTracerIDX = 1;
-	
+	/**
+	 * # of visible windows including side menu (always at least 1 for side menu)
+	 */
+	private static final int numVisWins = 2;
 	//don't use sphere background for this program
 	private boolean useSphereBKGnd = false;	
 	
@@ -70,7 +72,7 @@ public class DistRayTracer extends GUI_AppManager {
 	@Override
 	protected int[] getBackgroundColor(int winIdx) {return bground;}
 	@Override
-	protected int getNumDispWindows() {	return numVisFlags;	}
+	protected int getNumDispWindows() {	return numVisWins;	}
 	
 	/**
 	 * whether or not we want to restrict window size on widescreen monitors
@@ -112,6 +114,7 @@ public class DistRayTracer extends GUI_AppManager {
 		setBaseFlagToShow_runSim(false);
 		setBaseFlagToShow_singleStep(false);
 		setBaseFlagToShow_showRtSideMenu(true);
+		setBaseFlagToShow_showDrawableCanvas(false);
 	}
 
 	
@@ -123,8 +126,6 @@ public class DistRayTracer extends GUI_AppManager {
 				_winDescr = new String[] {"", "2D ray tracing renderer."};
 		setWinTitlesAndDescs(_winTitles, _winDescr);
 
-		//call for menu window
-		buildInitMenuWin();
 		//instanced window dimensions when open and closed - only showing 1 open at a time
 		float[] _dimOpen  = getDefaultWinDimOpen(), 
 				_dimClosed  = getDefaultWinDimClosed();	
@@ -135,8 +136,7 @@ public class DistRayTracer extends GUI_AppManager {
 			{"Func 1", "Func 2","Func 3"},	//row 1
 			{"Func 1", "Func 2", "Func 3", "Func 4"}};	//row 1
 		String[] dbgBtnNames = new String[] {"Debug 0","Debug 1","Debug 2","Debug 3","Debug 4"};
-		int wIdx = dispMenuIDX,fIdx=showUIMenu;
-		dispWinFrames[wIdx] = buildSideBarMenu(wIdx, fIdx,menuBtnTitles, menuBtnNames, dbgBtnNames, false, true);		
+		buildSideBarMenu(menuBtnTitles, menuBtnNames, dbgBtnNames, false, true);		
 
 		//define windows
 		//idx 0 is menu, and is ignored	
@@ -150,19 +150,18 @@ public class DistRayTracer extends GUI_AppManager {
 		//int _trajFill, int _trajStrk)			: trajectory fill and stroke colors, if these objects can be drawn in window (used as alt color otherwise)
 
 		//ray tracer window
-		wIdx = disp2DRayTracerIDX; fIdx = show2DRayTracerIDX;
+		int wIdx = disp2DRayTracerIDX;
 		setInitDispWinVals(wIdx, _dimOpen, _dimClosed,new boolean[]{false,false,false,false}, new int[]{20,30,10,255}, new int[]{255,255,255,255},new int[]{180,180,180,255},new int[]{100,100,100,255}); 
-		dispWinFrames[wIdx] = new RayTracer2DWin(ri, this, wIdx, fIdx);
+		dispWinFrames[wIdx] = new RayTracer2DWin(ri, this, wIdx);
 
 		//specify windows that cannot be shown simultaneously here
 		initXORWins(
-				new int[]{show2DRayTracerIDX},
+				new int[]{disp2DRayTracerIDX},
 				new int[]{disp2DRayTracerIDX});			
 	}
 	@Override
 	protected void initOnce_Indiv() {
-		setVisFlag(showUIMenu, true);					//show input UI menu	
-		setVisFlag(show2DRayTracerIDX, true);
+		setVisFlag(disp2DRayTracerIDX, true);
 	}
 	@Override
 	protected void initProgram_Indiv() {}	
@@ -199,13 +198,12 @@ public class DistRayTracer extends GUI_AppManager {
 	 * @return
 	 */
 	@Override
-	public int getNumVisFlags() {return numVisFlags;}
+	public int getNumVisFlags() {return numVisWins;}
 	@Override
 	//address all flag-setting here, so that if any special cases need to be addressed they can be
 	protected void setVisFlag_Indiv(int idx, boolean val ){
 		switch (idx){
-			case showUIMenu 	    : { dispWinFrames[dispMenuIDX].dispFlags.setShowWin(val);    break;}											//whether or not to show the main ui window (sidebar)			
-			case show2DRayTracerIDX		: {setWinFlagsXOR(disp2DRayTracerIDX, val); break;}		
+			case disp2DRayTracerIDX		: {setWinFlagsXOR(disp2DRayTracerIDX, val); break;}		
 			default : {break;}
 		}			
 	}
@@ -220,12 +218,11 @@ public class DistRayTracer extends GUI_AppManager {
 	}
 	//get the ui rect values of the "master" ui region (another window) -> this is so ui objects of one window can be made, clicked, and shown displaced from those of the parent windwo
 	@Override
-	public float[] getUIRectVals(int idx){
+	public float[] getUIRectVals_Indiv(int idx, float[] menuClickDim){
 			//this.pr("In getUIRectVals for idx : " + idx);
 		switch(idx){
-			case dispMenuIDX 		: { return new float[0];}			//idx 0 is parent menu sidebar
-			case disp2DRayTracerIDX	: {	return dispWinFrames[dispMenuIDX].uiClkCoords;}			
-			default :  return dispWinFrames[dispMenuIDX].uiClkCoords;
+			case disp2DRayTracerIDX	: {	return menuClickDim;}			
+			default :  return menuClickDim;
 			}
 	}//getUIRectVals
 	@Override

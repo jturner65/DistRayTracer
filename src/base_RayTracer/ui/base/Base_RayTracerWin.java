@@ -134,13 +134,13 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	 * @param _winIdx
 	 * @param _flagIdx
 	 */
-	public Base_RayTracerWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx, int _flagIdx) {
-		super(_p, _AppMgr, _winIdx, _flagIdx);
+	public Base_RayTracerWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx) {
+		super(_p, _AppMgr, _winIdx);
 
 		Path path = Paths.get("");
 		cliFilesDir = path.toAbsolutePath().toString()+File.separator+"data";
 		msgObj.dispInfoMessage(className, "Constructor", "Currently Set absolute working directory for CLI Files is :"+cliFilesDir);
-		rdr = new myRTFileReader(pa,this, cliFilesDir+File.separator+"txtrs"+File.separator);
+		rdr = new myRTFileReader(this, cliFilesDir+File.separator+"txtrs"+File.separator);
 		loadedScenes = new TreeMap<String, Base_Scene>();	
 	}
 
@@ -154,7 +154,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 		//this window uses a customizable camera
 		dispFlags.setUseCustCam(true);
 		// capable of using right side menu
-		dispFlags.setDrawRtSideMenu(true);	
+		dispFlags.setHasRtSideMenu(true);	
 	}
 	
 	@Override
@@ -298,7 +298,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected abstract int[] getFlagIDXsToInitToTrue_Indiv(int[] baseFlags);
 
 	/**
-	 * Called if int-handling guiObjs[UIidx] (int or list) has new data which updated UI adapter. 
+	 * Called if int-handling guiObjs_Numeric[UIidx] (int or list) has new data which updated UI adapter. 
 	 * Intended to support custom per-object handling by owning window.
 	 * Only called if data changed!
 	 * @param UIidx Index of gui obj with new data
@@ -328,7 +328,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	}//setUI_IntValsCustom
 	
 	/**
-	 * Instance-class specific. Called if int-handling guiObjs[UIidx] (int or list) has new data which updated UI adapter. 
+	 * Instance-class specific. Called if int-handling guiObjs_Numeric[UIidx] (int or list) has new data which updated UI adapter. 
 	 * Intended to support custom per-object handling by owning window.
 	 * Only called if data changed!
 	 * @param UIidx Index of gui obj with new data
@@ -338,7 +338,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected abstract boolean setUI_IntValsCustom_Indiv(int UIidx, int ival, int oldVal);
 	
 	/**
-	 * Called if float-handling guiObjs[UIidx] has new data which updated UI adapter.  
+	 * Called if float-handling guiObjs_Numeric[UIidx] has new data which updated UI adapter.  
 	 * Intended to support custom per-object handling by owning window.
 	 * Only called if data changed!
 	 * @param UIidx Index of gui obj with new data
@@ -359,7 +359,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	}//setUI_FloatValsCustom
 	
 	/**
-	 * Instance-class specific. Called if float-handling guiObjs[UIidx] has new data which updated UI adapter.  
+	 * Instance-class specific. Called if float-handling guiObjs_Numeric[UIidx] has new data which updated UI adapter.  
 	 * Intended to support custom per-object handling by owning window.
 	 * Only called if data changed!
 	 * @param UIidx Index of gui obj with new data
@@ -552,23 +552,23 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	//draw 2d constructs over 3d area on screen - draws behind left menu section
 	//modAmtMillis is in milliseconds
 	protected final void drawRightSideInfoBarPriv(float modAmtMillis) {
-		pa.pushMatState();
+		ri.pushMatState();
 		//display current simulation variables - call sim world through sim exec
 		drawRightSideInfoBarPriv_Indiv(modAmtMillis);
-		pa.popMatState();					
+		ri.popMatState();					
 	}//drawOnScreenStuff
 	
 	protected abstract void drawRightSideInfoBarPriv_Indiv(float modAmtMillis);	
 	
 	@Override
 	protected final void drawCustMenuObjs(float animTimeMod) {
-		pa.pushMatState();
+		ri.pushMatState();
 		//all sub menu drawing within push mat call
-		pa.translate(5,custMenuOffset+yOff);
+		ri.translate(5,custMenuOffset+txtHeightOff);
 		//draw any custom menu stuff here
 		drawCustMenuObjs_Indiv();
 		
-		pa.popMatState();		
+		ri.popMatState();		
 	}//drawCustMenuObjs
 	protected abstract void drawCustMenuObjs_Indiv();
 	
@@ -678,11 +678,11 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	}
 	
 	@Override
-	protected final void setCameraIndiv(float[] camVals){		
+	protected final void setCamera_Indiv(float[] camVals){		
 		//, float rx, float ry, float dz are now member variables of every window
-		pa.setCameraWinVals(camVals);//(camVals[0],camVals[1],camVals[2],camVals[3],camVals[4],camVals[5],camVals[6],camVals[7],camVals[8]);      
+		ri.setCameraWinVals(camVals);//(camVals[0],camVals[1],camVals[2],camVals[3],camVals[4],camVals[5],camVals[6],camVals[7],camVals[8]);      
 		// puts origin of all drawn objects at screen center and moves forward/away by dz
-		pa.translate(camVals[0],camVals[1],(float)dz); 
+		ri.translate(camVals[0],camVals[1],(float)dz); 
 	    setCamOrient();	
 	}//setCameraIndiv
 
@@ -717,7 +717,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 //		}		
 //		gIDX_CurrSceneCLIList = tmpAra.keySet().toArray(new String[0]);		
 //		curSceneCliFileIDX = fileIDX;
-//		this.guiObjs[gIDX_CurrSceneCLI].setNewMax(gIDX_CurrSceneCLIList.length-1);
+//		this.guiObjs_Numeric[gIDX_CurrSceneCLI].setNewMax(gIDX_CurrSceneCLIList.length-1);
 		
 	}//hndlFileLoad
 	public abstract void hndlFileLoad_Indiv(File file, String[] vals, int[] stIdx);
@@ -738,13 +738,13 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected final myPoint getMsePtAs3DPt(myPoint mseLoc){return new myPoint(mseLoc.x,mseLoc.y,0);}
 
 	@Override
-	protected final boolean hndlMouseMoveIndiv(int mouseX, int mouseY, myPoint mseClckInWorld) {
+	protected final boolean hndlMouseMove_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld) {
 		boolean res = chkMouseMoveDragState2D(mouseX, mouseY, -1);
 		return res;
 	}
 	
 	@Override
-	protected final boolean hndlMouseDragIndiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
+	protected final boolean hndlMouseDrag_Indiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
 		boolean res = false;
 		if(!res) {
 			res = chkMouseMoveDragState2D(mouseX, mouseY, mseBtn);
@@ -754,7 +754,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected abstract boolean chkMouseMoveDragState2D(int mouseX, int mouseY, int btn);
 
 	@Override
-	protected final boolean hndlMouseClickIndiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
+	protected final boolean hndlMouseClick_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
 		boolean res =  chkMouseClick2D(mouseX, mouseY, mseBtn);
 		
 		return res;}//hndlMouseClickIndiv
@@ -764,7 +764,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected final void snapMouseLocs(int oldMouseX, int oldMouseY, int[] newMouseLoc) {}
 	
 	@Override
-	protected final void hndlMouseRelIndiv() {
+	protected final void hndlMouseRel_Indiv() {
 		setMouseReleaseState2D();
 	}
 	protected abstract void setMouseReleaseState2D();
@@ -797,19 +797,19 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	///////////////////////
 	// Unused trajectory stuff
 	@Override
-	protected final void initDrwnTrajIndiv() {}
+	protected final void initDrwnTraj_Indiv() {}
 	@Override
-	public final void processTrajIndiv(DrawnSimpleTraj drawnTraj) {}
+	public final void processTraj_Indiv(DrawnSimpleTraj drawnTraj) {}
 	@Override
-	protected final void addTrajToScrIndiv(int subScrKey, String newTrajKey) {}
+	protected final void addTrajToScr_Indiv(int subScrKey, String newTrajKey) {}
 	@Override
-	protected final void delTrajToScrIndiv(int subScrKey, String newTrajKey) {}
+	protected final void delTrajToScr_Indiv(int subScrKey, String newTrajKey) {}
 
 	///////////////////////
 	// Unused sub screen stuff
 	@Override
-	protected final void addSScrToWinIndiv(int newWinKey) {}
+	protected final void addSScrToWin_Indiv(int newWinKey) {}
 	@Override
-	protected final void delSScrToWinIndiv(int idx) {}
+	protected final void delSScrToWin_Indiv(int idx) {}
 
 }
