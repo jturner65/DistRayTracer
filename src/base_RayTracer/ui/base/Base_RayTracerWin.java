@@ -287,7 +287,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	 * @return
 	 */
 	public final float[] getLocUpperCrnr() {
-		return new float[] {this.rectDim[0]+ .5f*(this.rectDim[2]-sceneCols), this.rectDim[1]+ .5f*(this.rectDim[3]-sceneRows)};		
+		return new float[] {winInitVals.rectDim[0]+ .5f*(winInitVals.rectDim[2]-sceneCols), winInitVals.rectDim[1]+ .5f*(winInitVals.rectDim[3]-sceneRows)};		
 	}
 
 	@Override
