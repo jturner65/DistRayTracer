@@ -125,7 +125,7 @@ public class DistRayTracer extends GUI_AppManager {
 		String[] _winTitles = new String[]{"","2D Ray Tracer"},
 				_winDescr = new String[] {"", "2D ray tracing renderer."};
 
-		//instanced window dimensions when open and closed - only showing 1 open at a time
+		//instanced window dims when open and closed - only showing 1 open at a time - and init cam vals
 		float[][] _floatDims  = new float[][] {getDefaultWinDimOpen(), getDefaultWinDimClosed(), getInitCameraValues()};	
 
 		//application-wide menu button bar titles and button names
