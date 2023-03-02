@@ -16,7 +16,6 @@ import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
 import base_UI_Objects.windowUI.uiData.UIDataUpdater;
-import base_UI_Objects.windowUI.uiObjs.base.base.GUIObj_Type;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
 /**
@@ -207,9 +206,9 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected final void setupGUIObjsAras(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals){		
 		//set up list of files to load
 		tmpListObjVals.put(gIDX_CurrSceneCLI, gIDX_CurrSceneCLIList);
-		tmpUIObjArray.put(gIDX_SceneCols, new Object[] {new double[]{100,AppMgr.getDisplayWidth(),10}, 1.0*initSceneCols, "Image Width (pxls)", GUIObj_Type.IntVal, new boolean[]{true}});
-		tmpUIObjArray.put(gIDX_SceneRows, new Object[] {new double[]{100,AppMgr.getDisplayHeight(),10}, 1.0*initSceneRows, "Image Height (pxls)", GUIObj_Type.IntVal, new boolean[]{true}});
-		tmpUIObjArray.put(gIDX_CurrSceneCLI, new Object[] {new double[]{0,tmpListObjVals.get(gIDX_CurrSceneCLI).length-1,1}, 0.0, "Scene to Display", GUIObj_Type.ListVal, new boolean[]{true}});
+		tmpUIObjArray.put(gIDX_SceneCols, uiObjInitAra_Int(new double[]{100,AppMgr.getDisplayWidth(),10}, 1.0*initSceneCols, "Image Width (pxls)", new boolean[]{true}));
+		tmpUIObjArray.put(gIDX_SceneRows, uiObjInitAra_Int(new double[]{100,AppMgr.getDisplayHeight(),10}, 1.0*initSceneRows, "Image Height (pxls)", new boolean[]{true}));
+		tmpUIObjArray.put(gIDX_CurrSceneCLI, uiObjInitAra_List(new double[]{0,tmpListObjVals.get(gIDX_CurrSceneCLI).length-1,1}, 0.0, "Scene to Display", new boolean[]{true}));
 		sceneCols = initSceneCols;
 		sceneRows = initSceneRows;
 		currSceneName = gIDX_CurrSceneCLIList[0];
