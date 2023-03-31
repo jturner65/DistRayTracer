@@ -42,7 +42,9 @@ public class DistRayTracer extends GUI_AppManager {
 	}//main
 	
 	protected DistRayTracer(){super();}
-	
+
+	@Override
+	protected boolean showMachineData() {return true;}
 	/**
 	 * Set various relevant runtime arguments in argsMap
 	 * @param _passedArgs command-line arguments
