@@ -16,14 +16,16 @@ import base_RayTracer.scene.geometry.sceneObjects.planar.base.Base_PlanarObject;
 import base_RayTracer.scene.materials.textures.imageTextures.myImageTexture;
 import base_RayTracer.ui.base.Base_RayTracerWin;
 import base_UI_Objects.my_procApplet;
+import base_UI_Objects.windowUI.base.Base_DispWindow;
 
 
 public class myRTFileReader {
 	public IRenderInterface pa;
 	private Base_RayTracerWin win;
 	public final String textureDir;
-	private int timer;
+	private int timeSinceStart;
 	private int curNumRows, curNumCols;
+		
 	public myRTFileReader(Base_RayTracerWin _win, String _txtrDirs) {
 		win=_win;
 		pa = Base_RayTracerWin.ri;
@@ -42,7 +44,7 @@ public class myRTFileReader {
 	 */
 	public Base_Scene readRTFile(TreeMap<String, Base_Scene> loadedScenes, String filePath, String fileName, Base_Scene _scene, int _numCols, int _numRows) {		  
 		//build individual scene for each file		
-		timer = getTime();			//times rendering
+		timeSinceStart = getTime();			//times rendering
 		curNumRows = _numRows;
 		curNumCols = _numCols;
 		
@@ -133,7 +135,7 @@ public class myRTFileReader {
 	 * TODO use window time manager
 	 * @return
 	 */
-	protected int getTime() {return ((my_procApplet)pa).millis();}
+	protected int getTime() {return Base_DispWindow.AppMgr.timeSinceStart();}
 	
 	/**
 	 * build the objects in a scene
@@ -194,12 +196,12 @@ public class myRTFileReader {
 			    
 			    //timer stuff
 			    case "reset_timer" : {//Reset a global timer that will be used to determine how long it takes to render a scene. 
-			    	timer = getTime();
+			    	timeSinceStart = getTime();
 			    	break;
 			    }
 			    case "print_timer" : {//Print the time elapsed since reset_timer was called (in seconds). Use the code snippet 
 			    	int new_timer = getTime();
-			    	int diff = new_timer - timer;
+			    	int diff = new_timer - timeSinceStart;
 			    	float seconds = diff / 1000.0f;
 			    	scene.renderTime = seconds;
 			    	win.getMsgObj().dispInfoMessage("myRTFileReader", "parseStringArray", "Timer = " + seconds);

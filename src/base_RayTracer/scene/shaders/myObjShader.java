@@ -41,7 +41,7 @@ public class myObjShader {
 	
 	public double avgDiffClr, avgSpecClr, avgPermClr;
 	//used as array indices
-	public static final int R = 0, G = 1, B = 2;
+	protected static final int R = 0, G = 1, B = 2;
 	
 	private int[] shdrFlags;					//various state-related flags for this shader
 	private static final int 

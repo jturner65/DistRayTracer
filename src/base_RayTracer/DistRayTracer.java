@@ -128,7 +128,7 @@ public class DistRayTracer extends GUI_AppManager {
 				_winDescr = new String[] {"", "2D ray tracing renderer."};
 
 		//instanced window dims when open and closed - only showing 1 open at a time - and init cam vals
-		float[][] _floatDims  = new float[][] {getDefaultWinDimOpen(), getDefaultWinDimClosed(), getInitCameraValues()};	
+		float[][] _floatDims  = getDefaultWinAndCameraDims();	
 
 		//application-wide menu button bar titles and button names
 		String[] menuBtnTitles = new String[]{"Special Functions 1","Special Functions 2"};
@@ -177,7 +177,7 @@ public class DistRayTracer extends GUI_AppManager {
 	}
 	@Override
 	protected void initOnce_Indiv() {
-		setVisFlag(disp2DRayTracerIDX, true);
+		setWinVisFlag(disp2DRayTracerIDX, true);
 	}
 	@Override
 	protected void initProgram_Indiv() {}	
@@ -249,7 +249,7 @@ public class DistRayTracer extends GUI_AppManager {
 			//val is btn state before transition 
 			boolean bVal = (val == 1?  false : true);
 			//each entry in this array should correspond to a clickable window
-			setVisFlag(winFlagsXOR[btn], bVal);
+			setWinVisFlag(winFlagsXOR[btn], bVal);
 		}
 	}//handleShowWin
 	

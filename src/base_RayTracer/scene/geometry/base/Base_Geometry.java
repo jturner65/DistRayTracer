@@ -184,16 +184,16 @@ public abstract class Base_Geometry {
 		String tmpString,tmp2str;
 	    for (int row = 0; row < 4; ++row){
 	    	result += "[";
-	    	for (int col = 0; col < 4; ++col){   tmp2str = (CTMara[glblIDX].m[row][col] < 0 ? "" : " ") + String.format("%.2f", CTMara[glblIDX].m[row][col]); if (col != 3) {tmp2str += ", ";} result += tmp2str;}    	tmpString = "]";result += tmpString + "      [";
-	    	for (int col = 0; col < 4; ++col){   tmp2str = (CTMara[invIDX].m[row][col] < 0 ? "" : " ") + String.format("%.2f", CTMara[invIDX].m[row][col]); if (col != 3) {tmp2str += ", ";} result += tmp2str;}    	tmpString = "]";  if (row != 3) { tmpString += "\n"; }
+	    	for (int col = 0; col < 4; ++col){   tmp2str = (CTMara[glblIDX].getValByIdx(row, col) < 0 ? "" : " ") + String.format("%.2f", CTMara[glblIDX].getValByIdx(row, col)); if (col != 3) {tmp2str += ", ";} result += tmp2str;}    	tmpString = "]";result += tmpString + "      [";
+	    	for (int col = 0; col < 4; ++col){   tmp2str = (CTMara[invIDX].getValByIdx(row, col) < 0 ? "" : " ") + String.format("%.2f", CTMara[invIDX].getValByIdx(row, col)); if (col != 3) {tmp2str += ", ";} result += tmp2str;}    	tmpString = "]";  if (row != 3) { tmpString += "\n"; }
 	    	result += tmpString;
 	    }
 		result+="\nCTMTrans :                         CTMAdj :\n";
 		
 	    for (int row = 0; row < 4; ++row){
 	    	result += "[";
-	    	for (int col = 0; col < 4; ++col){   tmp2str = (CTMara[transIDX].m[row][col] < 0 ? "" : " ") + String.format("%.2f", CTMara[transIDX].m[row][col]); if (col != 3) {tmp2str += ", ";} result += tmp2str;}    	tmpString = "]";result += tmpString + "      [";
-	    	for (int col = 0; col < 4; ++col){   tmp2str = (CTMara[invTransIDX].m[row][col] < 0 ? "" : " ")+String.format("%.2f", CTMara[invTransIDX].m[row][col]); if (col != 3) {tmp2str += ", ";} result += tmp2str;}    	tmpString = "]";  if (row != 3) { tmpString += "\n"; }
+	    	for (int col = 0; col < 4; ++col){   tmp2str = (CTMara[transIDX].getValByIdx(row, col) < 0 ? "" : " ") + String.format("%.2f", CTMara[transIDX].getValByIdx(row, col)); if (col != 3) {tmp2str += ", ";} result += tmp2str;}    	tmpString = "]";result += tmpString + "      [";
+	    	for (int col = 0; col < 4; ++col){   tmp2str = (CTMara[invTransIDX].getValByIdx(row, col) < 0 ? "" : " ")+String.format("%.2f", CTMara[invTransIDX].getValByIdx(row, col)); if (col != 3) {tmp2str += ", ";} result += tmp2str;}    	tmpString = "]";  if (row != 3) { tmpString += "\n"; }
 	    	result += tmpString;
 	    }
 	    if(_bbox != null){		result += "\nBounding box :\n" + _bbox.toString();}

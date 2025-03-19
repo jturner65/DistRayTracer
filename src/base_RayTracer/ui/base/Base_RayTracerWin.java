@@ -563,7 +563,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected final void drawCustMenuObjs(float animTimeMod) {
 		ri.pushMatState();
 		//all sub menu drawing within push mat call
-		ri.translate(5,custMenuOffset+txtHeightOff);
+		ri.translate(5,custMenuOffset+getTextHeightOffset());
 		//draw any custom menu stuff here
 		drawCustMenuObjs_Indiv();
 		
@@ -677,14 +677,10 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	}
 	
 	@Override
-	protected final void setCamera_Indiv(float[] camVals){		
-		//, float rx, float ry, float dz are now member variables of every window
-		ri.setCameraWinVals(camVals);//(camVals[0],camVals[1],camVals[2],camVals[3],camVals[4],camVals[5],camVals[6],camVals[7],camVals[8]);      
-		// puts origin of all drawn objects at screen center and moves forward/away by dz
-		ri.translate(camVals[0],camVals[1],(float)dz); 
-	    setCamOrient();	
+	protected void setCamera_Indiv(float[] camVals) {
+		// No custom camera handling
+		setCameraBase(camVals);
 	}//setCameraIndiv
-
 
 	
 	//return strings for directory names and for individual file names that describe the data being saved.  used for screenshots, and potentially other file saving
@@ -772,11 +768,11 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	///////////////////////
 	// Unused keyboard interaction stuff
 	@Override
-	protected final void endShiftKeyI() {}
+	protected final void endShiftKey_Indiv() {}
 	@Override
-	protected final void endAltKeyI() {}
+	protected final void endAltKey_Indiv() {}
 	@Override
-	protected final void endCntlKeyI() {}
+	protected final void endCntlKey_Indiv() {}
 	@Override
 	protected final void setCustMenuBtnLabels() {}	
 	
