@@ -175,7 +175,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected abstract void initMe_Indiv();
 	
 	@Override
-	public final int initAllPrivBtns(ArrayList<Object[]> tmpBtnNamesArray) {
+	public final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray) {
 		//give true labels, false labels and specify the indexes of the booleans that should be tied to UI buttons
 		tmpBtnNamesArray.add(new Object[]{"Shooting Rays", "Shoot Rays", shootRaysIDX});  
 		tmpBtnNamesArray.add(new Object[]{"Norms are Flipped", "Flip Normals", flipNormsIDX}); 
