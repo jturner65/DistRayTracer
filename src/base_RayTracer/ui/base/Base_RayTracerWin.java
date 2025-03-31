@@ -175,7 +175,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected abstract void initMe_Indiv();
 	
 	@Override
-	public final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray) {
+	protected final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray) {
 		//give true labels, false labels and specify the indexes of the booleans that should be tied to UI buttons
 		tmpBtnNamesArray.add(new Object[]{"Shooting Rays", "Shoot Rays", shootRaysIDX});  
 		tmpBtnNamesArray.add(new Object[]{"Norms are Flipped", "Flip Normals", flipNormsIDX}); 
@@ -206,9 +206,9 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected final void setupGUIObjsAras(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals){		
 		//set up list of files to load
 		tmpListObjVals.put(gIDX_CurrSceneCLI, gIDX_CurrSceneCLIList);
-		tmpUIObjArray.put(gIDX_SceneCols, uiObjInitAra_Int(new double[]{100,AppMgr.getDisplayWidth(),10}, 1.0*initSceneCols, "Image Width (pxls)", new boolean[]{true}));
-		tmpUIObjArray.put(gIDX_SceneRows, uiObjInitAra_Int(new double[]{100,AppMgr.getDisplayHeight(),10}, 1.0*initSceneRows, "Image Height (pxls)", new boolean[]{true}));
-		tmpUIObjArray.put(gIDX_CurrSceneCLI, uiObjInitAra_List(new double[]{0,tmpListObjVals.get(gIDX_CurrSceneCLI).length-1,1}, 0.0, "Scene to Display", new boolean[]{true}));
+		tmpUIObjArray.put(gIDX_SceneCols, uiObjInitAra_Int(new double[]{100,AppMgr.getDisplayWidth(),10}, 1.0*initSceneCols, "Image Width (pxls)"));
+		tmpUIObjArray.put(gIDX_SceneRows, uiObjInitAra_Int(new double[]{100,AppMgr.getDisplayHeight(),10}, 1.0*initSceneRows, "Image Height (pxls)"));
+		tmpUIObjArray.put(gIDX_CurrSceneCLI, uiObjInitAra_List(new double[]{0,tmpListObjVals.get(gIDX_CurrSceneCLI).length-1,1}, 0.0, "Scene to Display"));
 		sceneCols = initSceneCols;
 		sceneRows = initSceneRows;
 		currSceneName = gIDX_CurrSceneCLIList[0];
@@ -372,7 +372,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	 * @return
 	 */
 	protected final String getCurrSceneName() {
-		return gIDX_CurrSceneCLIList[((Base_RayTracerUIUpdater)uiUpdateData).getCurrSceneCliFileIDX() % gIDX_CurrSceneCLIList.length];
+		return gIDX_CurrSceneCLIList[((Base_RayTracerUIUpdater)getUIDataUpdater()).getCurrSceneCliFileIDX() % gIDX_CurrSceneCLIList.length];
 	}
 	
 	/**

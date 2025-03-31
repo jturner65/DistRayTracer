@@ -8,12 +8,9 @@ import java.util.*;
  *
  */
 public enum GeomObjType {
-	None(0),BBox(1),RenderedBBox(2),Instance(3),
-	PointLight(4),SpotLight(5),	DiskLight(6),
-	Triangle(7),Quad(8),Plane(9),
-	Sphere(10),	Cylinder(11),Hollow_Cylinder(12),Torus(13),
-	AccelFlatList(14),AccelBVH(15);	
-	private int value; 
+	None,BBox,RenderedBBox,Instance,PointLight,SpotLight,DiskLight,
+	Triangle,Quad,Plane,Sphere,Cylinder,Hollow_Cylinder,Torus,
+	AccelFlatList,AccelBVH;	
 
 	private final String[] _typeExplanation = new String[] {
 			"Non-object or unknown",
@@ -40,14 +37,14 @@ public enum GeomObjType {
 			"Flat List","BVH"};
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, GeomObjType> map = new HashMap<Integer, GeomObjType>(); 
-	static { for (GeomObjType enumV : GeomObjType.values()) { map.put(enumV.value, enumV);}}
-	private GeomObjType(int _val){value = _val;} 
-	public int getVal(){return value;}
-	public static GeomObjType getVal(int idx){return map.get(idx);}
+	static { for (GeomObjType enumV : GeomObjType.values()) { map.put(enumV.ordinal(), enumV);}}
+	public int getVal(){return ordinal();}
+	public static GeomObjType getEnumByIndex(int idx){return map.get(idx);}
+	public static GeomObjType getEnumFromValue(int idx){return map.get(idx);}
 	public static int getNumVals(){return map.size();}						//get # of values in enum
-	public String getName() {return _typeName[value];}
+	public String getName() {return _typeName[ordinal()];}
 	@Override
-    public String toString() { return ""+_typeExplanation[value] + "("+value+")"; }	
-    public String toStrBrf() { return ""+_typeExplanation[value]; }	
+    public String toString() { return ""+_typeExplanation[ordinal()] + "("+ordinal()+")"; }	
+    public String toStrBrf() { return ""+_typeExplanation[ordinal()]; }	
 
 }//enum GeomObjType

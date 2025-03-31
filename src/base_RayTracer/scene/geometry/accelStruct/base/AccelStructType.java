@@ -9,13 +9,12 @@ import java.util.Map;
  *
  */
 public enum AccelStructType {	
-	Unknown(0),
-	FlatList(1),
-	BVHTree(2),
-	BVHLeftChild(3),
-	BVHRightChild(4),
-	BVHLeafList(5);
-	private int value;
+	Unknown,
+	FlatList,
+	BVHTree,
+	BVHLeftChild,
+	BVHRightChild,
+	BVHLeafList;
 	
 	private final String[] _typeExplanation = new String[] {
 		"Unknown Acceleration Structure",
@@ -31,14 +30,14 @@ public enum AccelStructType {
 	
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, AccelStructType> map = new HashMap<Integer, AccelStructType>(); 
-	static { for (AccelStructType enumV : AccelStructType.values()) { map.put(enumV.value, enumV);}}
-	private AccelStructType(int _val){value = _val;} 
-	public int getVal(){return value;}
-	public static AccelStructType getVal(int idx){return map.get(idx);}
+	static { for (AccelStructType enumV : AccelStructType.values()) { map.put(enumV.ordinal(), enumV);}}
+	public int getVal(){return ordinal();}
+	public static AccelStructType getEnumByIndex(int idx){return map.get(idx);}
+	public static AccelStructType getEnumFromValue(int idx){return map.get(idx);}
 	public static int getNumVals(){return map.size();}						//get # of values in enum
-	public String getName() {return _typeName[value];}
+	public String getName() {return _typeName[ordinal()];}
 	@Override
-    public String toString() { return ""+_typeExplanation[value] + "("+value+")"; }	
-    public String toStrBrf() { return ""+_typeExplanation[value]; }	
+    public String toString() { return ""+_typeExplanation[ordinal()] + "("+ordinal()+")"; }	
+    public String toStrBrf() { return ""+_typeExplanation[ordinal()]; }	
 	
 }//enum AccelStructType
