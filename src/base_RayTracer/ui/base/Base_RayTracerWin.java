@@ -42,7 +42,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	//////////////////////////////////////
 	//private child-class flags - window specific
 	protected static final int 
-		//debug is idx 1
+		//debug is idx 0
 		shootRaysIDX		 		= 1,					//shoot rays
 		flipNormsIDX				= 2,
 		initPerlinNoiseIDX			= 3;
@@ -177,8 +177,8 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	@Override
 	protected final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray) {
 		//give true labels, false labels and specify the indexes of the booleans that should be tied to UI buttons
-		tmpBtnNamesArray.add(new Object[]{"Shooting Rays", "Shoot Rays", shootRaysIDX});  
-		tmpBtnNamesArray.add(new Object[]{"Norms are Flipped", "Flip Normals", flipNormsIDX}); 
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Shooting Rays", "Shoot Rays"}, shootRaysIDX));  
+		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Norms are Flipped", "Flip Normals"}, flipNormsIDX)); 
 		return initAllPrivBtns_Indiv(tmpBtnNamesArray);
 	}//initAllPrivBtns	
 	
