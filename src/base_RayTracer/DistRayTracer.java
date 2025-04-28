@@ -115,7 +115,8 @@ public class DistRayTracer extends GUI_AppManager {
 		setBaseFlagToShow_saveAnim(true); 
 		setBaseFlagToShow_runSim(false);
 		setBaseFlagToShow_singleStep(false);
-		setBaseFlagToShow_showRtSideMenu(true);
+		setBaseFlagToShow_showRtSideMenu(true);	
+		setBaseFlagToShow_showStatusBar(true);
 		setBaseFlagToShow_showDrawableCanvas(false);
 	}
 
@@ -178,6 +179,7 @@ public class DistRayTracer extends GUI_AppManager {
 	@Override
 	protected void initOnce_Indiv() {
 		setWinVisFlag(disp2DRayTracerIDX, true);
+		setShowStatusBar(true);
 	}
 	@Override
 	protected void initProgram_Indiv() {}	
