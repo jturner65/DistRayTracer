@@ -169,7 +169,7 @@ public class DistRayTracer extends GUI_AppManager {
 				new int[][] {new int[]{20,30,10,255}, new int[]{255,255,255,255},
 					new int[]{180,180,180,255}, new int[]{100,100,100,255},
 					new int[]{0,0,0,200},new int[]{255,255,255,255}});
-		dispWinFrames[wIdx] = new RayTracer2DWin(ri, this, wIdx);
+		setDispWindow(wIdx, new RayTracer2DWin(ri, this, wIdx));
 
 		//specify windows that cannot be shown simultaneously here
 		initXORWins(
@@ -198,7 +198,7 @@ public class DistRayTracer extends GUI_AppManager {
 	protected void handleKeyPress(char key, int keyCode) {
 		switch(key) {
 		case ' ' : {toggleSimIsRunning(); break;}							//run sim
-		case 'f' : {dispWinFrames[curFocusWin].setInitCamView();break;}					//reset camera
+		case 'f' : {getCurFocusDispWindow().setInitCamView();break;}					//reset camera
 		case 'a' :
 		case 'A' : {toggleSaveAnim();break;}						//start/stop saving every frame for making into animation
 		case 's' :

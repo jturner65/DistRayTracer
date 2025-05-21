@@ -26,7 +26,7 @@ public enum SceneType {
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, SceneType> map = new HashMap<Integer, SceneType>(); 
 	static { for (SceneType enumV : SceneType.values()) { map.put(enumV.ordinal(), enumV);}}
-	public int getVal(){return ordinal();}
+	public int getOrdinal() {return ordinal();}
 	public static SceneType getEnumByIndex(int idx){return map.get(idx);}
 	public static SceneType getEnumFromValue(int idx){return map.get(idx);}
 	public static int getNumVals(){return map.size();}						//get # of values in enum

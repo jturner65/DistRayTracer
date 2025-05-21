@@ -38,7 +38,7 @@ public enum GeomObjType {
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, GeomObjType> map = new HashMap<Integer, GeomObjType>(); 
 	static { for (GeomObjType enumV : GeomObjType.values()) { map.put(enumV.ordinal(), enumV);}}
-	public int getVal(){return ordinal();}
+	public int getOrdinal() {return ordinal();}
 	public static GeomObjType getEnumByIndex(int idx){return map.get(idx);}
 	public static GeomObjType getEnumFromValue(int idx){return map.get(idx);}
 	public static int getNumVals(){return map.size();}						//get # of values in enum

@@ -31,7 +31,7 @@ public enum AccelStructType {
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, AccelStructType> map = new HashMap<Integer, AccelStructType>(); 
 	static { for (AccelStructType enumV : AccelStructType.values()) { map.put(enumV.ordinal(), enumV);}}
-	public int getVal(){return ordinal();}
+	public int getOrdinal() {return ordinal();}
 	public static AccelStructType getEnumByIndex(int idx){return map.get(idx);}
 	public static AccelStructType getEnumFromValue(int idx){return map.get(idx);}
 	public static int getNumVals(){return map.size();}						//get # of values in enum
