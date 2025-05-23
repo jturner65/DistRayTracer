@@ -157,9 +157,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	}
 	
 	@Override
-	protected final void initMe() {
-		//set offset to use for custom menu objects
-		custMenuOffset = uiClkCoords[3];		
+	protected final void initMe() {	
 		//instance-specific init
 		initMe_Indiv();
 		//Initialize permuation table
@@ -562,11 +560,8 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	@Override
 	protected final void drawCustMenuObjs(float animTimeMod) {
 		ri.pushMatState();
-		//all sub menu drawing within push mat call
-		ri.translate(5,custMenuOffset+getTextHeightOffset());
 		//draw any custom menu stuff here
-		drawCustMenuObjs_Indiv();
-		
+		drawCustMenuObjs_Indiv();		
 		ri.popMatState();		
 	}//drawCustMenuObjs
 	protected abstract void drawCustMenuObjs_Indiv();
