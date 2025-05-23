@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import base_RayTracer.ui.RayTracer2DWin;
 import base_UI_Objects.GUI_AppManager;
-import base_UI_Objects.windowUI.sidebar.SidebarMenu;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
 /**
@@ -240,17 +239,6 @@ public class DistRayTracer extends GUI_AppManager {
 			default :  return menuClickDim;
 			}
 	}//getUIRectVals
-	@Override
-	public void handleShowWin(int btn, int val, boolean callFlags){//display specific windows - multi-select/ always on if sel
-		if(!callFlags){//called from setflags - only sets button state in UI to avoid infinite loop
-			setMenuBtnState(SidebarMenu.btnShowWinIdx,btn, val);
-		} else {//called from clicking on buttons in UI
-			//val is btn state before transition 
-			boolean bVal = (val == 1?  false : true);
-			//each entry in this array should correspond to a clickable window
-			setWinVisFlag(winFlagsXOR[btn], bVal);
-		}
-	}//handleShowWin
 	
 	/**
 	 * any instancing-class-specific colors - colorVal set to be higher than IRenderInterface.gui_OffWhite
