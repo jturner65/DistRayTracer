@@ -25,7 +25,7 @@ import base_RayTracer.scene.shaders.myObjShader;
 import base_RayTracer.scene.shaders.mySimpleReflObjShdr;
 import base_RayTracer.ui.base.Base_RayTracerWin;
 import base_RayTracer.utils.myRTColor;
-import base_UI_Objects.*;
+import base_UI_Objects.renderer.ProcessingRenderer;
 import base_Utils_Objects.io.messaging.*;
 import processing.core.PConstants;
 import processing.core.PImage;
@@ -793,7 +793,7 @@ public abstract class Base_Scene {
 		xStart = ((maxDim - sceneCols)/2.0) - rayXOffset;			//compensate for # rows or # cols not being max - make sure projection is centered in non-square images
 		fishMult = 2.0/maxDim; 
 			
-		rndrdImg = ((my_procApplet) pa).createImage(sceneCols,sceneRows,PConstants.RGB);
+		rndrdImg = ((ProcessingRenderer) pa).createImage(sceneCols,sceneRows,PConstants.RGB);
 		//Set scene-specific values for when 
 		setImageSize_Indiv();
 	}
@@ -1321,8 +1321,8 @@ public abstract class Base_Scene {
 			rndrdImg.updatePixels();
 			if(isRendered()){	finishImage();	}
 		}
-		((my_procApplet) pa).imageMode(PConstants.CORNER);
-		((my_procApplet) pa).image(rndrdImg,0,0);	
+		((ProcessingRenderer) pa).imageMode(PConstants.CORNER);
+		((ProcessingRenderer) pa).image(rndrdImg,0,0);	
 	}
 	
 	protected abstract void renderScene(int stepIter, boolean skipPxl, int[] pixels);

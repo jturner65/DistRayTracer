@@ -15,7 +15,7 @@ import base_RayTracer.scene.geometry.sceneObjects.planar.*;
 import base_RayTracer.scene.geometry.sceneObjects.planar.base.Base_PlanarObject;
 import base_RayTracer.scene.materials.textures.imageTextures.myImageTexture;
 import base_RayTracer.ui.base.Base_RayTracerWin;
-import base_UI_Objects.my_procApplet;
+import base_UI_Objects.renderer.ProcessingRenderer;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 
 
@@ -230,7 +230,7 @@ public class myRTFileReader {
 					if (tokenAra[1].equals("texture")) {
 						//load texture to be used for background
 						String textureName = tokenAra[2];
-						scene.currBkgTexture = ((my_procApplet)pa).loadImage(textureDir+textureName);
+						scene.currBkgTexture = ((ProcessingRenderer)pa).loadImage(textureDir+textureName);
 						scene.setHasGlblTxtrdBkg(true);
 						win.getMsgObj().dispInfoMessage("myRTFileReader", "parseStringArray", "Background texture loaded");
 						//build "skydome" - textured sphere encircling scene
@@ -368,13 +368,13 @@ public class myRTFileReader {
 			    	if (side.toLowerCase().equals("bottom")){
 			    		textureName = tokenAra[2]; 
 			    		//if specified as bottom, assume bottom texture
-			    		scene.currTextureBottom = ((my_procApplet)pa).loadImage(textureDir+textureName);
+			    		scene.currTextureBottom = ((ProcessingRenderer)pa).loadImage(textureDir+textureName);
 			    		scene.setHasGlblTxtrdBtm(true);
 			    		win.getMsgObj().dispInfoMessage("myRTFileReader", "parseStringArray", "Bottom surface texture loaded");      }
 			    	else {
 			    		//if not specified then assume texture goes on top and texture name is specified in first token
 			    		if (side.toLowerCase().equals("top")){  		  	textureName = tokenAra[2];   }
-			    		scene.currTextureTop = ((my_procApplet)pa).loadImage(textureDir+textureName);
+			    		scene.currTextureTop = ((ProcessingRenderer)pa).loadImage(textureDir+textureName);
 			    		scene.setHasGlblTxtrdTop(true);
 			    		win.getMsgObj().dispInfoMessage("myRTFileReader", "parseStringArray", "Top surface texture loaded");
 			    	} 

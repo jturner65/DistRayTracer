@@ -100,7 +100,6 @@ public class ObjInstance extends Base_Geometry{
 	//set to override base object's shader
 	public void useInstShader(){	setUseShader(true); shdr = scene.getCurShader();}//new myObjShader(scene);	}	
 	//this is probably not the best way to do this - each instance needs to have its own UV coords.  TODOgetTransformedPt(isctPt, CTMara[invIDX]);
-	//public double[] findTxtrCoords(myVector isctPt, PImage myTexture, double time){ return obj.findTxtrCoords(isctPt, myTexture, time);}
 	@Override
 	public double[] findTxtrCoords(myPoint isctPt, int textureH, int textureW, double time){ 
 		return obj.findTxtrCoords(CTMara[invIDX].transformPoint(isctPt), textureH, textureW, time);}

@@ -43,7 +43,6 @@ public class mySimpleReflObjShdr extends myObjShader{
 		//myVector V = new myVector(refrEyeDir);
 		myVector N = new myVector(objRayN);		//need to copy normal incase direction flips
 		double cosTheta1 = refrEyeDir._dot(N), cosTheta2 = 0;//calculated below
-		//thetaIncident = scene.pa._angleBetween(refrEyeDir, N);
 		thetaIncident = refrEyeDir.angleWithMe(N);
 		//the only way the ray doting the normal would be less than 0 is if the incident ray was coming from behind the normal (pointing in the same direction
 		//then the "eye"dir would form an angle greater than 90 degrees.  the only way this can happen is from inside the object
@@ -57,7 +56,6 @@ public class mySimpleReflObjShdr extends myObjShader{
 		}
 		//recalculate in case N switched directions
 		cosTheta1 = refrEyeDir._dot(N);
-		//thetaIncident = scene.pa._angleBetween(refrEyeDir, N);
 		thetaIncident = refrEyeDir.angleWithMe(N);
 		reflDir = compReflDir(refrEyeDir, N);
 		
