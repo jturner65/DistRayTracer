@@ -25,8 +25,8 @@ public class RayTracer2DWin extends Base_RayTracerWin {
 	public RayTracer2DWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx) {
 		super(_p, _AppMgr, _winIdx);
 		super.initThisWin(false);
-		setNewUIValue(gIDX_SceneCols, 600);setUIWinVals(gIDX_SceneCols);
-		setNewUIValue(gIDX_SceneRows, 600);setUIWinVals(gIDX_SceneRows);
+		uiMgr.setNewUIValue(gIDX_SceneCols, 600);uiMgr.setUIWinVals(gIDX_SceneCols);
+		uiMgr.setNewUIValue(gIDX_SceneRows, 600);uiMgr.setUIWinVals(gIDX_SceneRows);
 		startRayTrace();
 	}//ctor
 			

@@ -175,8 +175,8 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	@Override
 	protected final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray) {
 		//give true labels, false labels and specify the indexes of the booleans that should be tied to UI buttons
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Shooting Rays", "Shoot Rays"}, shootRaysIDX));  
-		tmpBtnNamesArray.add(uiObjInitAra_Btn(new String[] {"Norms are Flipped", "Flip Normals"}, flipNormsIDX)); 
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Shooting Rays", "Shoot Rays"}, shootRaysIDX));  
+		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Norms are Flipped", "Flip Normals"}, flipNormsIDX)); 
 		return initAllPrivBtns_Indiv(tmpBtnNamesArray);
 	}//initAllPrivBtns	
 	
@@ -204,9 +204,9 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected final void setupGUIObjsAras(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals){		
 		//set up list of files to load
 		tmpListObjVals.put(gIDX_CurrSceneCLI, gIDX_CurrSceneCLIList);
-		tmpUIObjArray.put(gIDX_SceneCols, uiObjInitAra_Int(new double[]{100,AppMgr.getDisplayWidth(),10}, 1.0*initSceneCols, "Image Width (pxls)"));
-		tmpUIObjArray.put(gIDX_SceneRows, uiObjInitAra_Int(new double[]{100,AppMgr.getDisplayHeight(),10}, 1.0*initSceneRows, "Image Height (pxls)"));
-		tmpUIObjArray.put(gIDX_CurrSceneCLI, uiObjInitAra_List(new double[]{0,tmpListObjVals.get(gIDX_CurrSceneCLI).length-1,1}, 0.0, "Scene to Display"));
+		tmpUIObjArray.put(gIDX_SceneCols, uiMgr.uiObjInitAra_Int(new double[]{100,AppMgr.getDisplayWidth(),10}, 1.0*initSceneCols, "Image Width (pxls)"));
+		tmpUIObjArray.put(gIDX_SceneRows, uiMgr.uiObjInitAra_Int(new double[]{100,AppMgr.getDisplayHeight(),10}, 1.0*initSceneRows, "Image Height (pxls)"));
+		tmpUIObjArray.put(gIDX_CurrSceneCLI, uiMgr.uiObjInitAra_List(new double[]{0,tmpListObjVals.get(gIDX_CurrSceneCLI).length-1,1}, 0.0, "Scene to Display"));
 		sceneCols = initSceneCols;
 		sceneRows = initSceneRows;
 		currSceneName = gIDX_CurrSceneCLIList[0];
@@ -436,7 +436,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	private void initPermTable() { 
 		for(int i=0; i<255; ++i) {perm[i] = pValAra[i];}
 		for(int i=256; i<512; ++i) {perm[i] = pValAra[i & 255];}
-		privFlags.setFlag(initPerlinNoiseIDX, true);
+		uiMgr.setPrivFlag(initPerlinNoiseIDX, true);
 	}
 
 	/**
