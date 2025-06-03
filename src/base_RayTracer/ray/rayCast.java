@@ -1,10 +1,9 @@
 package base_RayTracer.ray;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.geometry.base.Base_Geometry;
 import base_RayTracer.utils.myRTColor;
+import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.matrixObjs.doubles.myMatrix;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
@@ -81,7 +80,7 @@ public class rayCast{
 	 * @return
 	 */
 	public double getTime() {
-		if(time==-1) { time = ThreadLocalRandom.current().nextDouble(0,1.0);}
+		if(time==-1) { time = MyMathUtils.randomDouble(0,1.0);}
 		return time;
 	}
 	

@@ -239,23 +239,9 @@ public class DistRayTracer extends GUI_AppManager {
 			default :  return menuClickDim;
 			}
 	}//getUIRectVals
-	
-	/**
-	 * any instancing-class-specific colors - colorVal set to be higher than IRenderInterface.gui_OffWhite
-	 * @param colorVal
-	 * @param alpha
-	 * @return
-	 */
-	@Override
-	public int[] getClr_Custom(int colorVal, int alpha) {
-		// TODO Auto-generated method stub
-		return new int[] {255,255,255,alpha};
-	}
 
 	@Override
-	public String[] getMouseOverSelBtnLabels() {
-		return new String[0];
-	}
+	public String[] getMouseOverSelBtnLabels() {		return new String[0];	}
 
 	@Override
 	public void setSmoothing() {		ri.setSmoothing(0);		}
