@@ -1,10 +1,10 @@
 package base_RayTracer.scene.materials.textures.noiseTextures;
 
+import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.shaders.myObjShader;
 import base_RayTracer.utils.myRTColor;
-import base_Math_Objects.vectorObjs.doubles.*;
 
 /**
  * wood texture that looks like imag in proj 4 - based on only single iteration of noise

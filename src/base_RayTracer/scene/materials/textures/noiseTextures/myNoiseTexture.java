@@ -1,13 +1,13 @@
 package base_RayTracer.scene.materials.textures.noiseTextures;
 
+import base_Math_Objects.MyMathUtils;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.materials.textures.base.Base_TextureHandler;
 import base_RayTracer.scene.shaders.myObjShader;
 import base_RayTracer.utils.myRTColor;
-import base_Math_Objects.MyMathUtils;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 
 //noise-based texture
 public class myNoiseTexture extends Base_TextureHandler{

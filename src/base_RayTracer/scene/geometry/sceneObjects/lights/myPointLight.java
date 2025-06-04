@@ -1,11 +1,11 @@
 package base_RayTracer.scene.geometry.sceneObjects.lights;
 
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.ray.rayCast;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.geometry.base.GeomObjType;
 import base_RayTracer.scene.geometry.sceneObjects.lights.base.Base_Light;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 
 public class myPointLight extends Base_Light{
  

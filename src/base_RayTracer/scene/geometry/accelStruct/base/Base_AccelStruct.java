@@ -2,15 +2,15 @@ package base_RayTracer.scene.geometry.accelStruct.base;
 
 import java.util.List;
 
+import base_Math_Objects.matrixObjs.doubles.myMatrix;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.ray.rayCast;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.geometry.base.Base_Geometry;
 import base_RayTracer.scene.geometry.base.GeomObjType;
 import base_RayTracer.utils.myRTColor;
-import base_Math_Objects.matrixObjs.doubles.myMatrix;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * abstract base class for myGeomBase objects that are directly involved in holding other objects for acceleration purposes

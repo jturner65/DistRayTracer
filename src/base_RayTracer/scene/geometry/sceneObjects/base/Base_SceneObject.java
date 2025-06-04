@@ -1,4 +1,6 @@
 package base_RayTracer.scene.geometry.sceneObjects.base;
+import base_Math_Objects.matrixObjs.doubles.myMatrix;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.ray.rayCast;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.base.Base_Scene;
@@ -6,8 +8,6 @@ import base_RayTracer.scene.geometry.base.Base_Geometry;
 import base_RayTracer.scene.geometry.base.GeomObjType;
 import base_RayTracer.scene.shaders.myObjShader;
 import base_RayTracer.utils.myRTColor;
-import base_Math_Objects.matrixObjs.doubles.myMatrix;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 
 public abstract class Base_SceneObject extends Base_Geometry{	
 	

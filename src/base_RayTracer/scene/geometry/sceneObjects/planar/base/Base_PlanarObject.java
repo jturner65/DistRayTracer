@@ -1,13 +1,13 @@
 package base_RayTracer.scene.geometry.sceneObjects.planar.base;
 
+import base_Math_Objects.matrixObjs.doubles.myMatrix;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.ray.rayCast;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.geometry.base.GeomObjType;
 import base_RayTracer.scene.geometry.sceneObjects.base.Base_SceneObject;
-import base_Math_Objects.matrixObjs.doubles.myMatrix;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 
 public abstract class Base_PlanarObject extends Base_SceneObject{
 	//Normal structure and inverted normal structure, precalculated

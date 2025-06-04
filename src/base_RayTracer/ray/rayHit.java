@@ -1,10 +1,10 @@
 package base_RayTracer.ray;
 
-import base_RayTracer.scene.geometry.base.Base_Geometry;
-import base_RayTracer.scene.shaders.myObjShader;
 import base_Math_Objects.matrixObjs.doubles.myMatrix;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
+import base_RayTracer.scene.geometry.base.Base_Geometry;
+import base_RayTracer.scene.shaders.myObjShader;
 
 /**
  * this class stores information regarding a ray hit - the owning ray, the t value, the object hit, the hit location, the object normal at that hit, the object's transformation matrices array

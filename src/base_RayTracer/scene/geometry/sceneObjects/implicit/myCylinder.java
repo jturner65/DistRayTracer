@@ -1,13 +1,13 @@
 package base_RayTracer.scene.geometry.sceneObjects.implicit;
 
+import base_Math_Objects.matrixObjs.doubles.myMatrix;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.ray.rayCast;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.geometry.base.GeomObjType;
 import base_RayTracer.scene.geometry.sceneObjects.implicit.base.Base_Cylinder;
-import base_Math_Objects.matrixObjs.doubles.myMatrix;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * Class defining a capped cylinder via implicit equation

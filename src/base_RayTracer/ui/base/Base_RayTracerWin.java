@@ -1,17 +1,18 @@
 package base_RayTracer.ui.base;
 
 import java.io.File;
-import java.nio.file.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import base_Render_Interface.IRenderInterface;
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.utils.myRTColor;
 import base_RayTracer.utils.myRTFileReader;
+import base_Render_Interface.IRenderInterface;
 import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
@@ -173,10 +174,11 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	protected abstract void initMe_Indiv();
 	
 	@Override
-	protected final int initAllUIButtons(ArrayList<Object[]> tmpBtnNamesArray) {
+	protected final int initAllUIButtons(TreeMap<Integer, Object[]> tmpBtnNamesArray) {
 		//give true labels, false labels and specify the indexes of the booleans that should be tied to UI buttons
-		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Shooting Rays", "Shoot Rays"}, shootRaysIDX));  
-		tmpBtnNamesArray.add(uiMgr.uiObjInitAra_Btn(new String[] {"Norms are Flipped", "Flip Normals"}, flipNormsIDX)); 
+		int idx=0;
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Shooting Rays", "Shoot Rays"}, shootRaysIDX));  
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Norms are Flipped", "Flip Normals"}, flipNormsIDX)); 
 		return initAllPrivBtns_Indiv(tmpBtnNamesArray);
 	}//initAllPrivBtns	
 	
@@ -185,7 +187,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	 * @param tmpBtnNamesArray
 	 * @return # of buttons total
 	 */
-	protected abstract int initAllPrivBtns_Indiv(ArrayList<Object[]> tmpBtnNamesArray);
+	protected abstract int initAllPrivBtns_Indiv(TreeMap<Integer, Object[]> tmpBtnNamesArray);
 	
 	/**
 	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin

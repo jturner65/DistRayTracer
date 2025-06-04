@@ -1,10 +1,10 @@
 package base_RayTracer.scene.geometry.sceneObjects.implicit.base;
 
+import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_RayTracer.ray.rayCast;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.geometry.base.GeomObjType;
 import base_RayTracer.scene.geometry.sceneObjects.base.Base_SceneObject;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
 
 //scene object described by implicit equations
 public abstract class Base_ImplicitObject extends Base_SceneObject {

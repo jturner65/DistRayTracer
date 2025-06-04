@@ -1,6 +1,11 @@
 package base_RayTracer.scene.shaders;
 
 
+import java.util.PriorityQueue;
+
+import base_Math_Objects.MyMathUtils;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.ray.rayCast;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.base.Base_Scene;
@@ -11,12 +16,6 @@ import base_RayTracer.scene.materials.textures.base.Base_TextureHandler;
 import base_RayTracer.scene.materials.textures.imageTextures.myImageTexture;
 import base_RayTracer.scene.photonMapping.myPhoton;
 import base_RayTracer.utils.myRTColor;
-
-import java.util.PriorityQueue;
-
-import base_Math_Objects.MyMathUtils;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * 

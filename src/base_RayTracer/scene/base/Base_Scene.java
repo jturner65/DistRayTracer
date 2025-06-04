@@ -1,23 +1,38 @@
 package base_RayTracer.scene.base;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadLocalRandom;
 
-import base_Render_Interface.IRenderInterface;
+import base_Math_Objects.MyMathUtils;
+import base_Math_Objects.matrixObjs.doubles.myMatStack;
+import base_Math_Objects.matrixObjs.doubles.myMatrix;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.ray.rayCast;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.geometry.ObjInstance;
-import base_RayTracer.scene.geometry.accelStruct.*;
+import base_RayTracer.scene.geometry.accelStruct.BVH_AccelStruct;
+import base_RayTracer.scene.geometry.accelStruct.GeoList_AccelStruct;
 import base_RayTracer.scene.geometry.accelStruct.base.Base_AccelStruct;
 import base_RayTracer.scene.geometry.base.Base_Geometry;
 import base_RayTracer.scene.geometry.sceneObjects.base.Base_SceneObject;
-import base_RayTracer.scene.geometry.sceneObjects.implicit.*;
-import base_RayTracer.scene.geometry.sceneObjects.lights.*;
+import base_RayTracer.scene.geometry.sceneObjects.implicit.mySphere;
+import base_RayTracer.scene.geometry.sceneObjects.lights.myDiskLight;
+import base_RayTracer.scene.geometry.sceneObjects.lights.myPointLight;
+import base_RayTracer.scene.geometry.sceneObjects.lights.mySpotLight;
 import base_RayTracer.scene.geometry.sceneObjects.lights.base.Base_Light;
 import base_RayTracer.scene.materials.textures.base.Base_TextureHandler;
 import base_RayTracer.scene.materials.textures.imageTextures.myImageTexture;
 import base_RayTracer.scene.materials.textures.miscTextures.myNoneTexture;
-import base_RayTracer.scene.materials.textures.noiseTextures.*;
+import base_RayTracer.scene.materials.textures.noiseTextures.myBaseWoodTexture;
+import base_RayTracer.scene.materials.textures.noiseTextures.myMarbleTexture;
+import base_RayTracer.scene.materials.textures.noiseTextures.myNoiseTexture;
+import base_RayTracer.scene.materials.textures.noiseTextures.myWoodTexture;
 import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.myCellularTexture;
 import base_RayTracer.scene.photonMapping.Photon_KDTree;
 import base_RayTracer.scene.photonMapping.myPhoton;
@@ -25,15 +40,12 @@ import base_RayTracer.scene.shaders.myObjShader;
 import base_RayTracer.scene.shaders.mySimpleReflObjShdr;
 import base_RayTracer.ui.base.Base_RayTracerWin;
 import base_RayTracer.utils.myRTColor;
+import base_Render_Interface.IRenderInterface;
 import base_UI_Objects.renderer.ProcessingRenderer;
-import base_Utils_Objects.io.messaging.*;
+import base_Utils_Objects.io.messaging.MessageObject;
+import base_Utils_Objects.io.messaging.MsgCodes;
 import processing.core.PConstants;
 import processing.core.PImage;
-import base_Math_Objects.MyMathUtils;
-import base_Math_Objects.matrixObjs.doubles.myMatStack;
-import base_Math_Objects.matrixObjs.doubles.myMatrix;
-import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * class to hold all objects within a desired scene

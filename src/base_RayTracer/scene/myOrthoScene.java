@@ -2,13 +2,13 @@ package base_RayTracer.scene;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import base_Render_Interface.IRenderInterface;
+import base_Math_Objects.MyMathUtils;
+import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.ray.rayCast;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.ui.base.Base_RayTracerWin;
 import base_RayTracer.utils.myRTColor;
-import base_Math_Objects.MyMathUtils;
-import base_Math_Objects.vectorObjs.doubles.myVector;
+import base_Render_Interface.IRenderInterface;
 
 public class myOrthoScene extends Base_Scene{
 	//width and height of view - for ortho projection. for perspective will be screen width and height

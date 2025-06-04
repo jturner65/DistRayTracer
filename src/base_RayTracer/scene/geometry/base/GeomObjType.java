@@ -1,6 +1,7 @@
 package base_RayTracer.scene.geometry.base;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Enum used to specify type of myGeomBase object

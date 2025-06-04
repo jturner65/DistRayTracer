@@ -1,13 +1,12 @@
 package base_RayTracer.ui;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.TreeMap;
 
-import base_Render_Interface.IRenderInterface;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.ui.base.Base_RayTracerUIUpdater;
 import base_RayTracer.ui.base.Base_RayTracerWin;
+import base_Render_Interface.IRenderInterface;
 import base_UI_Objects.GUI_AppManager;
 
 /**
@@ -35,7 +34,7 @@ public class RayTracer2DWin extends Base_RayTracerWin {
 	
 	//initialize all UI buttons here
 	@Override
-	public int initAllPrivBtns_Indiv(ArrayList<Object[]> tmpBtnNamesArray) {
+	public int initAllPrivBtns_Indiv(TreeMap<Integer, Object[]> tmpBtnNamesArray) {
 		return numPrivFlags;	
 	}
 

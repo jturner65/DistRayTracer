@@ -3,17 +3,26 @@ package base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures;
 import java.util.Random;
 import java.util.concurrent.ConcurrentSkipListMap;
 
+import base_Math_Objects.MyMathUtils;
+import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_RayTracer.ray.rayHit;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.materials.textures.noiseTextures.myNoiseTexture;
-import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.distanceFuncs.*;
+import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.distanceFuncs.EuclidDist;
+import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.distanceFuncs.ManhatDist;
 import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.distanceFuncs.base.Base_DistFunc;
-import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.regionOfInterest.*;
+import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.regionOfInterest.altExpROI;
+import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.regionOfInterest.altInvLinROI;
+import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.regionOfInterest.altLinROI;
+import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.regionOfInterest.altLogROI;
+import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.regionOfInterest.invExpROI;
+import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.regionOfInterest.invLogROI;
+import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.regionOfInterest.linExpROI;
+import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.regionOfInterest.linLogROI;
+import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.regionOfInterest.nearestROI;
 import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.regionOfInterest.base.Base_ROI;
 import base_RayTracer.scene.shaders.myObjShader;
 import base_RayTracer.utils.myRTColor;
-import base_Math_Objects.MyMathUtils; 
-import base_Math_Objects.vectorObjs.doubles.myPoint;
 
 public class myCellularTexture extends myNoiseTexture{
 	private double avgNumPerCell, mortarThresh;	

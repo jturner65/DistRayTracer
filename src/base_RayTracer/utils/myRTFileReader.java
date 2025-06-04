@@ -1,20 +1,27 @@
 package base_RayTracer.utils;
 
 import java.io.File;
-import java.util.*;
+import java.util.TreeMap;
 
-import base_Render_Interface.IRenderInterface;
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myVector;
-import base_RayTracer.scene.*;
+import base_RayTracer.scene.myFOVScene;
+import base_RayTracer.scene.myFishEyeScene;
+import base_RayTracer.scene.myOrthoScene;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.scene.geometry.sceneObjects.myRndrdBox;
 import base_RayTracer.scene.geometry.sceneObjects.base.Base_SceneObject;
-import base_RayTracer.scene.geometry.sceneObjects.implicit.*;
-import base_RayTracer.scene.geometry.sceneObjects.planar.*;
+import base_RayTracer.scene.geometry.sceneObjects.implicit.myCylinder;
+import base_RayTracer.scene.geometry.sceneObjects.implicit.myHollow_Cylinder;
+import base_RayTracer.scene.geometry.sceneObjects.implicit.myMovingSphere;
+import base_RayTracer.scene.geometry.sceneObjects.implicit.mySphere;
+import base_RayTracer.scene.geometry.sceneObjects.planar.myPlane;
+import base_RayTracer.scene.geometry.sceneObjects.planar.myQuad;
+import base_RayTracer.scene.geometry.sceneObjects.planar.myTriangle;
 import base_RayTracer.scene.geometry.sceneObjects.planar.base.Base_PlanarObject;
 import base_RayTracer.scene.materials.textures.imageTextures.myImageTexture;
 import base_RayTracer.ui.base.Base_RayTracerWin;
+import base_Render_Interface.IRenderInterface;
 import base_UI_Objects.renderer.ProcessingRenderer;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 
