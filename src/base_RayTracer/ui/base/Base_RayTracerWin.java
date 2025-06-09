@@ -68,14 +68,14 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 		sqrt66 = (float) (Math.sqrt(6.0f)/6.0f), 
 		sqrt612 = .5f*sqrt66;
 	
-	public String[] gIDX_NoiseTxtrCLIFileList = new String[] {
+	public String[] gIDX_NoiseTxtrCLIFileList = new String[]{
 			"noiseTxtr_st01.cli","noiseTxtr_st02.cli","noiseTxtr_st03.cli","noiseTxtr_st04.cli","noiseTxtr_st05.cli",
 			"noiseTxtr_st06.cli","noiseTxtr_st07.cli","noiseTxtr_st08.cli","noiseTxtr_st09.cli",
 			"noiseTxtr_t01.cli","noiseTxtr_t02.cli","noiseTxtr_t03.cli","noiseTxtr_t04.cli","noiseTxtr_t05.cli","noiseTxtr_t05Alt.cli",
 			"noiseTxtr_t06_2.cli","noiseTxtr_t06.cli","noiseTxtr_t06Alt.cli","noiseTxtr_t07.cli","noiseTxtr_t08.cli","noiseTxtr_t09.cli"
 	};
 
-	public String[] gIDX_CurrSceneCLIList = new String[] {
+	public String[] gIDX_CurrSceneCLIList = new String[]{
 			"trTrans.cli","old_t07.cli","plnts3BunInstances.cli","test_2triTxtures.cli","test_QuadTxtures.cli","test_Plane.cli",
 			"t01.cli","t02.cli","t03.cli","t04.cli","t05.cli","t06.cli","t07.cli","t08.cli","t09.cli","t10.cli","t11.cli",
 			"noiseTxtr_st01.cli","noiseTxtr_st02.cli","noiseTxtr_st03.cli","noiseTxtr_st04.cli","noiseTxtr_st05.cli",
@@ -206,8 +206,8 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 		currSceneName = gIDX_CurrSceneCLIList[0];
 		
 		int idx=0;
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Shooting Rays", "Shoot Rays"}, shootRaysIDX));  
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[] {"Norms are Flipped", "Flip Normals"}, flipNormsIDX)); 
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Shooting Rays", "Shoot Rays"}, shootRaysIDX));  
+		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Norms are Flipped", "Flip Normals"}, flipNormsIDX)); 
 
 		setupGUIObjsAras_Indiv(tmpUIObjArray, tmpListObjVals, tmpBtnNamesArray.size(), tmpBtnNamesArray);
 	}//setupGUIObjsAras

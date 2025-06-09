@@ -16,7 +16,7 @@ public enum AccelStructType {
 	BVHRightChild,
 	BVHLeafList;
 	
-	private final String[] _typeExplanation = new String[] {
+	private final String[] _typeExplanation = new String[]{
 		"Unknown Acceleration Structure",
 		"Flat List of Objects",
 		"Bounding Volume Hierarchy Tree",
@@ -24,7 +24,7 @@ public enum AccelStructType {
 		"Bounding Volume Hierarchy Right Child",
 		"Bounding Volume Hierarchy Leaf List"			
 	};
-	private static final String[] _typeName = new String[] {
+	private static final String[] _typeName = new String[]{
 		"Unknown","Flat Object List","BVH Tree","BVH Left Child","BVH Right Child","BVH Leaf List"		
 	};
 	

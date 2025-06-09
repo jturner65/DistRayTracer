@@ -14,12 +14,12 @@ public enum SceneType {
 	DepthofFieldScene,
 	Orthographic;
 	
-	private final String[] _typeExplanation = new String[] {
+	private final String[] _typeExplanation = new String[]{
 			"Fisheye Lense Scene",
 			"Field of View Scene",
 			"FOV Scene with Depth Of Field",
 			"Orthographic Scene"};
-	private static final String[] _typeName = new String[] {
+	private static final String[] _typeName = new String[]{
 		"Fisheye","FOV","FOV_Depth","Ortho"	
 	};
 	
