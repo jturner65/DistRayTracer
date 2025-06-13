@@ -17,6 +17,7 @@ import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
 import base_UI_Objects.windowUI.uiData.UIDataUpdater;
+import base_UI_Objects.windowUI.uiObjs.base.GUIObj_Params;
 import base_Utils_Objects.io.messaging.MsgCodes;
 
 /**
@@ -25,7 +26,6 @@ import base_Utils_Objects.io.messaging.MsgCodes;
  *
  */
 public abstract class Base_RayTracerWin extends Base_DispWindow {
-	
 	/////////////
 	// ui objects 
 	////////////
@@ -75,7 +75,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 			"noiseTxtr_t06_2.cli","noiseTxtr_t06.cli","noiseTxtr_t06Alt.cli","noiseTxtr_t07.cli","noiseTxtr_t08.cli","noiseTxtr_t09.cli"
 	};
 
-	public String[] gIDX_CurrSceneCLIList = new String[]{
+	public String[] currSceneCLIList = new String[]{
 			"trTrans.cli","old_t07.cli","plnts3BunInstances.cli","test_2triTxtures.cli","test_QuadTxtures.cli","test_Plane.cli",
 			"t01.cli","t02.cli","t03.cli","t04.cli","t05.cli","t06.cli","t07.cli","t08.cli","t09.cli","t10.cli","t11.cli",
 			"noiseTxtr_st01.cli","noiseTxtr_st02.cli","noiseTxtr_st03.cli","noiseTxtr_st04.cli","noiseTxtr_st05.cli",
@@ -175,66 +175,82 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	
 	/**
 	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
-	 * @param tmpUIObjArray : map of object data, keyed by UI object idx, with array values being :                    
-	 *           the first element double array of min/max/mod values                                                   
-	 *           the 2nd element is starting value                                                                      
-	 *           the 3rd elem is label for object                                                                       
-	 *           the 4th element is object type (GUIObj_Type enum)
-	 *           the 5th element is boolean array of : (unspecified values default to false)
+	 * @param tmpUIObjMap : map of GUIObj_Params, keyed by unique string, with values describing the UI object
+	 * 			- The object IDX                   
+	 *          - A double array of min/max/mod values                                                   
+	 *          - The starting value                                                                      
+	 *          - The label for object                                                                       
+	 *          - The object type (GUIObj_Type enum)
+	 *          - A boolean array of behavior configuration values : (unspecified values default to false)
 	 *           	idx 0: value is sent to owning window,  
 	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
 	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
-	 *           the 6th element is a boolean array of format values :(unspecified values default to false)
+	 *          - A boolean array of renderer format values :(unspecified values default to false)
 	 *           	idx 0: whether multi-line(stacked) or not                                                  
 	 *              idx 1: if true, build prefix ornament                                                      
 	 *              idx 2: if true and prefix ornament is built, make it the same color as the text fill color.
-	 * @param tmpListObjVals : map of string arrays, keyed by UI object idx, with array values being each element in the list
-	 * @param tmpBtnNamesArray : map of Object arrays to be built containing all button definitions, keyed by sequential value == objId
-	 * 				the first element is true label
-	 * 				the second element is false label
-	 * 				the third element is integer flag idx 
 	 */
 	@Override
-	protected final void setupGUIObjsAras(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals, TreeMap<Integer,Object[]> tmpBtnNamesArray){		
+	protected final void setupGUIObjsAras(TreeMap<String, GUIObj_Params> tmpUIObjMap){		//keyed by object idx (uiXXXIDX), entries are lists of values to use for list select ui objects			
+		//keyed by object idx (uiXXXIDX), entries are lists of values to use for list select ui objects	
 		//set up list of files to load
-		tmpListObjVals.put(gIDX_CurrSceneCLI, gIDX_CurrSceneCLIList);
-		tmpUIObjArray.put(gIDX_SceneCols, uiMgr.uiObjInitAra_Int(new double[]{100,AppMgr.getDisplayWidth(),10}, 1.0*initSceneCols, "Image Width (pxls)"));
-		tmpUIObjArray.put(gIDX_SceneRows, uiMgr.uiObjInitAra_Int(new double[]{100,AppMgr.getDisplayHeight(),10}, 1.0*initSceneRows, "Image Height (pxls)"));
-		tmpUIObjArray.put(gIDX_CurrSceneCLI, uiMgr.uiObjInitAra_List(new double[]{0,tmpListObjVals.get(gIDX_CurrSceneCLI).length-1,1}, 0.0, "Scene to Display"));
+		tmpUIObjMap.put("gIDX_SceneCols", uiMgr.uiObjInitAra_Int(gIDX_SceneCols, new double[]{100,AppMgr.getDisplayWidth(),10}, 1.0*initSceneCols, "Image Width (pxls)"));
+		tmpUIObjMap.put("gIDX_SceneRows", uiMgr.uiObjInitAra_Int(gIDX_SceneRows, new double[]{100,AppMgr.getDisplayHeight(),10}, 1.0*initSceneRows, "Image Height (pxls)"));
+		tmpUIObjMap.put("gIDX_CurrSceneCLI", uiMgr.uiObjInitAra_List(gIDX_CurrSceneCLI, 0.0, "Scene to Display", currSceneCLIList));
 		sceneCols = initSceneCols;
 		sceneRows = initSceneRows;
-		currSceneName = gIDX_CurrSceneCLIList[0];
-		
-		int idx=0;
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Shooting Rays", "Shoot Rays"}, shootRaysIDX));  
-		tmpBtnNamesArray.put(idx++, uiMgr.uiObjInitAra_Btn(new String[]{"Norms are Flipped", "Flip Normals"}, flipNormsIDX)); 
-
-		setupGUIObjsAras_Indiv(tmpUIObjArray, tmpListObjVals, tmpBtnNamesArray.size(), tmpBtnNamesArray);
+		currSceneName = currSceneCLIList[0];
+		setupGUIObjsAras_Indiv(tmpUIObjMap);
 	}//setupGUIObjsAras
 	
 	/**
+	 * Build UI button objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
+	 * @param firstIdx : the first index to use in the map/as the objIdx
+	 * @param tmpUIBtnObjMap : map of GUIObj_Params to be built containing all button definitions, keyed by sequential value == objId
+	 * 				the first element is the object index
+	 * 				the second element is true label
+	 * 				the third element is false label
+	 * 				the final element is integer flag idx 
+	 */
+	@Override
+	protected final void setupGUIBtnAras(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBtnObjMap) {		
+		//add an entry for each button, in the order they are wished to be displayed
+		int idx=firstIdx;		
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Shooting Rays", "Shoot Rays", shootRaysIDX));  
+		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Norms are Flipped", "Flip Normals", flipNormsIDX)); 
+
+		setupGUIBtnAras_Indiv(tmpUIBtnObjMap);
+	}//setupGUIBtnAras
+		
+	/**
 	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
-	 * @param tmpUIObjArray : map of object data, keyed by UI object idx, with array values being :                    
-	 *           the first element double array of min/max/mod values                                                   
-	 *           the 2nd element is starting value                                                                      
-	 *           the 3rd elem is label for object                                                                       
-	 *           the 4th element is object type (GUIObj_Type enum)
-	 *           the 5th element is boolean array of : (unspecified values default to false)
+	 * @param tmpUIObjMap : map of GUIObj_Params, keyed by unique string, with values describing the UI object
+	 * 			- The object IDX                   
+	 *          - A double array of min/max/mod values                                                   
+	 *          - The starting value                                                                      
+	 *          - The label for object                                                                       
+	 *          - The object type (GUIObj_Type enum)
+	 *          - A boolean array of behavior configuration values : (unspecified values default to false)
 	 *           	idx 0: value is sent to owning window,  
 	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
 	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
-	 *           the 6th element is a boolean array of format values :(unspecified values default to false)
+	 *          - A boolean array of renderer format values :(unspecified values default to false)
 	 *           	idx 0: whether multi-line(stacked) or not                                                  
 	 *              idx 1: if true, build prefix ornament                                                      
 	 *              idx 2: if true and prefix ornament is built, make it the same color as the text fill color.
-	 * @param tmpListObjVals : map of string arrays, keyed by UI object idx, with array values being each element in the list
-	 * @param firstBtnIDX : first index to place button objects in @tmpBtnNamesArray 
-	 * @param tmpBtnNamesArray : map of Object arrays to be built containing all button definitions, keyed by sequential value == objId
-	 * 				the first element is true label
-	 * 				the second element is false label
-	 * 				the third element is integer flag idx 
 	 */
-	protected abstract void setupGUIObjsAras_Indiv(TreeMap<Integer, Object[]> tmpUIObjArray, TreeMap<Integer, String[]> tmpListObjVals, int firstBtnIDX, TreeMap<Integer, Object[]> tmpBtnNamesArray);
+	protected abstract void setupGUIObjsAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIObjMap);
+
+	/**
+	 * Build all UI buttons to be shown in left side bar menu for this window. This is for instancing windows to add to button region
+	 * USE tmpUIBtnObjMap.size() for start idx
+	 * @param tmpUIBtnObjMap : map of GUIObj_Params to be built containing all button definitions, keyed by sequential value == objId
+	 * 				the first element is the object index
+	 * 				the second element is true label
+	 * 				the third element is false label
+	 * 				the final element is integer flag idx 
+	 */
+	protected abstract void setupGUIBtnAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIBtnObjMap);
 
 	
 	/**
@@ -320,7 +336,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 				sceneRows = ival;
 				break;}	
 			case gIDX_CurrSceneCLI 	:{
-				currSceneName = gIDX_CurrSceneCLIList[ival % gIDX_CurrSceneCLIList.length];
+				currSceneName = currSceneCLIList[ival % currSceneCLIList.length];
 				break;}		
 			default : {
 				//Check Instance-class ints, if any
@@ -378,7 +394,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	 * @return
 	 */
 	protected final String getCurrSceneName() {
-		return gIDX_CurrSceneCLIList[((Base_RayTracerUIUpdater)getUIDataUpdater()).getCurrSceneCliFileIDX() % gIDX_CurrSceneCLIList.length];
+		return currSceneCLIList[((Base_RayTracerUIUpdater)getUIDataUpdater()).getCurrSceneCliFileIDX() % currSceneCLIList.length];
 	}
 	
 	/**
@@ -705,7 +721,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 //		for(String s : vals) {			msgObj.dispInfoMessage(className,"hndlFileLoad",s);}	
 //		String fileName = file.getName();
 //		TreeMap<String, String> tmpAra = new TreeMap<String, String>();//, valsToIDX = new TreeMap<String, String>();
-//		for(String s : gIDX_CurrSceneCLIList) {tmpAra.put(s, "");	}
+//		for(String s : currSceneCLIList) {tmpAra.put(s, "");	}
 //		tmpAra.put(fileName, "");
 //		int idx = 0;
 //		int fileIDX = 0;
@@ -713,9 +729,9 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 //			if (s.equals(fileName)) {fileIDX=idx; break;}
 //			++idx;
 //		}		
-//		gIDX_CurrSceneCLIList = tmpAra.keySet().toArray(new String[0]);		
+//		currSceneCLIList = tmpAra.keySet().toArray(new String[0]);		
 //		curSceneCliFileIDX = fileIDX;
-//		this.guiObjs_Numeric[gIDX_CurrSceneCLI].setNewMax(gIDX_CurrSceneCLIList.length-1);
+//		this.guiObjs_Numeric[gIDX_CurrSceneCLI].setNewMax(currSceneCLIList.length-1);
 		
 	}//hndlFileLoad
 	public abstract void hndlFileLoad_Indiv(File file, String[] vals, int[] stIdx);
