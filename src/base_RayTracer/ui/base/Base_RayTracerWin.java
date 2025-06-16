@@ -206,21 +206,21 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 	/**
 	 * Build UI button objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
 	 * @param firstIdx : the first index to use in the map/as the objIdx
-	 * @param tmpUIBtnObjMap : map of GUIObj_Params to be built containing all button definitions, keyed by sequential value == objId
+	 * @param tmpUIBoolSwitchObjMap : map of GUIObj_Params to be built containing all flag-backed boolean switch definitions, keyed by sequential value == objId
 	 * 				the first element is the object index
 	 * 				the second element is true label
 	 * 				the third element is false label
 	 * 				the final element is integer flag idx 
 	 */
 	@Override
-	protected final void setupGUIBtnAras(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBtnObjMap) {		
+	protected final void setupGUIBoolSwitchAras(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap) {		
 		//add an entry for each button, in the order they are wished to be displayed
 		int idx=firstIdx;		
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Shooting Rays", "Shoot Rays", shootRaysIDX));  
-		tmpUIBtnObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Btn(idx++, "button_"+idx, "Norms are Flipped", "Flip Normals", flipNormsIDX)); 
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Shooting Rays", "Shoot Rays", shootRaysIDX));  
+		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx++, "button_"+idx, "Norms are Flipped", "Flip Normals", flipNormsIDX)); 
 
-		setupGUIBtnAras_Indiv(tmpUIBtnObjMap);
-	}//setupGUIBtnAras
+		setupGUIBoolSwitchAras_Indiv(tmpUIBoolSwitchObjMap);
+	}//setupGUIBoolSwitchAras
 		
 	/**
 	 * Build all UI objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
@@ -243,14 +243,14 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 
 	/**
 	 * Build all UI buttons to be shown in left side bar menu for this window. This is for instancing windows to add to button region
-	 * USE tmpUIBtnObjMap.size() for start idx
-	 * @param tmpUIBtnObjMap : map of GUIObj_Params to be built containing all button definitions, keyed by sequential value == objId
+	 * USE tmpUIBoolSwitchObjMap.size() for start idx
+	 * @param tmpUIBoolSwitchObjMap : map of GUIObj_Params to be built containing all flag-backed boolean switch definitions, keyed by sequential value == objId
 	 * 				the first element is the object index
 	 * 				the second element is true label
 	 * 				the third element is false label
 	 * 				the final element is integer flag idx 
 	 */
-	protected abstract void setupGUIBtnAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIBtnObjMap);
+	protected abstract void setupGUIBoolSwitchAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap);
 
 	
 	/**
@@ -279,7 +279,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
 			case shootRaysIDX : {//build new image
 				if (val) {
 					startRayTrace();
-					addPrivBtnToClear(idx);
+					addPrivSwitchToClear(idx);
 				}
 				break;}
 			case flipNormsIDX : {
