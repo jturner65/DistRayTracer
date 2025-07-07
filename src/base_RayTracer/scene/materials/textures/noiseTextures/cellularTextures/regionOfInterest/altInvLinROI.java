@@ -8,19 +8,19 @@ import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.re
  *
  */
 public class altInvLinROI extends Base_ROI{
-	public altInvLinROI(int _numPts) {super(_numPts);	}
-	@Override
-	public double calcROI(Double[] orderedKeys) {		
-		int i =0, modVal = -1;
-		double dist = 0;
-		for(Double dToPt : orderedKeys){
-			dist += 1.0/(modVal * dToPt);
-			++i;
-			if (i>=numPtsDist){break;}
-			modVal *= -1;
-		}
-		return fixDist(dist);
-	}//calcROI
-	@Override
-	public String toString(){return "Alternating Linear sum/diff ROI Calc";}	
+    public altInvLinROI(int _numPts) {super(_numPts);    }
+    @Override
+    public double calcROI(Double[] orderedKeys) {        
+        int i =0, modVal = -1;
+        double dist = 0;
+        for(Double dToPt : orderedKeys){
+            dist += 1.0/(modVal * dToPt);
+            ++i;
+            if (i>=numPtsDist){break;}
+            modVal *= -1;
+        }
+        return fixDist(dist);
+    }//calcROI
+    @Override
+    public String toString(){return "Alternating Linear sum/diff ROI Calc";}    
 }//altLinROI

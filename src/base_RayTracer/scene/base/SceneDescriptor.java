@@ -8,17 +8,17 @@ package base_RayTracer.scene.base;
  *
  */
 public class SceneDescriptor {
-	/**
-	 * Type of scene being built
-	 */
-	private SceneType sceneType;
-	
-		
-	public SceneDescriptor() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	public void setSceneType(SceneType _sceneType) {sceneType = _sceneType;}
-	public SceneType getSceneType() {return sceneType;}
+    /**
+     * Type of scene being built
+     */
+    private SceneType sceneType;
+    
+        
+    public SceneDescriptor() {
+        // TODO Auto-generated constructor stub
+    }
+    
+    public void setSceneType(SceneType _sceneType) {sceneType = _sceneType;}
+    public SceneType getSceneType() {return sceneType;}
 
 }//class SceneDescriptor

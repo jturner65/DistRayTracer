@@ -8,29 +8,29 @@ import base_Math_Objects.vectorObjs.doubles.myPoint;
  *
  */
 public class myRTColor extends myPoint {
-	public myRTColor(double _r, double _g, double _b) {	super( gate(_r), gate(_g), gate(_b) );	}//alpha = Math.min(1,_alpha);	}
-	public myRTColor(myRTColor _clr){super(_clr);}
-	
-	public myRTColor(int _color){super(((_color >> 16) & 0xFF)/255.0,((_color >> 8) & 0xFF)/255.0,(_color & 0xFF)/255.0);}
-	public myRTColor(){super(0,0,0);}
-	public myRTColor(myRTColor a, double t, myRTColor b) {super(a,t,b);}
-	//interpolate this color with passed color
-	public myRTColor interpColor(double t, myRTColor B){				return new myRTColor(this, t, B);}
-	public void set(myRTColor _c){										super.set(gate( _c.x), gate(_c.y), gate(_c.z));}// alpha  = Math.min(1,_c.alpha);}
-	public void set(double _r, double _g, double _b){					super.set(gate( _r), gate(_g), gate(_b)); }//alpha  = 1.0;}
-	
-	/**
-	 * Gate value
-	 * @param val
-	 * @return
-	 */
-	private static double gate(double val) {
-		if (1.0 < val) {return 1.0;	}
-		if (0.0 > val) {return 0.0;	}
-		return val;
-	}
-	
-	public int getInt(){int retVal = ((int)(255) << 24) + ((int)(x * 255) << 16) + ((int)(y * 255) << 8) + (int)(z * 255);return retVal;}
-	public String toString(){	String res = "Color : r : "+ x+" | g : "+y+" | b : "+z;return res;	}
-	public String toStrBrf(){	String res = "Color (RGB) : " + super.toStrBrf();return res;	}
+    public myRTColor(double _r, double _g, double _b) {    super( gate(_r), gate(_g), gate(_b) );    }//alpha = Math.min(1,_alpha);    }
+    public myRTColor(myRTColor _clr){super(_clr);}
+    
+    public myRTColor(int _color){super(((_color >> 16) & 0xFF)/255.0,((_color >> 8) & 0xFF)/255.0,(_color & 0xFF)/255.0);}
+    public myRTColor(){super(0,0,0);}
+    public myRTColor(myRTColor a, double t, myRTColor b) {super(a,t,b);}
+    //interpolate this color with passed color
+    public myRTColor interpColor(double t, myRTColor B){                return new myRTColor(this, t, B);}
+    public void set(myRTColor _c){                                        super.set(gate( _c.x), gate(_c.y), gate(_c.z));}// alpha  = Math.min(1,_c.alpha);}
+    public void set(double _r, double _g, double _b){                    super.set(gate( _r), gate(_g), gate(_b)); }//alpha  = 1.0;}
+    
+    /**
+     * Gate value
+     * @param val
+     * @return
+     */
+    private static double gate(double val) {
+        if (1.0 < val) {return 1.0;    }
+        if (0.0 > val) {return 0.0;    }
+        return val;
+    }
+    
+    public int getInt(){int retVal = ((int)(255) << 24) + ((int)(x * 255) << 16) + ((int)(y * 255) << 8) + (int)(z * 255);return retVal;}
+    public String toString(){    String res = "Color : r : "+ x+" | g : "+y+" | b : "+z;return res;    }
+    public String toStrBrf(){    String res = "Color (RGB) : " + super.toStrBrf();return res;    }
 }//mycolor class

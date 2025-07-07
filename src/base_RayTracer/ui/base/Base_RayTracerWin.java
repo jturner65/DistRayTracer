@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
 import base_Math_Objects.MyMathUtils;
@@ -26,811 +27,815 @@ import base_Utils_Objects.io.messaging.MsgCodes;
  *
  */
 public abstract class Base_RayTracerWin extends Base_DispWindow {
-	/////////////
-	// ui objects 
-	////////////
-	//////////////////////////////////
-	//initial values of UI variables
-	//ints
-	protected final int initSceneCols = 300;
-	protected final int initSceneRows = 300;
+    /////////////
+    // ui objects 
+    ////////////
+    //////////////////////////////////
+    //initial values of UI variables
+    //ints
+    protected final int initSceneCols = 300;
+    protected final int initSceneRows = 300;
 
-	//local versions of UI values
-	protected int sceneCols;
-	protected int sceneRows;
-	protected String currSceneName = "", currDispSceneName = "";
-	
-	//////////////////////////////////////
-	//private child-class flags - window specific
-	protected static final int 
-		//debug is idx 0
-		shootRaysIDX		 		= 1,					//shoot rays
-		flipNormsIDX				= 2,
-		initPerlinNoiseIDX			= 3;
-	protected static final int numPrivFlags = 4;
-	
-	//idxs - need one per object
-	public final static int
-		gIDX_SceneCols		= 0,
-		gIDX_SceneRows		= 1,
-		gIDX_CurrSceneCLI	= 2;
-	public final int numGUIObjs = 3;	
-	
-	/**
-	 * Used by scene for refinement
-	 */
-	public static final int[] pow2 = new int[]{1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768};
+    //local versions of UI values
+    protected int sceneCols;
+    protected int sceneRows;
+    protected String currSceneName = "", currDispSceneName = "";
+    
+    //////////////////////////////////////
+    //private child-class flags - window specific
+    protected static final int 
+        //debug is idx 0
+        shootRaysIDX                 = 1,                    //shoot rays
+        flipNormsIDX                = 2,
+        initPerlinNoiseIDX            = 3;
+    protected static final int numPrivFlags = 4;
+    
+    //idxs - need one per object
+    public final static int
+        gIDX_SceneCols        = 0,
+        gIDX_SceneRows        = 1,
+        gIDX_CurrSceneCLI    = 2;
+    public final int numGUIObjs = 3;    
+    
+    /**
+     * Used by scene for refinement
+     */
+    public static final int[] pow2 = new int[]{1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768};
 
-	/**
-	 * Used for Sierpinski calc
-	 */
-	public static final float 
-		sqrt66 = (float) (Math.sqrt(6.0f)/6.0f), 
-		sqrt612 = .5f*sqrt66;
-	
-	public String[] gIDX_NoiseTxtrCLIFileList = new String[]{
-			"noiseTxtr_st01.cli","noiseTxtr_st02.cli","noiseTxtr_st03.cli","noiseTxtr_st04.cli","noiseTxtr_st05.cli",
-			"noiseTxtr_st06.cli","noiseTxtr_st07.cli","noiseTxtr_st08.cli","noiseTxtr_st09.cli",
-			"noiseTxtr_t01.cli","noiseTxtr_t02.cli","noiseTxtr_t03.cli","noiseTxtr_t04.cli","noiseTxtr_t05.cli","noiseTxtr_t05Alt.cli",
-			"noiseTxtr_t06_2.cli","noiseTxtr_t06.cli","noiseTxtr_t06Alt.cli","noiseTxtr_t07.cli","noiseTxtr_t08.cli","noiseTxtr_t09.cli"
-	};
+    /**
+     * Used for Sierpinski calc
+     */
+    public static final float 
+        sqrt66 = (float) (Math.sqrt(6.0f)/6.0f), 
+        sqrt612 = .5f*sqrt66;
+    
+    public String[] gIDX_NoiseTxtrCLIFileList = new String[]{
+            "noiseTxtr_st01.cli","noiseTxtr_st02.cli","noiseTxtr_st03.cli","noiseTxtr_st04.cli","noiseTxtr_st05.cli",
+            "noiseTxtr_st06.cli","noiseTxtr_st07.cli","noiseTxtr_st08.cli","noiseTxtr_st09.cli",
+            "noiseTxtr_t01.cli","noiseTxtr_t02.cli","noiseTxtr_t03.cli","noiseTxtr_t04.cli","noiseTxtr_t05.cli","noiseTxtr_t05Alt.cli",
+            "noiseTxtr_t06_2.cli","noiseTxtr_t06.cli","noiseTxtr_t06Alt.cli","noiseTxtr_t07.cli","noiseTxtr_t08.cli","noiseTxtr_t09.cli"
+    };
 
-	public String[] currSceneCLIList = new String[]{
-			"trTrans.cli","old_t07.cli","plnts3BunInstances.cli","test_2triTxtures.cli","test_QuadTxtures.cli","test_Plane.cli",
-			"t01.cli","t02.cli","t03.cli","t04.cli","t05.cli","t06.cli","t07.cli","t08.cli","t09.cli","t10.cli","t11.cli",
-			"noiseTxtr_st01.cli","noiseTxtr_st02.cli","noiseTxtr_st03.cli","noiseTxtr_st04.cli","noiseTxtr_st05.cli",
-			"noiseTxtr_st06.cli","noiseTxtr_st07.cli","noiseTxtr_st08.cli","noiseTxtr_st09.cli",
-			"noiseTxtr_t01.cli","noiseTxtr_t02.cli","noiseTxtr_t03.cli","noiseTxtr_t04.cli","noiseTxtr_t05.cli","noiseTxtr_t05Alt.cli",
-			"noiseTxtr_t06_2.cli","noiseTxtr_t06.cli","noiseTxtr_t06Alt.cli","noiseTxtr_t07.cli","noiseTxtr_t08.cli","noiseTxtr_t09.cli",
-			"plnts3ColsBunnies.cli","p3_t02_sierp.cli","fish_t10.cli",
-			"p2_t01.cli", "p2_t02.cli", "p2_t03.cli", "p2_t04.cli", "p2_t05.cli","p2_t06.cli", "p2_t07.cli", "p2_t08.cli", "p2_t09.cli", 			
-			"old_t07c.cli","earthAA1.cli","earthAA2.cli","earthAA3.cli","c2clear.cli","c3shinyBall.cli","c4InSphere.cli","c6.cli", "c6Fish.cli","c2torus.cli",
-			"old_t02.cli","old_t03.cli","old_t04.cli","old_t05.cli","old_t06.cli","old_t07.cli","old_t08.cli","old_t09.cli","old_t10.cli",
-			"planets.cli","planets2.cli","planets3.cli","planets3columns.cli","planets3Ortho.cli",
-			"c0.cli", "c1.cli","c2.cli","c3.cli","c4.cli","c5.cli","c5Fish.cli","c6.cli","c6Fish.cli",
-			"p3_t01.cli","p3_t02.cli","p3_t03.cli","p3_t04.cli","p3_t05.cli","p3_t06.cli","p3_t07.cli","p3_t11_sierp.cli", 	
-			"cylinder1.cli", "tr0.cli","c0Square.cli",  "c1octo.cli",		
-			"old_t0rotate.cli","old_t03a.cli", "old_t04a.cli", "old_t05a.cli", "old_t06a.cli", 	"old_t07a.cli",		
-	};
+    public String[] currSceneCLIList = new String[]{
+            "trTrans.cli","old_t07.cli","plnts3BunInstances.cli","test_2triTxtures.cli","test_QuadTxtures.cli","test_Plane.cli",
+            "t01.cli","t02.cli","t03.cli","t04.cli","t05.cli","t06.cli","t07.cli","t08.cli","t09.cli","t10.cli","t11.cli",
+            "noiseTxtr_st01.cli","noiseTxtr_st02.cli","noiseTxtr_st03.cli","noiseTxtr_st04.cli","noiseTxtr_st05.cli",
+            "noiseTxtr_st06.cli","noiseTxtr_st07.cli","noiseTxtr_st08.cli","noiseTxtr_st09.cli",
+            "noiseTxtr_t01.cli","noiseTxtr_t02.cli","noiseTxtr_t03.cli","noiseTxtr_t04.cli","noiseTxtr_t05.cli","noiseTxtr_t05Alt.cli",
+            "noiseTxtr_t06_2.cli","noiseTxtr_t06.cli","noiseTxtr_t06Alt.cli","noiseTxtr_t07.cli","noiseTxtr_t08.cli","noiseTxtr_t09.cli",
+            "plnts3ColsBunnies.cli","p3_t02_sierp.cli","fish_t10.cli",
+            "p2_t01.cli", "p2_t02.cli", "p2_t03.cli", "p2_t04.cli", "p2_t05.cli","p2_t06.cli", "p2_t07.cli", "p2_t08.cli", "p2_t09.cli",             
+            "old_t07c.cli","earthAA1.cli","earthAA2.cli","earthAA3.cli","c2clear.cli","c3shinyBall.cli","c4InSphere.cli","c6.cli", "c6Fish.cli","c2torus.cli",
+            "old_t02.cli","old_t03.cli","old_t04.cli","old_t05.cli","old_t06.cli","old_t07.cli","old_t08.cli","old_t09.cli","old_t10.cli",
+            "planets.cli","planets2.cli","planets3.cli","planets3columns.cli","planets3Ortho.cli",
+            "c0.cli", "c1.cli","c2.cli","c3.cli","c4.cli","c5.cli","c5Fish.cli","c6.cli","c6Fish.cli",
+            "p3_t01.cli","p3_t02.cli","p3_t03.cli","p3_t04.cli","p3_t05.cli","p3_t06.cli","p3_t07.cli","p3_t11_sierp.cli",     
+            "cylinder1.cli", "tr0.cli","c0Square.cli",  "c1octo.cli",        
+            "old_t0rotate.cli","old_t03a.cli", "old_t04a.cli", "old_t05a.cli", "old_t06a.cli",     "old_t07a.cli",        
+    };
 
-	/**
-	 * Ray Tracer cli file reader/interpreter
-	 */
-	protected myRTFileReader rdr; 		
-	/**
-	 * Directory where cli files can be found. TODO break up into individual subdirs based on scene topic
-	 */
-	protected final String cliFilesDir;
-	/**
-	 * holds references to all loaded scenes
-	 */
-	public TreeMap<String, Base_Scene> loadedScenes;
-	
-	//////////////////////////////////
-	// Perlin noise variables
-	/**
-	 * 3D gradient locations - midpoints of edges between neighboring cells
-	 */
-	private int grad3[][] = {{1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},{1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},{0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1}};
-	private final int pValAra[] = {151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,
-		140,36,103,30,69,142,8,99,37,240,21,10,23,190,6,148,247,120,234,75,0,26,197,62,94,
-		252,219,203,117,35,11,32,57,177,33,88,237,149,56,87,174,20,125,136,171,168,68,175,
-		74,165,71,134,139,48,27,166,77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,
-		41,55,46,245,40,244,102,143,54,65,25,63,161,1,216,80,73,209,76,132,187,208,89,18,169,
-		200,196,135,130,116,188,159,86,164,100,109,198,173,186,3,64,52,217,226,250,124,123,
-		5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,189,28,42,223,183,
-		170,213,119,248,152,2,44,154,163,70,221,153,101,155,167,43,172,9,129,22,39,253,19,
-		98,108,110,79,113,224,232,178,185,112,104,218,246,97,228,251,34,242,193,238,210,144,
-		12,191,179,162,241, 81,51,145,235,249,14,239,107,49,192,214,31,181,199,106,157,184,
-		84,204,176,115,121,50,45,127,4,150,254,138,236,205,93,222,114,67,29,24,72,243,141,
-		128,195,78,66,215,61,156,180};
+    /**
+     * Ray Tracer cli file reader/interpreter
+     */
+    protected myRTFileReader rdr;         
+    /**
+     * Directory where cli files can be found. TODO break up into individual subdirs based on scene topic
+     */
+    protected final String cliFilesDir;
+    /**
+     * holds references to all loaded scenes
+     */
+    public TreeMap<String, Base_Scene> loadedScenes;
+    
+    //////////////////////////////////
+    // Perlin noise variables
+    /**
+     * 3D gradient locations - midpoints of edges between neighboring cells
+     */
+    private int grad3[][] = {{1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},{1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},{0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1}};
+    private final int pValAra[] = {151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,
+        140,36,103,30,69,142,8,99,37,240,21,10,23,190,6,148,247,120,234,75,0,26,197,62,94,
+        252,219,203,117,35,11,32,57,177,33,88,237,149,56,87,174,20,125,136,171,168,68,175,
+        74,165,71,134,139,48,27,166,77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,
+        41,55,46,245,40,244,102,143,54,65,25,63,161,1,216,80,73,209,76,132,187,208,89,18,169,
+        200,196,135,130,116,188,159,86,164,100,109,198,173,186,3,64,52,217,226,250,124,123,
+        5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,189,28,42,223,183,
+        170,213,119,248,152,2,44,154,163,70,221,153,101,155,167,43,172,9,129,22,39,253,19,
+        98,108,110,79,113,224,232,178,185,112,104,218,246,97,228,251,34,242,193,238,210,144,
+        12,191,179,162,241, 81,51,145,235,249,14,239,107,49,192,214,31,181,199,106,157,184,
+        84,204,176,115,121,50,45,127,4,150,254,138,236,205,93,222,114,67,29,24,72,243,141,
+        128,195,78,66,215,61,156,180};
 
-	// To remove the need for index wrapping, double the permutation table length
-	private int perm[] = new int[512];
-	
-	/**
-	 * @param _p
-	 * @param _AppMgr
-	 * @param _winIdx
-	 * @param _flagIdx
-	 */
-	public Base_RayTracerWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx) {
-		super(_p, _AppMgr, _winIdx);
+    // To remove the need for index wrapping, double the permutation table length
+    private int perm[] = new int[512];
+    
+    /**
+     * @param _p
+     * @param _AppMgr
+     * @param _winIdx
+     * @param _flagIdx
+     */
+    public Base_RayTracerWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx) {
+        super(_p, _AppMgr, _winIdx);
 
-		Path path = Paths.get("");
-		cliFilesDir = path.toAbsolutePath().toString()+File.separator+"data";
-		msgObj.dispInfoMessage(className, "Constructor", "Currently Set absolute working directory for CLI Files is :"+cliFilesDir);
-		rdr = new myRTFileReader(this, cliFilesDir+File.separator+"txtrs"+File.separator);
-		loadedScenes = new TreeMap<String, Base_Scene>();	
-	}
+        Path path = Paths.get("");
+        cliFilesDir = path.toAbsolutePath().toString()+File.separator+"data";
+        msgObj.dispInfoMessage(className, "Constructor", "Currently Set absolute working directory for CLI Files is :"+cliFilesDir);
+        rdr = new myRTFileReader(this, cliFilesDir+File.separator+"txtrs"+File.separator);
+        loadedScenes = new TreeMap<String, Base_Scene>();    
+    }
 
-	/**
-	 * Initialize any UI control flags appropriate for all boids window application
-	 */
-	@Override
-	protected final void initDispFlags() {
-		//this window is runnable
-		dispFlags.setIsRunnable(true);
-		//this window uses a customizable camera
-		dispFlags.setUseCustCam(true);
-		// capable of using right side menu
-		dispFlags.setHasRtSideMenu(true);	
-	}
-	
-	@Override
-	protected final void initMe() {	
-		//instance-specific init
-		initMe_Indiv();
-		//Initialize permuation table
-		initPermTable();
-		//call first ray trace
-		startRayTrace();
-	}
-	
-	
-	/**
-	 * Instance-class specific init
-	 */
-	protected abstract void initMe_Indiv();
-	
+    /**
+     * Initialize any UI control flags appropriate for all boids window application
+     */
+    @Override
+    protected final void initDispFlags() {
+        //this window is runnable
+        dispFlags.setIsRunnable(true);
+        //this window uses a customizable camera
+        dispFlags.setUseCustCam(true);
+        // capable of using right side menu
+        dispFlags.setHasRtSideMenu(true);    
+    }
+    
+    @Override
+    protected final void initMe() {    
+        //instance-specific init
+        initMe_Indiv();
+        //Initialize permuation table
+        initPermTable();
+        //call first ray trace
+        startRayTrace();
+    }
+    
+    
+    /**
+     * Instance-class specific init
+     */
+    protected abstract void initMe_Indiv();
+    
 
-	/**
-	 * Build all UI objects to be shown in left side bar menu for this window. This is the first child class function called by initThisWin
-	 * @param tmpUIObjMap : map of GUIObj_Params, keyed by unique string, with values describing the UI object
-	 * 			- The object IDX                   
-	 *          - A double array of min/max/mod values                                                   
-	 *          - The starting value                                                                      
-	 *          - The label for object                                                                       
-	 *          - The object type (GUIObj_Type enum)
-	 *          - A boolean array of behavior configuration values : (unspecified values default to false)
-	 *           	idx 0: value is sent to owning window,  
-	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
-	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
-	 *          - A boolean array of renderer format values :(unspecified values default to false) - Behavior Boolean array must also be provided!
-	 * 				idx 0 : Should be multiline
-	 * 				idx 1 : One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
-	 * 				idx 2 : Text should be centered (default is false)
-	 * 				idx 3 : Object should be rendered with outline (default for btns is true, for non-buttons is false)
-	 * 				idx 4 : Should have ornament
-	 * 				idx 5 : Ornament color should match label color 
-	 */
-	@Override
-	protected final void setupGUIObjsAras(TreeMap<String, GUIObj_Params> tmpUIObjMap){		//keyed by object idx (uiXXXIDX), entries are lists of values to use for list select ui objects			
-		//keyed by object idx (uiXXXIDX), entries are lists of values to use for list select ui objects	
-		//set up list of files to load
-		tmpUIObjMap.put("gIDX_SceneCols", uiMgr.uiObjInitAra_Int(gIDX_SceneCols, new double[]{100,AppMgr.getDisplayWidth(),10}, 1.0*initSceneCols, "Image Width (pxls)"));
-		tmpUIObjMap.put("gIDX_SceneRows", uiMgr.uiObjInitAra_Int(gIDX_SceneRows, new double[]{100,AppMgr.getDisplayHeight(),10}, 1.0*initSceneRows, "Image Height (pxls)"));
-		tmpUIObjMap.put("gIDX_CurrSceneCLI", uiMgr.uiObjInitAra_List(gIDX_CurrSceneCLI, 0.0, "Scene to Display", currSceneCLIList));
-		sceneCols = initSceneCols;
-		sceneRows = initSceneRows;
-		currSceneName = currSceneCLIList[0];
-		setupGUIObjsAras_Indiv(tmpUIObjMap);
-	}//setupGUIObjsAras
-	
-	/**
-	 * Build UI button objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
-	 * @param firstIdx : the first index to use in the map/as the objIdx
-	 * @param tmpUIBoolSwitchObjMap : map of GUIObj_Params to be built containing all flag-backed boolean switch definitions, keyed by sequential value == objId
-	 * 				the first element is the object index
-	 * 				the second element is true label
-	 * 				the third element is false label
-	 * 				the final element is integer flag idx 
-	 */
-	@Override
-	protected final void setupGUIBoolSwitchAras(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap) {		
-		//add an entry for each button, in the order they are wished to be displayed
-		int idx=firstIdx;		
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Shooting Rays", "Shoot Rays", shootRaysIDX));  
-		tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Norms are Flipped", "Flip Normals", flipNormsIDX)); 
+    /**
+     * Build all UI objects to be shown in left side bar menu for this window. This is the first child class function called by initThisWin
+     * @param tmpUIObjMap : map of GUIObj_Params, keyed by unique string, with values describing the UI object
+     *             - The object IDX                   
+     *          - A double array of min/max/mod values                                                   
+     *          - The starting value                                                                      
+     *          - The label for object                                                                       
+     *          - The object type (GUIObj_Type enum)
+     *          - A boolean array of behavior configuration values : (unspecified values default to false)
+     *               idx 0: value is sent to owning window,  
+     *               idx 1: value is sent on any modifications (while being modified, not just on release), 
+     *               idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
+     *          - A boolean array of renderer format values :(unspecified values default to false) - Behavior Boolean array must also be provided!
+     *                 - Should be multiline
+     *                 - One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
+     *                 - Force this object to be on a new row/line (For side-by-side layouts)
+     *                 - Text should be centered (default is false)
+     *                 - Object should be rendered with outline (default for btns is true, for non-buttons is false)
+     *                 - Should have ornament
+     *                 - Ornament color should match label color  
+     */
+    @Override
+    protected final void setupGUIObjsAras(LinkedHashMap<String, GUIObj_Params> tmpUIObjMap){        //keyed by object idx (uiXXXIDX), entries are lists of values to use for list select ui objects            
+        //keyed by object idx (uiXXXIDX), entries are lists of values to use for list select ui objects    
+        //set up list of files to load
+        tmpUIObjMap.put("gIDX_SceneCols", uiMgr.uiObjInitAra_Int(gIDX_SceneCols, new double[]{100,AppMgr.getDisplayWidth(),10}, 1.0*initSceneCols, "Image Width (pxls)"));
+        tmpUIObjMap.put("gIDX_SceneRows", uiMgr.uiObjInitAra_Int(gIDX_SceneRows, new double[]{100,AppMgr.getDisplayHeight(),10}, 1.0*initSceneRows, "Image Height (pxls)"));
+        tmpUIObjMap.put("gIDX_CurrSceneCLI", uiMgr.uiObjInitAra_List(gIDX_CurrSceneCLI, 0.0, "Scene to Display", currSceneCLIList));
+        sceneCols = initSceneCols;
+        sceneRows = initSceneRows;
+        currSceneName = currSceneCLIList[0];
+        setupGUIObjsAras_Indiv(tmpUIObjMap);
+    }//setupGUIObjsAras
+    
+    /**
+     * Build UI button objects to be shown in left side bar menu for this window.  This is the first child class function called by initThisWin
+     * @param firstIdx : the first index to use in the map/as the objIdx
+     * @param tmpUIBoolSwitchObjMap : map of GUIObj_Params to be built containing all flag-backed boolean switch definitions, keyed by sequential value == objId
+     *                 the first element is the object index
+     *                 the second element is true label
+     *                 the third element is false label
+     *                 the final element is integer flag idx 
+     */
+    @Override
+    protected final void setupGUIBoolSwitchAras(int firstIdx, LinkedHashMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap) {        
+        //add an entry for each button, in the order they are wished to be displayed
+        int idx=firstIdx;        
+        tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Shooting Rays", "Shoot Rays", shootRaysIDX));  
+        tmpUIBoolSwitchObjMap.put("Button_"+idx, uiMgr.uiObjInitAra_Switch(idx, "button_"+idx++, "Norms are Flipped", "Flip Normals", flipNormsIDX)); 
 
-		setupGUIBoolSwitchAras_Indiv(idx, tmpUIBoolSwitchObjMap);
-	}//setupGUIBoolSwitchAras
+        setupGUIBoolSwitchAras_Indiv(idx, tmpUIBoolSwitchObjMap);
+    }//setupGUIBoolSwitchAras
 
-	/**
-	 * Build all UI objects to be shown in left side bar menu for this window. This is the first child class function called by initThisWin
-	 * @param tmpUIObjMap : map of GUIObj_Params, keyed by unique string, with values describing the UI object
-	 * 			- The object IDX                   
-	 *          - A double array of min/max/mod values                                                   
-	 *          - The starting value                                                                      
-	 *          - The label for object                                                                       
-	 *          - The object type (GUIObj_Type enum)
-	 *          - A boolean array of behavior configuration values : (unspecified values default to false)
-	 *           	idx 0: value is sent to owning window,  
-	 *           	idx 1: value is sent on any modifications (while being modified, not just on release), 
-	 *           	idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
-	 *          - A boolean array of renderer format values :(unspecified values default to false) - Behavior Boolean array must also be provided!
-	 * 				idx 0 : Should be multiline
-	 * 				idx 1 : One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
-	 * 				idx 2 : Text should be centered (default is false)
-	 * 				idx 3 : Object should be rendered with outline (default for btns is true, for non-buttons is false)
-	 * 				idx 4 : Should have ornament
-	 * 				idx 5 : Ornament color should match label color 
-	 */
-	protected abstract void setupGUIObjsAras_Indiv(TreeMap<String, GUIObj_Params> tmpUIObjMap);
+    /**
+     * Build all UI objects to be shown in left side bar menu for this window. This is the first child class function called by initThisWin
+     * @param tmpUIObjMap : map of GUIObj_Params, keyed by unique string, with values describing the UI object
+     *             - The object IDX                   
+     *          - A double array of min/max/mod values                                                   
+     *          - The starting value                                                                      
+     *          - The label for object                                                                       
+     *          - The object type (GUIObj_Type enum)
+     *          - A boolean array of behavior configuration values : (unspecified values default to false)
+     *               idx 0: value is sent to owning window,  
+     *               idx 1: value is sent on any modifications (while being modified, not just on release), 
+     *               idx 2: changes to value must be explicitly sent to consumer (are not automatically sent),
+     *          - A boolean array of renderer format values :(unspecified values default to false) - Behavior Boolean array must also be provided!
+     *                 - Should be multiline
+     *                 - One object per row in UI space (i.e. default for multi-line and btn objects is false, single line non-buttons is true)
+     *                 - Force this object to be on a new row/line (For side-by-side layouts)
+     *                 - Text should be centered (default is false)
+     *                 - Object should be rendered with outline (default for btns is true, for non-buttons is false)
+     *                 - Should have ornament
+     *                 - Ornament color should match label color 
+     */
+    protected abstract void setupGUIObjsAras_Indiv(LinkedHashMap<String, GUIObj_Params> tmpUIObjMap);
 
-	/**
-	 * Build all UI buttons to be shown in left side bar menu for this window. This is for instancing windows to add to button region
-	 * @param firstIdx : the first index to use in the map/as the objIdx
-	 * @param tmpUIBoolSwitchObjMap : map of GUIObj_Params to be built containing all flag-backed boolean switch definitions, keyed by sequential value == objId
-	 * 				the first element is the object index
-	 * 				the second element is true label
-	 * 				the third element is false label
-	 * 				the final element is integer flag idx 
-	 */
-	protected abstract void setupGUIBoolSwitchAras_Indiv(int firstIdx, TreeMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap);
+    /**
+     * Build all UI buttons to be shown in left side bar menu for this window. This is for instancing windows to add to button region
+     * @param firstIdx : the first index to use in the map/as the objIdx
+     * @param tmpUIBoolSwitchObjMap : map of GUIObj_Params to be built containing all flag-backed boolean switch definitions, keyed by sequential value == objId
+     *                 the first element is the object index
+     *                 the second element is true label
+     *                 the third element is false label
+     *                 the final element is integer flag idx 
+     */
+    protected abstract void setupGUIBoolSwitchAras_Indiv(int firstIdx, LinkedHashMap<String, GUIObj_Params> tmpUIBoolSwitchObjMap);
 
-	
-	/**
-	 * This function provides an instance of the override class for base_UpdateFromUIData, which would
-	 * be used to communicate changes in UI settings directly to the value consumers.  For this abstract class, 
-	 * it forces the created inheritor of Base_RayTracerUIUpdater to be created by the instancing window class.
-	 */
-	@Override
-	protected final UIDataUpdater buildUIDataUpdateObject() {
-		return buildUIDataUpdateObject_Indiv();
-	}
-	
-	/**
-	 * Instance-class specific updater creator
-	 * @return
-	 */
-	protected abstract Base_RayTracerUIUpdater buildUIDataUpdateObject_Indiv();
-	
-	/**
-	 * Handle application-specific flag setting
-	 */
-	@Override
-	public void handlePrivFlags_Indiv(int idx, boolean val, boolean oldVal){
-		if(val == oldVal) {return;}
-		switch(idx){
-			case shootRaysIDX : {//build new image
-				if (val) {
-					startRayTrace();
-					addPrivSwitchToClear(idx);
-				}
-				break;}
-			case flipNormsIDX : {
-				setFlipNorms();
-				break;}
-			default : {setPrivFlags_Indiv(idx, val);}
-		}
-	}//setPrivFlags	
-	protected abstract void setPrivFlags_Indiv(int idx, boolean val);
-	
-	public void setFlipNorms() {
-		Base_Scene s = loadedScenes.get(currSceneName);
-		if(s!=null) {s.flipNormal();}
-	}
-	
-	public void startRayTrace() {	
-		Base_Scene tmp = rdr.readRTFile(loadedScenes, cliFilesDir, currSceneName, null, sceneCols, sceneRows);//pass null as scene so that we don't add to an existing scene
-		msgObj.dispMessage("RayTracerExperiment", "startRayTrace", "Done with readRTFile", MsgCodes.info1);
-		//returns null means not found
-		if(null==tmp) {currSceneName = "";}
-		currDispSceneName = currSceneName;
-	}
-	
-	/**
-	 * This will return a location to place the rendered image in the display window so that it is centered.
-	 * @return
-	 */
-	public final float[] getLocUpperCrnr() {
-		return new float[] {winInitVals.rectDim[0]+ .5f*(winInitVals.rectDim[2]-sceneCols), winInitVals.rectDim[1]+ .5f*(winInitVals.rectDim[3]-sceneRows)};		
-	}
+    
+    /**
+     * This function provides an instance of the override class for base_UpdateFromUIData, which would
+     * be used to communicate changes in UI settings directly to the value consumers.  For this abstract class, 
+     * it forces the created inheritor of Base_RayTracerUIUpdater to be created by the instancing window class.
+     */
+    @Override
+    protected final UIDataUpdater buildUIDataUpdateObject() {
+        return buildUIDataUpdateObject_Indiv();
+    }
+    
+    /**
+     * Instance-class specific updater creator
+     * @return
+     */
+    protected abstract Base_RayTracerUIUpdater buildUIDataUpdateObject_Indiv();
+    
+    /**
+     * Handle application-specific flag setting
+     */
+    @Override
+    public void handlePrivFlags_Indiv(int idx, boolean val, boolean oldVal){
+        if(val == oldVal) {return;}
+        switch(idx){
+            case shootRaysIDX : {//build new image
+                if (val) {
+                    startRayTrace();
+                    addPrivSwitchToClear(idx);
+                }
+                break;}
+            case flipNormsIDX : {
+                setFlipNorms();
+                break;}
+            default : {setPrivFlags_Indiv(idx, val);}
+        }
+    }//setPrivFlags    
+    protected abstract void setPrivFlags_Indiv(int idx, boolean val);
+    
+    public void setFlipNorms() {
+        Base_Scene s = loadedScenes.get(currSceneName);
+        if(s!=null) {s.flipNormal();}
+    }
+    
+    public void startRayTrace() {    
+        Base_Scene tmp = rdr.readRTFile(loadedScenes, cliFilesDir, currSceneName, null, sceneCols, sceneRows);//pass null as scene so that we don't add to an existing scene
+        msgObj.dispMessage("RayTracerExperiment", "startRayTrace", "Done with readRTFile", MsgCodes.info1);
+        //returns null means not found
+        if(null==tmp) {currSceneName = "";}
+        currDispSceneName = currSceneName;
+    }
+    
+    /**
+     * This will return a location to place the rendered image in the display window so that it is centered.
+     * @return
+     */
+    public final float[] getLocUpperCrnr() {
+        return new float[] {winInitVals.rectDim[0]+ .5f*(winInitVals.rectDim[2]-sceneCols), winInitVals.rectDim[1]+ .5f*(winInitVals.rectDim[3]-sceneRows)};        
+    }
 
-	@Override
-	protected final int[] getFlagIDXsToInitToTrue() {
-		int[] flagsToInit = new int[] {};
-		return getFlagIDXsToInitToTrue_Indiv(flagsToInit);
-	}	
-	protected abstract int[] getFlagIDXsToInitToTrue_Indiv(int[] baseFlags);
+    @Override
+    protected final int[] getFlagIDXsToInitToTrue() {
+        int[] flagsToInit = new int[] {};
+        return getFlagIDXsToInitToTrue_Indiv(flagsToInit);
+    }    
+    protected abstract int[] getFlagIDXsToInitToTrue_Indiv(int[] baseFlags);
 
-	/**
-	 * Called if int-handling guiObjs_Numeric[UIidx] (int or list) has new data which updated UI adapter. 
-	 * Intended to support custom per-object handling by owning window.
-	 * Only called if data changed!
-	 * @param UIidx Index of gui obj with new data
-	 * @param ival integer value of new data
-	 * @param oldVal integer value of old data in UIUpdater
-	 */
-	@Override
-	protected final void setUI_IntValsCustom(int UIidx, int ival, int oldVal) {
-		switch(UIidx) {
-			case gIDX_SceneCols		:{
-				sceneCols = ival;
-				break;}			
-			case gIDX_SceneRows		:{
-				sceneRows = ival;
-				break;}	
-			case gIDX_CurrSceneCLI 	:{
-				currSceneName = currSceneCLIList[ival % currSceneCLIList.length];
-				break;}		
-			default : {
-				//Check Instance-class ints, if any
-				boolean found = setUI_IntValsCustom_Indiv(UIidx, ival, oldVal);
-				if(!found) {
-					msgObj.dispWarningMessage(className, "setUI_IntValsCustom", "No int-defined gui object mapped to idx :"+UIidx);
-				}
-				break;}
-		}	
-	}//setUI_IntValsCustom
-	
-	/**
-	 * Instance-class specific. Called if int-handling guiObjs_Numeric[UIidx] (int or list) has new data which updated UI adapter. 
-	 * Intended to support custom per-object handling by owning window.
-	 * Only called if data changed!
-	 * @param UIidx Index of gui obj with new data
-	 * @param ival integer value of new data
-	 * @param oldVal integer value of old data in UIUpdater
-	 */
-	protected abstract boolean setUI_IntValsCustom_Indiv(int UIidx, int ival, int oldVal);
-	
-	/**
-	 * Called if float-handling guiObjs_Numeric[UIidx] has new data which updated UI adapter.  
-	 * Intended to support custom per-object handling by owning window.
-	 * Only called if data changed!
-	 * @param UIidx Index of gui obj with new data
-	 * @param val float value of new data
-	 * @param oldVal float value of old data in UIUpdater
-	 */
-	@Override
-	protected final void setUI_FloatValsCustom(int UIidx, float val, float oldVal) {
-		switch(UIidx) {		
-			default : {
-				//Check Instance-class floats, if any
-				boolean found = setUI_FloatValsCustom_Indiv(UIidx, val, oldVal);
-				if(!found) {
-					msgObj.dispWarningMessage(className, "setUI_FloatValsCustom", "No float-defined gui object mapped to idx :"+UIidx);
-				}
-				break;}
-		}
-	}//setUI_FloatValsCustom
-	
-	/**
-	 * Instance-class specific. Called if float-handling guiObjs_Numeric[UIidx] has new data which updated UI adapter.  
-	 * Intended to support custom per-object handling by owning window.
-	 * Only called if data changed!
-	 * @param UIidx Index of gui obj with new data
-	 * @param val float value of new data
-	 * @param oldVal float value of old data in UIUpdater
-	 */
-	protected abstract boolean setUI_FloatValsCustom_Indiv(int UIidx, float val, float oldVal);
+    /**
+     * Called if int-handling guiObjs_Numeric[UIidx] (int or list) has new data which updated UI adapter. 
+     * Intended to support custom per-object handling by owning window.
+     * Only called if data changed!
+     * @param UIidx Index of gui obj with new data
+     * @param ival integer value of new data
+     * @param oldVal integer value of old data in UIUpdater
+     */
+    @Override
+    protected final void setUI_IntValsCustom(int UIidx, int ival, int oldVal) {
+        switch(UIidx) {
+            case gIDX_SceneCols        :{
+                sceneCols = ival;
+                break;}            
+            case gIDX_SceneRows        :{
+                sceneRows = ival;
+                break;}    
+            case gIDX_CurrSceneCLI     :{
+                currSceneName = currSceneCLIList[ival % currSceneCLIList.length];
+                break;}        
+            default : {
+                //Check Instance-class ints, if any
+                boolean found = setUI_IntValsCustom_Indiv(UIidx, ival, oldVal);
+                if(!found) {
+                    msgObj.dispWarningMessage(className, "setUI_IntValsCustom", "No int-defined gui object mapped to idx :"+UIidx);
+                }
+                break;}
+        }    
+    }//setUI_IntValsCustom
+    
+    /**
+     * Instance-class specific. Called if int-handling guiObjs_Numeric[UIidx] (int or list) has new data which updated UI adapter. 
+     * Intended to support custom per-object handling by owning window.
+     * Only called if data changed!
+     * @param UIidx Index of gui obj with new data
+     * @param ival integer value of new data
+     * @param oldVal integer value of old data in UIUpdater
+     */
+    protected abstract boolean setUI_IntValsCustom_Indiv(int UIidx, int ival, int oldVal);
+    
+    /**
+     * Called if float-handling guiObjs_Numeric[UIidx] has new data which updated UI adapter.  
+     * Intended to support custom per-object handling by owning window.
+     * Only called if data changed!
+     * @param UIidx Index of gui obj with new data
+     * @param val float value of new data
+     * @param oldVal float value of old data in UIUpdater
+     */
+    @Override
+    protected final void setUI_FloatValsCustom(int UIidx, float val, float oldVal) {
+        switch(UIidx) {        
+            default : {
+                //Check Instance-class floats, if any
+                boolean found = setUI_FloatValsCustom_Indiv(UIidx, val, oldVal);
+                if(!found) {
+                    msgObj.dispWarningMessage(className, "setUI_FloatValsCustom", "No float-defined gui object mapped to idx :"+UIidx);
+                }
+                break;}
+        }
+    }//setUI_FloatValsCustom
+    
+    /**
+     * Instance-class specific. Called if float-handling guiObjs_Numeric[UIidx] has new data which updated UI adapter.  
+     * Intended to support custom per-object handling by owning window.
+     * Only called if data changed!
+     * @param UIidx Index of gui obj with new data
+     * @param val float value of new data
+     * @param oldVal float value of old data in UIUpdater
+     */
+    protected abstract boolean setUI_FloatValsCustom_Indiv(int UIidx, float val, float oldVal);
 
-	/**
-	 * Get selected scene name
-	 * @return
-	 */
-	protected final String getCurrSceneName() {
-		return currSceneCLIList[((Base_RayTracerUIUpdater)getUIDataUpdater()).getCurrSceneCliFileIDX() % currSceneCLIList.length];
-	}
-	
-	/**
-	 * 
-	 */
-	public final Base_Scene getCurrScene() { return loadedScenes.get(currDispSceneName);}
-	
-	/////////////////////////////////////
-	// Utilities
+    /**
+     * Get selected scene name
+     * @return
+     */
+    protected final String getCurrSceneName() {
+        return currSceneCLIList[((Base_RayTracerUIUpdater)getUIDataUpdater()).getCurrSceneCliFileIDX() % currSceneCLIList.length];
+    }
+    
+    /**
+     * 
+     */
+    public final Base_Scene getCurrScene() { return loadedScenes.get(currDispSceneName);}
+    
+    /////////////////////////////////////
+    // Utilities
 
-	public double perlinNoise3D(myPoint pt){return perlinNoise3D((float)pt.x, (float)pt.y, (float)pt.z);}
+    public double perlinNoise3D(myPoint pt){return perlinNoise3D((float)pt.x, (float)pt.y, (float)pt.z);}
 
-	/**
-	 * Derive Perlin noise value at a particular 3D location
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
-	 */
-	public float perlinNoise3D(float x, float y, float z) {
-		// Find unit grid cell containing point
-		int X = MyMathUtils.floor(x),Y = MyMathUtils.floor(y), Z = MyMathUtils.floor(z);		
-		// Get relative xyz coordinates of point within that cell
-		x = x - X;	y = y - Y;	z = z - Z;		
-		// Wrap the integer cells at 255 (smaller integer period can be introduced here)
-		X = X & 255;	Y = Y & 255;	Z = Z & 255;		
-		// Calculate a set of eight hashed gradient indices
-		int Xp1 = X+1, Yp1 = Y+1, Zp1 = Z+1 ;
-		int pYpZ = perm[Y+perm[Z]];
-		int pYpZ1 = perm[Y+perm[Zp1]];
-		int pY1pZ = perm[Yp1+perm[Z]];
-		int pY1pZ1 = perm[Yp1+perm[Zp1]];
+    /**
+     * Derive Perlin noise value at a particular 3D location
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public float perlinNoise3D(float x, float y, float z) {
+        // Find unit grid cell containing point
+        int X = MyMathUtils.floor(x),Y = MyMathUtils.floor(y), Z = MyMathUtils.floor(z);        
+        // Get relative xyz coordinates of point within that cell
+        x = x - X;    y = y - Y;    z = z - Z;        
+        // Wrap the integer cells at 255 (smaller integer period can be introduced here)
+        X = X & 255;    Y = Y & 255;    Z = Z & 255;        
+        // Calculate a set of eight hashed gradient indices
+        int Xp1 = X+1, Yp1 = Y+1, Zp1 = Z+1 ;
+        int pYpZ = perm[Y+perm[Z]];
+        int pYpZ1 = perm[Y+perm[Zp1]];
+        int pY1pZ = perm[Yp1+perm[Z]];
+        int pY1pZ1 = perm[Yp1+perm[Zp1]];
 
-		int gi000 = perm[X+pYpZ] % 12;
-		int gi001 = perm[X+pYpZ1] % 12;
-		int gi010 = perm[X+pY1pZ] % 12;
-		int gi011 = perm[X+pY1pZ1] % 12;
-		int gi100 = perm[Xp1+pYpZ] % 12;
-		int gi101 = perm[Xp1+pYpZ1] % 12;
-		int gi110 = perm[Xp1+pY1pZ] % 12;
-		int gi111 = perm[Xp1+pY1pZ1] % 12;
-		
-		float xm1 = x-1, ym1 = y-1, zm1 = z-1;
-		// Calculate noise contributions from each of the eight corners
-		float n000 = dot(grad3[gi000], x, y, z);
-		float n100 = dot(grad3[gi100], xm1, y, z);
-		float n010 = dot(grad3[gi010], x, ym1, z);
-		float n110 = dot(grad3[gi110], xm1, ym1, z);
-		float n001 = dot(grad3[gi001], x, y, zm1);
-		float n101 = dot(grad3[gi101], xm1, y, zm1);
-		float n011 = dot(grad3[gi011], x, ym1, zm1);
-		float n111 = dot(grad3[gi111], xm1, ym1, zm1);
-		
-		// Compute the fade curve value for each of x, y, z
-		float u = fade(x), v = fade(y), w = fade(z);
-		return mix(mix(mix(n000, n100, u), mix(n010, n110, u), v), mix(mix(n001, n101, u), mix(n011, n111, u), v), w);
-	
-	}//noise_3d
-	
-	/**
-	 * Initialize perlin noise permuation table
-	 */
-	private void initPermTable() { 
-		for(int i=0; i<255; ++i) {perm[i] = pValAra[i];}
-		for(int i=256; i<512; ++i) {perm[i] = pValAra[i & 255];}
-		uiMgr.setPrivFlag(initPerlinNoiseIDX, true);
-	}
+        int gi000 = perm[X+pYpZ] % 12;
+        int gi001 = perm[X+pYpZ1] % 12;
+        int gi010 = perm[X+pY1pZ] % 12;
+        int gi011 = perm[X+pY1pZ1] % 12;
+        int gi100 = perm[Xp1+pYpZ] % 12;
+        int gi101 = perm[Xp1+pYpZ1] % 12;
+        int gi110 = perm[Xp1+pY1pZ] % 12;
+        int gi111 = perm[Xp1+pY1pZ1] % 12;
+        
+        float xm1 = x-1, ym1 = y-1, zm1 = z-1;
+        // Calculate noise contributions from each of the eight corners
+        float n000 = dot(grad3[gi000], x, y, z);
+        float n100 = dot(grad3[gi100], xm1, y, z);
+        float n010 = dot(grad3[gi010], x, ym1, z);
+        float n110 = dot(grad3[gi110], xm1, ym1, z);
+        float n001 = dot(grad3[gi001], x, y, zm1);
+        float n101 = dot(grad3[gi101], xm1, y, zm1);
+        float n011 = dot(grad3[gi011], x, ym1, zm1);
+        float n111 = dot(grad3[gi111], xm1, ym1, zm1);
+        
+        // Compute the fade curve value for each of x, y, z
+        float u = fade(x), v = fade(y), w = fade(z);
+        return mix(mix(mix(n000, n100, u), mix(n010, n110, u), v), mix(mix(n001, n101, u), mix(n011, n111, u), v), w);
+    
+    }//noise_3d
+    
+    /**
+     * Initialize perlin noise permuation table
+     */
+    private void initPermTable() { 
+        for(int i=0; i<255; ++i) {perm[i] = pValAra[i];}
+        for(int i=256; i<512; ++i) {perm[i] = pValAra[i & 255];}
+        uiMgr.setPrivFlag(initPerlinNoiseIDX, true);
+    }
 
-	/**
-	 * Dot product between array and individual values
-	 * @param g
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
-	 */
-	private float dot(int g[], float x, float y, float z) { return g[0]*x + g[1]*y + g[2]*z;}
-	/**
-	 * Interpolate between both values
-	 * @param a
-	 * @param b
-	 * @param t
-	 * @return
-	 */
-	private float mix(float a, float b, float t) { return (1-t)*a + t*b;}
-	//Quintic interpolant calc
-	private float fade(float t) { return t*t*t*(t*(t*6-15)+10);}
-	//end 3d perlin noise code
-	
-	/**
-	 * build miniTet - call recursively to build successively smaller tets 
-	 * Set shader for object based on current level - pastel bunnies
-	 * @param level
-	 * @param maxLevel
-	 */
-	private void setSierpShdr(Base_Scene _s, int level, int maxLevel){
-		float bVal = 1.0f - MyMathUtils.min(1.0f,(1.5f*level/maxLevel)), 
-				rVal = 1.0f - bVal, 
-				tmp = MyMathUtils.min((1.2f*(level-(maxLevel/2)))/(1.0f*maxLevel),1.0f), 
-				gVal = (tmp*tmp);
-		myRTColor cDiff = new myRTColor(MyMathUtils.min(1.0f,rVal+.5f), MyMathUtils.min(1.0f,gVal+.5f), MyMathUtils.min(1.0f,bVal+.5f));
-		_s.setHasGlblTxtrdTop(false);
-		_s.setHasGlblTxtrdBtm(false);
-		_s.setSurface(cDiff,new myRTColor(0,0,0),new myRTColor(0,0,0),0,0,0);
-	}
+    /**
+     * Dot product between array and individual values
+     * @param g
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    private float dot(int g[], float x, float y, float z) { return g[0]*x + g[1]*y + g[2]*z;}
+    /**
+     * Interpolate between both values
+     * @param a
+     * @param b
+     * @param t
+     * @return
+     */
+    private float mix(float a, float b, float t) { return (1-t)*a + t*b;}
+    //Quintic interpolant calc
+    private float fade(float t) { return t*t*t*(t*(t*6-15)+10);}
+    //end 3d perlin noise code
+    
+    /**
+     * build miniTet - call recursively to build successively smaller tets 
+     * Set shader for object based on current level - pastel bunnies
+     * @param level
+     * @param maxLevel
+     */
+    private void setSierpShdr(Base_Scene _s, int level, int maxLevel){
+        float bVal = 1.0f - MyMathUtils.min(1.0f,(1.5f*level/maxLevel)), 
+                rVal = 1.0f - bVal, 
+                tmp = MyMathUtils.min((1.2f*(level-(maxLevel/2)))/(1.0f*maxLevel),1.0f), 
+                gVal = (tmp*tmp);
+        myRTColor cDiff = new myRTColor(MyMathUtils.min(1.0f,rVal+.5f), MyMathUtils.min(1.0f,gVal+.5f), MyMathUtils.min(1.0f,bVal+.5f));
+        _s.setHasGlblTxtrdTop(false);
+        _s.setHasGlblTxtrdBtm(false);
+        _s.setSurface(cDiff,new myRTColor(0,0,0),new myRTColor(0,0,0),0,0,0);
+    }
 
-	private final double s120 = .5*MyMathUtils.SQRT_3, c120 = -.5;
-	
-	/**
-	 * Recursively build sierpenski tetrahedron - dim is relative dimension, decreases at each recursive call
-	 * @param dim
-	 * @param scVal
-	 * @param instName instance name of object to use in layout
-	 * @param level
-	 * @param maxLevel
-	 * @param addShader
-	 */
-	public void buildSierpSubTri(Base_Scene _s, float dim, float scVal, String instName, int level, int maxLevel, boolean addShader){
-		if(level>=maxLevel){return;}
-		float newDim = scVal*dim;
-		
-		_s.gtPushMatrix();
-		_s.gtTranslate(0,.1f*dim,0);
-		_s.gtRotate(70, 0, 1, 0);	
-		if(addShader){	setSierpShdr(_s,level, maxLevel);	}
-		//add instance of object here
-		_s.addInstance(instName,addShader);
-		_s.gtPopMatrix();
-		
-		double newTrans = sqrt66*dim, 
-				c120NewTrans = c120*newTrans, 
-				s120NewTrans = s120*newTrans;
-		//up object
-		_s.gtPushMatrix();		
-		_s.gtTranslate(0,newTrans,0);
-		_s.gtScale(scVal,scVal,scVal);
-		buildSierpSubTri(_s,newDim, scVal, instName,level+1,maxLevel,addShader);
-		_s.gtPopMatrix();
-		//front object
-		_s.gtPushMatrix();	
-		_s.gtTranslate(0,c120NewTrans,s120NewTrans);
-		_s.gtScale(scVal,scVal,scVal);
-		buildSierpSubTri(_s,newDim, scVal,instName,level+1,maxLevel,addShader);
-		_s.gtPopMatrix();
-		//left object
-		_s.gtPushMatrix();		
-		_s.gtRotate(120,0,1,0);
-		_s.gtTranslate(0,c120NewTrans,s120NewTrans);
-		_s.gtRotate(-120,0,1,0);
-		_s.gtScale(scVal,scVal,scVal);
-		buildSierpSubTri(_s,newDim, scVal,instName,level+1,maxLevel,addShader);
-		_s.gtPopMatrix();		
-		//right object
-		_s.gtPushMatrix();		
-		_s.gtRotate(-120,0,1,0);
-		_s.gtTranslate(0,c120NewTrans,s120NewTrans);
-		_s.gtRotate(120,0,1,0);
-		_s.gtScale(scVal,scVal,scVal);
-		buildSierpSubTri(_s,newDim,scVal,instName,level+1,maxLevel,addShader);
-		_s.gtPopMatrix();		
-	}//buildSierpSubTri
-	
-	/////////////////////////////////////
-	// Drawing
+    private final double s120 = .5*MyMathUtils.SQRT_3, c120 = -.5;
+    
+    /**
+     * Recursively build sierpenski tetrahedron - dim is relative dimension, decreases at each recursive call
+     * @param dim
+     * @param scVal
+     * @param instName instance name of object to use in layout
+     * @param level
+     * @param maxLevel
+     * @param addShader
+     */
+    public void buildSierpSubTri(Base_Scene _s, float dim, float scVal, String instName, int level, int maxLevel, boolean addShader){
+        if(level>=maxLevel){return;}
+        float newDim = scVal*dim;
+        
+        _s.gtPushMatrix();
+        _s.gtTranslate(0,.1f*dim,0);
+        _s.gtRotate(70, 0, 1, 0);    
+        if(addShader){    setSierpShdr(_s,level, maxLevel);    }
+        //add instance of object here
+        _s.addInstance(instName,addShader);
+        _s.gtPopMatrix();
+        
+        double newTrans = sqrt66*dim, 
+                c120NewTrans = c120*newTrans, 
+                s120NewTrans = s120*newTrans;
+        //up object
+        _s.gtPushMatrix();        
+        _s.gtTranslate(0,newTrans,0);
+        _s.gtScale(scVal,scVal,scVal);
+        buildSierpSubTri(_s,newDim, scVal, instName,level+1,maxLevel,addShader);
+        _s.gtPopMatrix();
+        //front object
+        _s.gtPushMatrix();    
+        _s.gtTranslate(0,c120NewTrans,s120NewTrans);
+        _s.gtScale(scVal,scVal,scVal);
+        buildSierpSubTri(_s,newDim, scVal,instName,level+1,maxLevel,addShader);
+        _s.gtPopMatrix();
+        //left object
+        _s.gtPushMatrix();        
+        _s.gtRotate(120,0,1,0);
+        _s.gtTranslate(0,c120NewTrans,s120NewTrans);
+        _s.gtRotate(-120,0,1,0);
+        _s.gtScale(scVal,scVal,scVal);
+        buildSierpSubTri(_s,newDim, scVal,instName,level+1,maxLevel,addShader);
+        _s.gtPopMatrix();        
+        //right object
+        _s.gtPushMatrix();        
+        _s.gtRotate(-120,0,1,0);
+        _s.gtTranslate(0,c120NewTrans,s120NewTrans);
+        _s.gtRotate(120,0,1,0);
+        _s.gtScale(scVal,scVal,scVal);
+        buildSierpSubTri(_s,newDim,scVal,instName,level+1,maxLevel,addShader);
+        _s.gtPopMatrix();        
+    }//buildSierpSubTri
+    
+    /////////////////////////////////////
+    // Drawing
 
-	@Override
-	protected final void drawMe(float animTimeMod) {
-		drawMe_Indiv(animTimeMod);
-	}//drawMe
-	protected abstract void drawMe_Indiv(float animTimeMod);
+    @Override
+    protected final void drawMe(float animTimeMod) {
+        drawMe_Indiv(animTimeMod);
+    }//drawMe
+    protected abstract void drawMe_Indiv(float animTimeMod);
 
-	@Override
-	protected final void drawOnScreenStuffPriv(float modAmtMillis) {}	
+    @Override
+    protected final void drawOnScreenStuffPriv(float modAmtMillis) {}    
 
-	@Override
-	//draw 2d constructs over 3d area on screen - draws behind left menu section
-	//modAmtMillis is in milliseconds
-	protected final void drawRightSideInfoBarPriv(float modAmtMillis) {
-		ri.pushMatState();
-		//display current simulation variables - call sim world through sim exec
-		drawRightSideInfoBarPriv_Indiv(modAmtMillis);
-		ri.popMatState();					
-	}//drawOnScreenStuff
-	
-	protected abstract void drawRightSideInfoBarPriv_Indiv(float modAmtMillis);	
-	
-	@Override
-	protected final void drawCustMenuObjs(float animTimeMod) {
-		ri.pushMatState();
-		//draw any custom menu stuff here
-		drawCustMenuObjs_Indiv();		
-		ri.popMatState();		
-	}//drawCustMenuObjs
-	protected abstract void drawCustMenuObjs_Indiv();
-	
-	
-	@Override
-	protected final void setVisScreenDimsPriv() {
-		setVisScreenDimsPriv_Indiv();
-	}
-	protected abstract void setVisScreenDimsPriv_Indiv();
-	
-	@Override
-	public final void handleSideMenuMseOvrDispSel(int btn, boolean val) {	}
-	/**
-	 * type is row of buttons (1st idx in curCustBtn array) 2nd idx is btn
-	 * @param funcRow idx for button row
-	 * @param btn idx for button within row (column)
-	 * @param label label for this button (for display purposes)
-	 */
-	@Override
-	protected final void launchMenuBtnHndlr(int funcRow, int btn, String label){
-		switch(funcRow) {
-		case 0 : {
-			msgObj.dispInfoMessage(className,"launchMenuBtnHndlr","Clicked Btn row : Aux Func 1 | Btn : " + btn);
-			switch(btn){
-				case 0 : {						
-					resetButtonState();
-					break;}
-				case 1 : {	
-					resetButtonState();
-					break;}
-				case 2 : {	
-					resetButtonState();
-					break;}
-				default : {
-					break;}
-			}	
-			break;}//row 1 of menu side bar buttons
-		case 1 : {
-			msgObj.dispInfoMessage(className,"launchMenuBtnHndlr","Clicked Btn row : Aux Func 2 | Btn : " + btn);
-			switch(btn){
-				case 0 : {	
-					//test calculation of inverse fleish function -> derive x such that y = f(x) for fleishman polynomial.  This x is then the value from normal dist that yields y from fleish dist
-					//double xDesired = -2.0;
-					resetButtonState();
-					break;}
-				case 1 : {	
-					resetButtonState();
-					break;}
-				case 2 : {	
-					resetButtonState();
-					break;}
-				case 3 : {	
-					//test cosine function
-					resetButtonState();
-					break;}
-				default : {
-					break;}	
-			}
-			break;}//row 2 of menu side bar buttons
-		default : {
-			msgObj.dispWarningMessage(className,"launchMenuBtnHndlr","Clicked Unknown Btn row : " + funcRow +" | Btn : " + btn);
-			break;
-		}
-		}		
-	}//launchMenuBtnHndlr	
-	
-	@Override
-	protected final void handleSideMenuDebugSelEnable(int btn) {
-		switch (btn) {
-			case 0: {				break;			}
-			case 1: {				break;			}
-			case 2: {				break;			}
-			case 3: {				break;			}
-			case 4: {				break;			}
-			case 5: {				break;			}
-			default: {
-				msgObj.dispMessage(className, "handleSideMenuDebugSelEnable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
-				break;
-			}
-		}
-	}
-	
-	@Override
-	protected final void handleSideMenuDebugSelDisable(int btn) {
-		switch (btn) {
-			case 0: {				break;			}
-			case 1: {				break;			}
-			case 2: {				break;			}
-			case 3: {				break;			}
-			case 4: {				break;			}
-			case 5: {				break;			}
-		default: {
-			msgObj.dispMessage(className, "handleSideMenuDebugSelDisable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
-			break;
-			}
-		}
-	}
+    @Override
+    //draw 2d constructs over 3d area on screen - draws behind left menu section
+    //modAmtMillis is in milliseconds
+    protected final void drawRightSideInfoBarPriv(float modAmtMillis) {
+        ri.pushMatState();
+        //display current simulation variables - call sim world through sim exec
+        drawRightSideInfoBarPriv_Indiv(modAmtMillis);
+        ri.popMatState();                    
+    }//drawOnScreenStuff
+    
+    protected abstract void drawRightSideInfoBarPriv_Indiv(float modAmtMillis);    
+    
+    @Override
+    protected final void drawCustMenuObjs(float animTimeMod) {
+        ri.pushMatState();
+        //draw any custom menu stuff here
+        drawCustMenuObjs_Indiv();        
+        ri.popMatState();        
+    }//drawCustMenuObjs
+    protected abstract void drawCustMenuObjs_Indiv();
+    
+    
+    @Override
+    protected final void setVisScreenDimsPriv() {
+        setVisScreenDimsPriv_Indiv();
+    }
+    protected abstract void setVisScreenDimsPriv_Indiv();
+    
+    @Override
+    public final void handleSideMenuMseOvrDispSel(int btn, boolean val) {    }
+    /**
+     * type is row of buttons (1st idx in curCustBtn array) 2nd idx is btn
+     * @param funcRow idx for button row
+     * @param btn idx for button within row (column)
+     * @param label label for this button (for display purposes)
+     */
+    @Override
+    protected final void launchMenuBtnHndlr(int funcRow, int btn, String label){
+        switch(funcRow) {
+        case 0 : {
+            msgObj.dispInfoMessage(className,"launchMenuBtnHndlr","Clicked Btn row : Aux Func 1 | Btn : " + btn);
+            switch(btn){
+                case 0 : {                        
+                    resetButtonState();
+                    break;}
+                case 1 : {    
+                    resetButtonState();
+                    break;}
+                case 2 : {    
+                    resetButtonState();
+                    break;}
+                default : {
+                    break;}
+            }    
+            break;}//row 1 of menu side bar buttons
+        case 1 : {
+            msgObj.dispInfoMessage(className,"launchMenuBtnHndlr","Clicked Btn row : Aux Func 2 | Btn : " + btn);
+            switch(btn){
+                case 0 : {    
+                    //test calculation of inverse fleish function -> derive x such that y = f(x) for fleishman polynomial.  This x is then the value from normal dist that yields y from fleish dist
+                    //double xDesired = -2.0;
+                    resetButtonState();
+                    break;}
+                case 1 : {    
+                    resetButtonState();
+                    break;}
+                case 2 : {    
+                    resetButtonState();
+                    break;}
+                case 3 : {    
+                    //test cosine function
+                    resetButtonState();
+                    break;}
+                default : {
+                    break;}    
+            }
+            break;}//row 2 of menu side bar buttons
+        default : {
+            msgObj.dispWarningMessage(className,"launchMenuBtnHndlr","Clicked Unknown Btn row : " + funcRow +" | Btn : " + btn);
+            break;
+        }
+        }        
+    }//launchMenuBtnHndlr    
+    
+    @Override
+    protected final void handleSideMenuDebugSelEnable(int btn) {
+        switch (btn) {
+            case 0: {                break;            }
+            case 1: {                break;            }
+            case 2: {                break;            }
+            case 3: {                break;            }
+            case 4: {                break;            }
+            case 5: {                break;            }
+            default: {
+                msgObj.dispMessage(className, "handleSideMenuDebugSelEnable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
+                break;
+            }
+        }
+    }
+    
+    @Override
+    protected final void handleSideMenuDebugSelDisable(int btn) {
+        switch (btn) {
+            case 0: {                break;            }
+            case 1: {                break;            }
+            case 2: {                break;            }
+            case 3: {                break;            }
+            case 4: {                break;            }
+            case 5: {                break;            }
+        default: {
+            msgObj.dispMessage(className, "handleSideMenuDebugSelDisable", "Unknown Debug btn : " + btn,MsgCodes.warning2);
+            break;
+            }
+        }
+    }
 
-	/**
-	 * Load the ray tracer file into a string array
-	 * @param fileName
-	 * @return
-	 */
-	public String[] loadRTStrings(String fileName) {
-		String[] res = fileIO.loadFileIntoStringAra(fileName, "Successfully loaded CLI file", "Failed to load CLI file");
-		return res;
-	}
-	
-	@Override
-	protected void setCamera_Indiv(float[] camVals) {
-		// No custom camera handling
-		setCameraBase(camVals);
-	}//setCameraIndiv
+    /**
+     * Load the ray tracer file into a string array
+     * @param fileName
+     * @return
+     */
+    public String[] loadRTStrings(String fileName) {
+        String[] res = fileIO.loadFileIntoStringAra(fileName, "Successfully loaded CLI file", "Failed to load CLI file");
+        return res;
+    }
+    
+    @Override
+    protected void setCamera_Indiv(float[] camVals) {
+        // No custom camera handling
+        setCameraBase(camVals);
+    }//setCameraIndiv
 
-	
-	//return strings for directory names and for individual file names that describe the data being saved.  used for screenshots, and potentially other file saving
-	//first index is directory suffix - should have identifying tags based on major/archtypical component of sim run
-	//2nd index is file name, should have parameters encoded
-	@Override
-	protected final String[] getSaveFileDirNamesPriv() {
-		String dirString="", fileString ="";
-		//for(int i=0;i<uiAbbrevList.length;++i) {fileString += uiAbbrevList[i]+"_"+ (uiVals[i] > 1 ? ((int)uiVals[i]) : uiVals[i] < .0001 ? String.format("%6.3e", uiVals[i]) : String.format("%3.3f", uiVals[i]))+"_";}
-		return new String[]{dirString,fileString};	
-	}
-	@Override
-	public final void hndlFileLoad(File file, String[] vals, int[] stIdx) {
-		//TODO Need to redo this - should load file structure in a hierarchy matching the file system
-		
-//		//if wanting to load/save UI values, uncomment this call and similar in hndlFileSave 
-//		//hndlFileLoad_GUI(vals, stIdx);
-//		//loading in grade data from grade file - vals holds array of strings, expected to be comma sep values, for a single class, with student names and grades
-//		for(String s : vals) {			msgObj.dispInfoMessage(className,"hndlFileLoad",s);}	
-//		String fileName = file.getName();
-//		TreeMap<String, String> tmpAra = new TreeMap<String, String>();//, valsToIDX = new TreeMap<String, String>();
-//		for(String s : currSceneCLIList) {tmpAra.put(s, "");	}
-//		tmpAra.put(fileName, "");
-//		int idx = 0;
-//		int fileIDX = 0;
-//		for(String s : tmpAra.keySet()){
-//			if (s.equals(fileName)) {fileIDX=idx; break;}
-//			++idx;
-//		}		
-//		currSceneCLIList = tmpAra.keySet().toArray(new String[0]);		
-//		curSceneCliFileIDX = fileIDX;
-//		this.guiObjs_Numeric[gIDX_CurrSceneCLI].setNewMax(currSceneCLIList.length-1);
-		
-	}//hndlFileLoad
-	public abstract void hndlFileLoad_Indiv(File file, String[] vals, int[] stIdx);
+    
+    //return strings for directory names and for individual file names that describe the data being saved.  used for screenshots, and potentially other file saving
+    //first index is directory suffix - should have identifying tags based on major/archtypical component of sim run
+    //2nd index is file name, should have parameters encoded
+    @Override
+    protected final String[] getSaveFileDirNamesPriv() {
+        String dirString="", fileString ="";
+        //for(int i=0;i<uiAbbrevList.length;++i) {fileString += uiAbbrevList[i]+"_"+ (uiVals[i] > 1 ? ((int)uiVals[i]) : uiVals[i] < .0001 ? String.format("%6.3e", uiVals[i]) : String.format("%3.3f", uiVals[i]))+"_";}
+        return new String[]{dirString,fileString};    
+    }
+    @Override
+    public final void hndlFileLoad(File file, String[] vals, int[] stIdx) {
+        //TODO Need to redo this - should load file structure in a hierarchy matching the file system
+        
+//        //if wanting to load/save UI values, uncomment this call and similar in hndlFileSave 
+//        //hndlFileLoad_GUI(vals, stIdx);
+//        //loading in grade data from grade file - vals holds array of strings, expected to be comma sep values, for a single class, with student names and grades
+//        for(String s : vals) {            msgObj.dispInfoMessage(className,"hndlFileLoad",s);}    
+//        String fileName = file.getName();
+//        TreeMap<String, String> tmpAra = new TreeMap<String, String>();//, valsToIDX = new TreeMap<String, String>();
+//        for(String s : currSceneCLIList) {tmpAra.put(s, "");    }
+//        tmpAra.put(fileName, "");
+//        int idx = 0;
+//        int fileIDX = 0;
+//        for(String s : tmpAra.keySet()){
+//            if (s.equals(fileName)) {fileIDX=idx; break;}
+//            ++idx;
+//        }        
+//        currSceneCLIList = tmpAra.keySet().toArray(new String[0]);        
+//        curSceneCliFileIDX = fileIDX;
+//        this.guiObjs_Numeric[gIDX_CurrSceneCLI].setNewMax(currSceneCLIList.length-1);
+        
+    }//hndlFileLoad
+    public abstract void hndlFileLoad_Indiv(File file, String[] vals, int[] stIdx);
 
-	@Override
-	public final ArrayList<String> hndlFileSave(File file) {
-		ArrayList<String> res = new ArrayList<String>();
-		//if wanting to load/save UI values, uncomment this call and similar in hndlFileLoad 
-		//res = hndlFileSave_GUI();
-		//saving student grades to a file for a single class - vals holds array of strings, expected to be comma sep values, for a single class, with student names and grades
-		
-		return res;
-	}
-	
-	////////////////////////
-	// Mouse Handling
-	@Override
-	protected final myPoint getMsePtAs3DPt(myPoint mseLoc){return new myPoint(mseLoc.x,mseLoc.y,0);}
+    @Override
+    public final ArrayList<String> hndlFileSave(File file) {
+        ArrayList<String> res = new ArrayList<String>();
+        //if wanting to load/save UI values, uncomment this call and similar in hndlFileLoad 
+        //res = hndlFileSave_GUI();
+        //saving student grades to a file for a single class - vals holds array of strings, expected to be comma sep values, for a single class, with student names and grades
+        
+        return res;
+    }
+    
+    ////////////////////////
+    // Mouse Handling
+    @Override
+    protected final myPoint getMsePtAs3DPt(myPoint mseLoc){return new myPoint(mseLoc.x,mseLoc.y,0);}
 
-	@Override
-	protected final boolean hndlMouseMove_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld) {
-		boolean res = chkMouseMoveDragState2D(mouseX, mouseY, -1);
-		return res;
-	}
-	
-	@Override
-	protected final boolean hndlMouseDrag_Indiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
-		boolean res = false;
-		if(!res) {
-			res = chkMouseMoveDragState2D(mouseX, mouseY, mseBtn);
-		}		
-		return res;}	
-	
-	protected abstract boolean chkMouseMoveDragState2D(int mouseX, int mouseY, int btn);
+    @Override
+    protected final boolean hndlMouseMove_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld) {
+        boolean res = chkMouseMoveDragState2D(mouseX, mouseY, -1);
+        return res;
+    }
+    
+    @Override
+    protected final boolean hndlMouseDrag_Indiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
+        boolean res = false;
+        if(!res) {
+            res = chkMouseMoveDragState2D(mouseX, mouseY, mseBtn);
+        }        
+        return res;}    
+    
+    protected abstract boolean chkMouseMoveDragState2D(int mouseX, int mouseY, int btn);
 
-	@Override
-	protected final boolean hndlMouseClick_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
-		boolean res =  chkMouseClick2D(mouseX, mouseY, mseBtn);
-		
-		return res;}//hndlMouseClickIndiv
-	protected abstract boolean chkMouseClick2D(int mouseX, int mouseY, int btn);
-	
-	@Override
-	protected final void snapMouseLocs(int oldMouseX, int oldMouseY, int[] newMouseLoc) {}
-	
-	@Override
-	protected final void hndlMouseRel_Indiv() {
-		setMouseReleaseState2D();
-	}
-	protected abstract void setMouseReleaseState2D();
+    @Override
+    protected final boolean hndlMouseClick_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
+        boolean res =  chkMouseClick2D(mouseX, mouseY, mseBtn);
+        
+        return res;}//hndlMouseClickIndiv
+    protected abstract boolean chkMouseClick2D(int mouseX, int mouseY, int btn);
+    
+    @Override
+    protected final void snapMouseLocs(int oldMouseX, int oldMouseY, int[] newMouseLoc) {}
+    
+    @Override
+    protected final void hndlMouseRel_Indiv() {
+        setMouseReleaseState2D();
+    }
+    protected abstract void setMouseReleaseState2D();
+    
+    @Override
+    protected boolean handleMouseWheel_Indiv(int ticks, float mult) {        return false;    }
+    
+    ///////////////////////
+    // Unused keyboard interaction stuff
+    @Override
+    protected final void endShiftKey_Indiv() {}
+    @Override
+    protected final void endAltKey_Indiv() {}
+    @Override
+    protected final void endCntlKey_Indiv() {}
+    @Override
+    protected final void setCustMenuBtnLabels() {}    
+    
+    ///////////////////////
+    // Unused window display stuff     
+    @Override
+    protected final void resizeMe(float scale) {}
+    @Override
+    protected final void showMe() {}
+    @Override
+    protected final void closeMe() {}
+    @Override
+    protected final boolean simMe(float modAmtSec) {        return true;    }    
+    @Override
+    protected final void stopMe() {msgObj.dispInfoMessage(className,"stopMe","Stop");}    
+    
+    ///////////////////////
+    // Unused trajectory stuff
+    @Override
+    protected final void initDrwnTraj_Indiv() {}
+    @Override
+    public final void processTraj_Indiv(DrawnSimpleTraj drawnTraj) {}
+    @Override
+    protected final void addTrajToScr_Indiv(int subScrKey, String newTrajKey) {}
+    @Override
+    protected final void delTrajToScr_Indiv(int subScrKey, String newTrajKey) {}
 
-	
-	///////////////////////
-	// Unused keyboard interaction stuff
-	@Override
-	protected final void endShiftKey_Indiv() {}
-	@Override
-	protected final void endAltKey_Indiv() {}
-	@Override
-	protected final void endCntlKey_Indiv() {}
-	@Override
-	protected final void setCustMenuBtnLabels() {}	
-	
-	///////////////////////
-	// Unused window display stuff 	
-	@Override
-	protected final void resizeMe(float scale) {}
-	@Override
-	protected final void showMe() {}
-	@Override
-	protected final void closeMe() {}
-	@Override
-	protected final boolean simMe(float modAmtSec) {		return true;	}	
-	@Override
-	protected final void stopMe() {msgObj.dispInfoMessage(className,"stopMe","Stop");}	
-	
-	///////////////////////
-	// Unused trajectory stuff
-	@Override
-	protected final void initDrwnTraj_Indiv() {}
-	@Override
-	public final void processTraj_Indiv(DrawnSimpleTraj drawnTraj) {}
-	@Override
-	protected final void addTrajToScr_Indiv(int subScrKey, String newTrajKey) {}
-	@Override
-	protected final void delTrajToScr_Indiv(int subScrKey, String newTrajKey) {}
-
-	///////////////////////
-	// Unused sub screen stuff
-	@Override
-	protected final void addSScrToWin_Indiv(int newWinKey) {}
-	@Override
-	protected final void delSScrToWin_Indiv(int idx) {}
+    ///////////////////////
+    // Unused sub screen stuff
+    @Override
+    protected final void addSScrToWin_Indiv(int newWinKey) {}
+    @Override
+    protected final void delSScrToWin_Indiv(int idx) {}
 
 }

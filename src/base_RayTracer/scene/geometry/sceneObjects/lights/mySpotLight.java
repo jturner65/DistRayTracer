@@ -22,68 +22,68 @@ import base_RayTracer.scene.geometry.sceneObjects.lights.base.Base_OrientedLight
 */
 
 public class mySpotLight extends Base_OrientedLight{
-	
-	public double innerThet, outerThet, innerThetRad, outerThetRad, radDiff;
+    
+    public double innerThet, outerThet, innerThetRad, outerThetRad, radDiff;
 
-	public myVector oPhAxis;	//unit vector ortho to orientation, to use for randomly calculating direction for photon casting
-	
-	public mySpotLight(Base_Scene _scn, int _lightID, 
-			double _r, double _g, double _b, 
-			double _x, double _y, double _z, 
-			double _dx, double _dy, double _dz, 
-			double _inThet, double _outThet) {
-		super(_scn, _lightID, _r, _g, _b, _x, _y, _z, _dx, _dy, _dz, GeomObjType.SpotLight);
-		setSpotlightVals(_inThet,_outThet);
-	}
-	
-	public void setSpotlightVals(double inAngle, double outAngle){
-		innerThet = inAngle;
-		innerThetRad = innerThet * MyMathUtils.DEG_TO_RAD;
-		outerThet = outAngle;
-		outerThetRad = outerThet * MyMathUtils.DEG_TO_RAD;		
-		radDiff = outerThetRad - innerThetRad;				//for interpolation 
-		oPhAxis = getOrthoVec(orientation);			//for rotation of dir vector for generating photons
-		setMinAndMaxVals(epsVal);
-	}//setSpotlightVals	
-	@Override
-	public rayHit intersectCheck(rayCast _ray, rayCast transRay, myMatrix[] _ctAra){  
-		rayHit hit = super.intersectCheck(_ray, transRay, _ctAra);
-		hit.ltMult = calcT_Mult(transRay.direction,transRay.getTime(), innerThetRad, outerThetRad, radDiff);
-		return hit;
-	}
-	@Override
-	public rayCast genRndPhtnRay() {  //diminish power of photon by t value at fringe
-		//find random unit vector at some angle from orientation < outerThetRad, scale pwr of photon by t for angle >innerThetRad, <outerThetRad 
-		myVector tmp = new myVector();
-		double prob, angle;
-		
-		//as per CLT this should approach gaussian
-		double checkProb = ThreadLocalRandom.current().nextDouble(0,1);
-		do{//penumbra isn't as likely
-			angle = ThreadLocalRandom.current().nextDouble(0,outerThetRad);
-			prob = getAngleProb(angle, innerThetRad, outerThetRad, radDiff);			
-		//} while (prob > ThreadLocalRandom.current().nextDouble(0,1));
-		} while (prob > checkProb);		
-		
-		tmp.set(orientation.rotMeAroundAxis(oPhAxis,angle));	
-		tmp._normalize();
-		//rotate in phi dir for random direction
-		tmp = tmp.rotMeAroundAxis(orientation,ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI));
-		
-		return new rayCast(scene, CTMara[glblIDX].transformPoint(origin), tmp, 0);
-	}//genRndPhtnRay	
+    public myVector oPhAxis;    //unit vector ortho to orientation, to use for randomly calculating direction for photon casting
+    
+    public mySpotLight(Base_Scene _scn, int _lightID, 
+            double _r, double _g, double _b, 
+            double _x, double _y, double _z, 
+            double _dx, double _dy, double _dz, 
+            double _inThet, double _outThet) {
+        super(_scn, _lightID, _r, _g, _b, _x, _y, _z, _dx, _dy, _dz, GeomObjType.SpotLight);
+        setSpotlightVals(_inThet,_outThet);
+    }
+    
+    public void setSpotlightVals(double inAngle, double outAngle){
+        innerThet = inAngle;
+        innerThetRad = innerThet * MyMathUtils.DEG_TO_RAD;
+        outerThet = outAngle;
+        outerThetRad = outerThet * MyMathUtils.DEG_TO_RAD;        
+        radDiff = outerThetRad - innerThetRad;                //for interpolation 
+        oPhAxis = getOrthoVec(orientation);            //for rotation of dir vector for generating photons
+        setMinAndMaxVals(epsVal);
+    }//setSpotlightVals    
+    @Override
+    public rayHit intersectCheck(rayCast _ray, rayCast transRay, myMatrix[] _ctAra){  
+        rayHit hit = super.intersectCheck(_ray, transRay, _ctAra);
+        hit.ltMult = calcT_Mult(transRay.direction,transRay.getTime(), innerThetRad, outerThetRad, radDiff);
+        return hit;
+    }
+    @Override
+    public rayCast genRndPhtnRay() {  //diminish power of photon by t value at fringe
+        //find random unit vector at some angle from orientation < outerThetRad, scale pwr of photon by t for angle >innerThetRad, <outerThetRad 
+        myVector tmp = new myVector();
+        double prob, angle;
+        
+        //as per CLT this should approach gaussian
+        double checkProb = ThreadLocalRandom.current().nextDouble(0,1);
+        do{//penumbra isn't as likely
+            angle = ThreadLocalRandom.current().nextDouble(0,outerThetRad);
+            prob = getAngleProb(angle, innerThetRad, outerThetRad, radDiff);            
+        //} while (prob > ThreadLocalRandom.current().nextDouble(0,1));
+        } while (prob > checkProb);        
+        
+        tmp.set(orientation.rotMeAroundAxis(oPhAxis,angle));    
+        tmp._normalize();
+        //rotate in phi dir for random direction
+        tmp = tmp.rotMeAroundAxis(orientation,ThreadLocalRandom.current().nextDouble(0,MyMathUtils.TWO_PI));
+        
+        return new rayCast(scene, CTMara[glblIDX].transformPoint(origin), tmp, 0);
+    }//genRndPhtnRay    
 
-	//TODO textured light could give different color light to scene based on location? BATSIGNAL!
-	@Override
-	protected double findTextureU_Indiv(myPoint isctPt, double v, double time){ return 0.0; }
-	//TODO textured light could give different color light to scene based on location? BATSIGNAL!
-	@Override
-	protected double findTextureV_Indiv(myPoint isctPt, double time){	return 0.0;  } 	
-	
-	@Override
-	public String toString(){  
-		String res = super.toString();
-		res+= "\nSpotlight : Direction : " + orientation + " inner angle rad : " + innerThetRad + " outer angle rad : " + outerThetRad + "\n";
-		return res;
-	}
+    //TODO textured light could give different color light to scene based on location? BATSIGNAL!
+    @Override
+    protected double findTextureU_Indiv(myPoint isctPt, double v, double time){ return 0.0; }
+    //TODO textured light could give different color light to scene based on location? BATSIGNAL!
+    @Override
+    protected double findTextureV_Indiv(myPoint isctPt, double time){    return 0.0;  }     
+    
+    @Override
+    public String toString(){  
+        String res = super.toString();
+        res+= "\nSpotlight : Direction : " + orientation + " inner angle rad : " + innerThetRad + " outer angle rad : " + outerThetRad + "\n";
+        return res;
+    }
 }//class mySpotLight

@@ -11,33 +11,33 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
  *
  */
 class BaseVertex implements Comparable<BaseVertex> {
-	public myPoint V;
-	public myVector N;
-	private ArrayList<Base_PlanarObject> owners;
-	
-	public BaseVertex( myPoint _v){
-		V = new myPoint(_v);
-		owners = new ArrayList<Base_PlanarObject>();		
-	}
-	
-	public void addOwner(Base_PlanarObject obj){owners.add(obj);}
-	/**
-	 * calc vertex normal of this vertex by averaging the face normals of each adjacent face
-	 * @return
-	 */
-	public myVector calcNorm(){
-		myVector res = new myVector(0,0,0);
-		for(Base_PlanarObject obj : owners){res._add(obj.getWeightedNorm());}
-		res._normalize();		
-		return res;		
-	}
+    public myPoint V;
+    public myVector N;
+    private ArrayList<Base_PlanarObject> owners;
+    
+    public BaseVertex( myPoint _v){
+        V = new myPoint(_v);
+        owners = new ArrayList<Base_PlanarObject>();        
+    }
+    
+    public void addOwner(Base_PlanarObject obj){owners.add(obj);}
+    /**
+     * calc vertex normal of this vertex by averaging the face normals of each adjacent face
+     * @return
+     */
+    public myVector calcNorm(){
+        myVector res = new myVector(0,0,0);
+        for(Base_PlanarObject obj : owners){res._add(obj.getWeightedNorm());}
+        res._normalize();        
+        return res;        
+    }
 
-	@Override
-	public int compareTo(BaseVertex arg0) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-		
-	
-	
+    @Override
+    public int compareTo(BaseVertex arg0) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+        
+    
+    
 }//myVertex

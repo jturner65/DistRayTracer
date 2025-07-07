@@ -8,14 +8,14 @@ import base_Utils_Objects.kdTree.KDTree;
  *
  */
 public class Photon_KDTree extends KDTree<myPhoton>{
-	/**
-	 * Target number of photons to cast into scene
-	 */
-	public final int numCast;
-	public Photon_KDTree(int _numCast, int _maxNumNeighbors, double _maxNeighborSqDist) {
-		super(_maxNumNeighbors, _maxNeighborSqDist);
-		numCast = _numCast;
-	}
-	
+    /**
+     * Target number of photons to cast into scene
+     */
+    public final int numCast;
+    public Photon_KDTree(int _numCast, int _maxNumNeighbors, double _maxNeighborSqDist) {
+        super(_maxNumNeighbors, _maxNeighborSqDist);
+        numCast = _numCast;
+    }
+    
 }//Photon_KDTree
 

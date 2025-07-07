@@ -12,62 +12,62 @@ import base_RayTracer.scene.shaders.myObjShader;
  *
  */
 public class rayHit{
-	public rayCast transRay;
-	public Base_Geometry obj;
-	public myVector objNorm;
-	public myVector fwdTransRayDir;
-	public myPoint hitLoc;
-	public myPoint fwdTransHitLoc;
-	public myObjShader shdr;				//what shader to use for the hit object
-	public double t;
-	public double ltMult;				//certain objects have multiple hit values - spotlight has light multiplier to make penumbra
-	private int[] iSectArgs;
-	public boolean isHit;
-	public double[] phtnPwr;
-	//ara of object hit by ray that this object represents 
-	public myMatrix[] CTMara;
-	public final int 
-			glblIDX = 0,
-			invIDX = 1,
-			transIDX = 2,
-			adjIDX = 3;
+    public rayCast transRay;
+    public Base_Geometry obj;
+    public myVector objNorm;
+    public myVector fwdTransRayDir;
+    public myPoint hitLoc;
+    public myPoint fwdTransHitLoc;
+    public myObjShader shdr;                //what shader to use for the hit object
+    public double t;
+    public double ltMult;                //certain objects have multiple hit values - spotlight has light multiplier to make penumbra
+    private int[] iSectArgs;
+    public boolean isHit;
+    public double[] phtnPwr;
+    //ara of object hit by ray that this object represents 
+    public myMatrix[] CTMara;
+    public final int 
+            glblIDX = 0,
+            invIDX = 1,
+            transIDX = 2,
+            adjIDX = 3;
 
-	public rayHit(rayCast _tray, myVector _rawRayDir, Base_Geometry _obj, myMatrix[] _ctMtrx, myVector _objNorm, myPoint _hitLoc, myPoint _fwdTransHitLoc, double _t, int[] _iSectArgs){
-		transRay = _tray;
-		isHit = true;
-		obj = _obj;
-		shdr = _obj.shdr;
-		CTMara = _ctMtrx;
-		objNorm = new myVector(_objNorm);
-		t = _t;
-		hitLoc = _hitLoc;
-		fwdTransHitLoc = transRay.getTransformedPt(hitLoc, CTMara[glblIDX]);		//hit location in world space
-		fwdTransRayDir = new myVector(_rawRayDir);
-		iSectArgs = _iSectArgs;
-		ltMult = 1;						//initialize to be full on for light.  only spotlight modifies this value
-	}
-	//used to represent a miss - div is ID of object that misses - use it to make t different for every object while still much bigger than any valid t values
-	public rayHit(boolean _isHit){
-		isHit = _isHit;
-		t = Double.MAX_VALUE;
-	}
-	/**
-	 * enable recalculation of hit normal based on modified/updated CTMara
-	 * @param _ctMtrx
-	 */
-	public void reCalcCTMHitNorm(myMatrix[] _ctMtrx){
-		CTMara = _ctMtrx;
-		fwdTransHitLoc = transRay.getTransformedPt(hitLoc, CTMara[glblIDX]);
-		myVector norm = obj.getNormalAtPoint(hitLoc,iSectArgs);
-		double[] newNormDir = CTMara[Base_Geometry.invTransIDX].multVert(norm.asHAraVec());//fix for scaling - N' == R . S^-1 . N -> CTMadj  
-		objNorm = new myVector(newNormDir);
-		objNorm._normalize();
-	}
+    public rayHit(rayCast _tray, myVector _rawRayDir, Base_Geometry _obj, myMatrix[] _ctMtrx, myVector _objNorm, myPoint _hitLoc, myPoint _fwdTransHitLoc, double _t, int[] _iSectArgs){
+        transRay = _tray;
+        isHit = true;
+        obj = _obj;
+        shdr = _obj.shdr;
+        CTMara = _ctMtrx;
+        objNorm = new myVector(_objNorm);
+        t = _t;
+        hitLoc = _hitLoc;
+        fwdTransHitLoc = transRay.getTransformedPt(hitLoc, CTMara[glblIDX]);        //hit location in world space
+        fwdTransRayDir = new myVector(_rawRayDir);
+        iSectArgs = _iSectArgs;
+        ltMult = 1;                        //initialize to be full on for light.  only spotlight modifies this value
+    }
+    //used to represent a miss - div is ID of object that misses - use it to make t different for every object while still much bigger than any valid t values
+    public rayHit(boolean _isHit){
+        isHit = _isHit;
+        t = Double.MAX_VALUE;
+    }
+    /**
+     * enable recalculation of hit normal based on modified/updated CTMara
+     * @param _ctMtrx
+     */
+    public void reCalcCTMHitNorm(myMatrix[] _ctMtrx){
+        CTMara = _ctMtrx;
+        fwdTransHitLoc = transRay.getTransformedPt(hitLoc, CTMara[glblIDX]);
+        myVector norm = obj.getNormalAtPoint(hitLoc,iSectArgs);
+        double[] newNormDir = CTMara[Base_Geometry.invTransIDX].multVert(norm.asHAraVec());//fix for scaling - N' == R . S^-1 . N -> CTMadj  
+        objNorm = new myVector(newNormDir);
+        objNorm._normalize();
+    }
 
-	@Override
-	public String toString(){
-		String res = "Hit : "+transRay+" hits object : " + obj.ID + " at location : " + hitLoc + " with ray t = :"+String.format("%.2f",t) + " and normal @ loc : " + objNorm + "\n";
-		return res;
-	}
-	
+    @Override
+    public String toString(){
+        String res = "Hit : "+transRay+" hits object : " + obj.ID + " at location : " + hitLoc + " with ray t = :"+String.format("%.2f",t) + " and normal @ loc : " + objNorm + "\n";
+        return res;
+    }
+    
 }//class rayHit

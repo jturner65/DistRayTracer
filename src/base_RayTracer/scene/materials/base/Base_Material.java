@@ -7,12 +7,12 @@ package base_RayTracer.scene.materials.base;
  */
 public abstract class Base_Material {
 
-	public Base_Material() {
-		
-	}//ctor
-	
-	public Base_Material(Base_Material _otr) {
-		
-	}//copy ctor
+    public Base_Material() {
+        
+    }//ctor
+    
+    public Base_Material(Base_Material _otr) {
+        
+    }//copy ctor
 
 }//class Base_Material

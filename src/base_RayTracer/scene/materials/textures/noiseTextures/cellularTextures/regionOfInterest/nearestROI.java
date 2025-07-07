@@ -8,14 +8,14 @@ import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.re
  *
  */
 public class nearestROI extends Base_ROI{
-	public nearestROI(int _numPts) {super(_numPts);}
-	@Override
-	public double calcROI(Double[] orderedKeys) {
-		int i =0;
-		double dist = 0;
-		for(Double dToPt : orderedKeys){	dist += dToPt;	++i;	if (i>=numPtsDist){break;}}
-		return fixDist(dist);
-	}
-	@Override
-	public String toString(){return "Nearest " +numPtsDist+" ROI Calc";}		
+    public nearestROI(int _numPts) {super(_numPts);}
+    @Override
+    public double calcROI(Double[] orderedKeys) {
+        int i =0;
+        double dist = 0;
+        for(Double dToPt : orderedKeys){    dist += dToPt;    ++i;    if (i>=numPtsDist){break;}}
+        return fixDist(dist);
+    }
+    @Override
+    public String toString(){return "Nearest " +numPtsDist+" ROI Calc";}        
 }

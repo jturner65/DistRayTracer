@@ -8,18 +8,18 @@ import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.re
  *
  */
 public class invLogROI extends Base_ROI{
-	public invLogROI(int _numPts) {super(_numPts);	}
-	@Override
-	public double calcROI(Double[] orderedKeys) {		
-		int i =0;
-		double dist = 0;
-		for(Double dToPt : orderedKeys){
-			dist += 1.0/Math.log(1+dToPt);
-			++i;
-			if (i>=numPtsDist){break;}
-		}
-		return fixDist(dist);
-	}//calcROI
-	@Override
-	public String toString(){return "Inverse Log sum ROI Calc";}	
+    public invLogROI(int _numPts) {super(_numPts);    }
+    @Override
+    public double calcROI(Double[] orderedKeys) {        
+        int i =0;
+        double dist = 0;
+        for(Double dToPt : orderedKeys){
+            dist += 1.0/Math.log(1+dToPt);
+            ++i;
+            if (i>=numPtsDist){break;}
+        }
+        return fixDist(dist);
+    }//calcROI
+    @Override
+    public String toString(){return "Inverse Log sum ROI Calc";}    
 }//invLogROI

@@ -8,18 +8,18 @@ import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.re
  *
  */
 public class linLogROI extends Base_ROI{
-	public linLogROI(int _numPts) {super(_numPts);	}
-	@Override
-	public double calcROI(Double[] orderedKeys) {		
-		int i =0;
-		double dist = 0;
-		for(Double dToPt : orderedKeys){
-			dist += Math.log(1+dToPt);
-			++i;
-			if (i>=numPtsDist){break;}
-		}
-		return dist;
-	}//calcROI
-	@Override
-	public String toString(){return "Linear Log sum ROI Calc";}	
+    public linLogROI(int _numPts) {super(_numPts);    }
+    @Override
+    public double calcROI(Double[] orderedKeys) {        
+        int i =0;
+        double dist = 0;
+        for(Double dToPt : orderedKeys){
+            dist += Math.log(1+dToPt);
+            ++i;
+            if (i>=numPtsDist){break;}
+        }
+        return dist;
+    }//calcROI
+    @Override
+    public String toString(){return "Linear Log sum ROI Calc";}    
 }//linLogROI

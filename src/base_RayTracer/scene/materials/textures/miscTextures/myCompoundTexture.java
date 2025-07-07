@@ -16,58 +16,58 @@ import base_RayTracer.utils.myRTColor;
  *
  */
 public class myCompoundTexture extends Base_TextureHandler{
-	//list of potential image textures
-	private ArrayList<myImageTexture> imgTxtrs;
-	//list of pcg noise-based textures
-	private ArrayList<myNoiseTexture> noiseTxtrs;		
-	
-	//weights for each texture
-	private ArrayList<Double> imgWts;			
-	private ArrayList<Double> nseWts;	
-	
-	public myCompoundTexture(Base_Scene _scn, myObjShader _shdr) {
-		super(_scn, _shdr);
-		imgTxtrs = new ArrayList<myImageTexture>();
-		imgWts = new ArrayList<Double>();
-		noiseTxtrs = new ArrayList<myNoiseTexture>();
-		nseWts = new ArrayList<Double>();
-	}
+    //list of potential image textures
+    private ArrayList<myImageTexture> imgTxtrs;
+    //list of pcg noise-based textures
+    private ArrayList<myNoiseTexture> noiseTxtrs;        
+    
+    //weights for each texture
+    private ArrayList<Double> imgWts;            
+    private ArrayList<Double> nseWts;    
+    
+    public myCompoundTexture(Base_Scene _scn, myObjShader _shdr) {
+        super(_scn, _shdr);
+        imgTxtrs = new ArrayList<myImageTexture>();
+        imgWts = new ArrayList<Double>();
+        noiseTxtrs = new ArrayList<myNoiseTexture>();
+        nseWts = new ArrayList<Double>();
+    }
 
-	@Override
-	protected void initTextureVals() {}
+    @Override
+    protected void initTextureVals() {}
 
-	@Override
-	public double[] getDiffTxtrColor(rayHit hit, myRTColor diffuseColor, double diffConst) {
-		//First calc all img-based colors
-		double[] tmpColor, resColor= new double[3];
-		for (int i=0;i<imgTxtrs.size();++i) {
-			tmpColor = imgTxtrs.get(i).getDiffTxtrColor(hit, diffuseColor, diffConst);
-			for(int j=0;j<resColor.length;++j) {resColor[i]+=tmpColor[i];}
-		}
-		//Then get all noise-based texture colors
-		for (int i=0;i<noiseTxtrs.size();++i) {
-			tmpColor = noiseTxtrs.get(i).getDiffTxtrColor(hit, diffuseColor, diffConst);
-			for(int j=0;j<resColor.length;++j) {resColor[i]+=tmpColor[i];}			
-		}
-		
-		// TODO Auto-generated method stub
-		return resColor;
-	}
+    @Override
+    public double[] getDiffTxtrColor(rayHit hit, myRTColor diffuseColor, double diffConst) {
+        //First calc all img-based colors
+        double[] tmpColor, resColor= new double[3];
+        for (int i=0;i<imgTxtrs.size();++i) {
+            tmpColor = imgTxtrs.get(i).getDiffTxtrColor(hit, diffuseColor, diffConst);
+            for(int j=0;j<resColor.length;++j) {resColor[i]+=tmpColor[i];}
+        }
+        //Then get all noise-based texture colors
+        for (int i=0;i<noiseTxtrs.size();++i) {
+            tmpColor = noiseTxtrs.get(i).getDiffTxtrColor(hit, diffuseColor, diffConst);
+            for(int j=0;j<resColor.length;++j) {resColor[i]+=tmpColor[i];}            
+        }
+        
+        // TODO Auto-generated method stub
+        return resColor;
+    }
 
-	@Override
-	public String showUV() {
-		String res = "Compound Texture :\n\tImage Based ("+imgTxtrs.size() +") :\n";
-		for (int i=0;i<imgTxtrs.size();++i) {
-			res+="\tWt:"+imgWts.get(i) +" : "+imgTxtrs.get(i)+"\n";	
-		}
-		res +="\n\tTexture Based ("+noiseTxtrs.size() +") :\n";
-		for (int i=0;i<noiseTxtrs.size();++i) {
-			res+="\tWt:"+nseWts.get(i) +" : "+noiseTxtrs.get(i)+"\n";			
-		}
-		
-		return res;
-	}
-	
-	
-	
+    @Override
+    public String showUV() {
+        String res = "Compound Texture :\n\tImage Based ("+imgTxtrs.size() +") :\n";
+        for (int i=0;i<imgTxtrs.size();++i) {
+            res+="\tWt:"+imgWts.get(i) +" : "+imgTxtrs.get(i)+"\n";    
+        }
+        res +="\n\tTexture Based ("+noiseTxtrs.size() +") :\n";
+        for (int i=0;i<noiseTxtrs.size();++i) {
+            res+="\tWt:"+nseWts.get(i) +" : "+noiseTxtrs.get(i)+"\n";            
+        }
+        
+        return res;
+    }
+    
+    
+    
 }//class myCompoundTexture

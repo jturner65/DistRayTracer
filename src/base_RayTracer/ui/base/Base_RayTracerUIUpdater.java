@@ -12,32 +12,32 @@ import base_UI_Objects.windowUI.uiData.UIDataUpdater;
  */
 public class Base_RayTracerUIUpdater extends UIDataUpdater {
 
-	public Base_RayTracerUIUpdater(Base_RayTracerWin _win) {
-		super(_win);
-	}
+    public Base_RayTracerUIUpdater(Base_RayTracerWin _win) {
+        super(_win);
+    }
 
-	public Base_RayTracerUIUpdater(UIDataUpdater _otr) {
-		super(_otr);
-	}
+    public Base_RayTracerUIUpdater(UIDataUpdater _otr) {
+        super(_otr);
+    }
 
-	public Base_RayTracerUIUpdater(Base_RayTracerWin _win, Map<Integer, Integer> _iVals, Map<Integer, Float> _fVals,
-			Map<Integer, Boolean> _bVals) {
-		super(_win, _iVals, _fVals, _bVals);
-	}
-	/**
-	 * access app-specific ints
-	 */
-	public int getNumSceneCols() {return intValues.get(Base_RayTracerWin.gIDX_SceneCols);}
-	public int getNumSceneRows() {return intValues.get(Base_RayTracerWin.gIDX_SceneRows);}
-	public int getCurrSceneCliFileIDX() {return intValues.get(Base_RayTracerWin.gIDX_CurrSceneCLI);}
-	
-	/**
-	 * access app-specific floats
-	 */
+    public Base_RayTracerUIUpdater(Base_RayTracerWin _win, Map<Integer, Integer> _iVals, Map<Integer, Float> _fVals,
+            Map<Integer, Boolean> _bVals) {
+        super(_win, _iVals, _fVals, _bVals);
+    }
+    /**
+     * access app-specific ints
+     */
+    public int getNumSceneCols() {return intValues.get(Base_RayTracerWin.gIDX_SceneCols);}
+    public int getNumSceneRows() {return intValues.get(Base_RayTracerWin.gIDX_SceneRows);}
+    public int getCurrSceneCliFileIDX() {return intValues.get(Base_RayTracerWin.gIDX_CurrSceneCLI);}
+    
+    /**
+     * access app-specific floats
+     */
 
-	/**
-	 * access app-specific booleans
-	 */		
+    /**
+     * access app-specific booleans
+     */        
 
-		
+        
 }//class RayTracerUIUpdater
