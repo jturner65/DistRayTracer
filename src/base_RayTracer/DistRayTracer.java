@@ -171,10 +171,16 @@ public class DistRayTracer extends GUI_AppManager {
         setDispWindow(wIdx, new RayTracer2DWin(ri, this, wIdx));
 
         //specify windows that cannot be shown simultaneously here
-        initXORWins(
-                new int[]{disp2DRayTracerIDX},
-                new int[]{disp2DRayTracerIDX});            
-    }
+        initXORWins(new int[]{disp2DRayTracerIDX}, new int[]{disp2DRayTracerIDX});            
+    }//initAllDispWindows
+    
+    /**
+     * Map indexed by window ID, holding an array of the titles (idx 0) and descriptions (idx 1) for every sub window
+     * return null if none exist, and only put an entry in the map if one exists for that window
+     * @return
+     */
+    @Override
+    protected final HashMap<Integer, String[]> getSubWindowTitles(){ return null;}
     @Override
     protected void initOnce_Indiv() {
         setWinVisFlag(disp2DRayTracerIDX, true);
