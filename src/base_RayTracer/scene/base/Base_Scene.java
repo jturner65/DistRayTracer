@@ -40,7 +40,7 @@ import base_RayTracer.scene.shaders.myObjShader;
 import base_RayTracer.scene.shaders.mySimpleReflObjShdr;
 import base_RayTracer.ui.base.Base_RayTracerWin;
 import base_RayTracer.utils.myRTColor;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_UI_Objects.renderer.ProcessingRenderer;
 import base_Utils_Objects.io.messaging.MessageObject;
 import base_Utils_Objects.io.messaging.MsgCodes;
@@ -53,7 +53,7 @@ import processing.core.PImage;
  *
  */
 public abstract class Base_Scene {
-    protected static IRenderInterface pa;
+    protected static IGraphicsAppInterface pa;
     //Owning window
     protected Base_RayTracerWin win;
     //Message object manages console/log output
@@ -220,7 +220,7 @@ public abstract class Base_Scene {
     //current depth in matrix stack - starts at 0;
     private int currMatrixDepthIDX;    
         
-    public Base_Scene(IRenderInterface _p, Base_RayTracerWin _win, String _sceneName, int _numCols, int _numRows) {
+    public Base_Scene(IGraphicsAppInterface _p, Base_RayTracerWin _win, String _sceneName, int _numCols, int _numRows) {
         pa = _p;
         win = _win;
         msgObj = win.getMsgObj();

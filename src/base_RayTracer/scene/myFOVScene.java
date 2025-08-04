@@ -12,7 +12,7 @@ import base_RayTracer.scene.geometry.base.Base_Geometry;
 import base_RayTracer.scene.geometry.sceneObjects.planar.myPlane;
 import base_RayTracer.ui.base.Base_RayTracerWin;
 import base_RayTracer.utils.myRTColor;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 
 public class myFOVScene extends Base_Scene {
     /**
@@ -33,7 +33,7 @@ public class myFOVScene extends Base_Scene {
     //public List<Future<Boolean>> callFOVFutures;
     //public List<myFOVCall> callFOVCalcs;
 
-    public myFOVScene(IRenderInterface _p,Base_RayTracerWin _win, String _sceneName, int _numCols, int _numRows, double _fov) {
+    public myFOVScene(IGraphicsAppInterface _p,Base_RayTracerWin _win, String _sceneName, int _numCols, int _numRows, double _fov) {
         super(_p,_win,_sceneName,_numCols,_numRows);
         setFOVVals(_fov);
         //callFOVCalcs= new ArrayList<myFOVCall>();

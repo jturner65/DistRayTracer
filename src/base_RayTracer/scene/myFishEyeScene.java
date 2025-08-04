@@ -8,7 +8,7 @@ import base_RayTracer.ray.rayCast;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.ui.base.Base_RayTracerWin;
 import base_RayTracer.utils.myRTColor;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 
 public class myFishEyeScene extends Base_Scene{
     //current field of view
@@ -17,7 +17,7 @@ public class myFishEyeScene extends Base_Scene{
     //public List<Future<Boolean>> callFishFutures;
     //public List<myFishCall> callFishCalcs;
     
-    public myFishEyeScene(IRenderInterface _p, Base_RayTracerWin _win, String _sceneName, int _numCols, int _numRows, double _fishEye) {
+    public myFishEyeScene(IGraphicsAppInterface _p, Base_RayTracerWin _win, String _sceneName, int _numCols, int _numRows, double _fishEye) {
         super(_p,_win,_sceneName,_numCols,_numRows);    
         setFishEye(_fishEye);
     }

@@ -21,13 +21,13 @@ import base_RayTracer.scene.geometry.sceneObjects.planar.myTriangle;
 import base_RayTracer.scene.geometry.sceneObjects.planar.base.Base_PlanarObject;
 import base_RayTracer.scene.materials.textures.imageTextures.myImageTexture;
 import base_RayTracer.ui.base.Base_RayTracerWin;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_UI_Objects.renderer.ProcessingRenderer;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 
 
 public class myRTFileReader {
-    public IRenderInterface pa;
+    public IGraphicsAppInterface pa;
     private Base_RayTracerWin win;
     public final String textureDir;
     private int timeSinceStart;

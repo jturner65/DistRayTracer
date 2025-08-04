@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.ui.base.Base_RayTracerUIUpdater;
 import base_RayTracer.ui.base.Base_RayTracerWin;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.GUI_AppWinVals;
 import base_UI_Objects.windowUI.uiObjs.base.GUIObj_Params;
@@ -23,20 +23,22 @@ public class RayTracer2DWin extends Base_RayTracerWin {
     ////////////
 
         
-    public RayTracer2DWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx) {
+    public RayTracer2DWin(IGraphicsAppInterface _p, GUI_AppManager _AppMgr, int _winIdx) {
         super(_p, _AppMgr, _winIdx);
-        super.initThisWin(false);
-        uiMgr.setNewUIValue(gIDX_SceneCols, 600);uiMgr.setUIWinVals(gIDX_SceneCols);
-        uiMgr.setNewUIValue(gIDX_SceneRows, 600);uiMgr.setUIWinVals(gIDX_SceneRows);
-        startRayTrace();
+        
     }//ctor
             
     @Override
-    protected void initMe_Indiv() {}//
+    protected void initMe_Indiv() {        
+        uiMgr.setNewUIValue(gIDX_SceneCols, 600);uiMgr.setUIWinVals(gIDX_SceneCols);
+        uiMgr.setNewUIValue(gIDX_SceneRows, 600);uiMgr.setUIWinVals(gIDX_SceneRows);
+        startRayTrace();
+    }//
     /**
      * This function implements the instantiation of a child window owned by this window, if such exists.
      * The implementation should be similar to how the main windows are implemented in GUI_AppManager::initAllDispWindows.
      * If no child window exists, this implementation of this function can be empty
+     * If a child window is instantiated, it MUST have its init called (childWin.initThisWin(false))
      * 
      * @param GUI_AppWinVals the window control values for the child window.
      */

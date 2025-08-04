@@ -13,7 +13,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.utils.myRTColor;
 import base_RayTracer.utils.myRTFileReader;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 import base_UI_Objects.GUI_AppManager;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
@@ -135,7 +135,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
      * @param _winIdx
      * @param _flagIdx
      */
-    public Base_RayTracerWin(IRenderInterface _p, GUI_AppManager _AppMgr, int _winIdx) {
+    public Base_RayTracerWin(IGraphicsAppInterface _p, GUI_AppManager _AppMgr, int _winIdx) {
         super(_p, _AppMgr, _winIdx);
 
         Path path = Paths.get("");

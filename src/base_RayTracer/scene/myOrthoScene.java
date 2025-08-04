@@ -8,7 +8,7 @@ import base_RayTracer.ray.rayCast;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.ui.base.Base_RayTracerWin;
 import base_RayTracer.utils.myRTColor;
-import base_Render_Interface.IRenderInterface;
+import base_Render_Interface.IGraphicsAppInterface;
 
 public class myOrthoScene extends Base_Scene{
     //width and height of view - for ortho projection. for perspective will be screen width and height
@@ -17,7 +17,7 @@ public class myOrthoScene extends Base_Scene{
     //public List<Future<Boolean>> callOrthoFutures;
     //public List<myOrthoCall> callOrthoCalcs;
 
-    public myOrthoScene(IRenderInterface _p, Base_RayTracerWin _win, String _sceneName,int _numCols, int _numRows, double _orthoWidth, double _orthoHeight) {
+    public myOrthoScene(IGraphicsAppInterface _p, Base_RayTracerWin _win, String _sceneName,int _numCols, int _numRows, double _orthoWidth, double _orthoHeight) {
         super(_p,_win,_sceneName,_numCols,_numRows);
         setOrthoVals(_orthoWidth,_orthoHeight);    
     }
