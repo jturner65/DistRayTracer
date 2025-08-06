@@ -567,7 +567,7 @@ public abstract class Base_Scene {
             if(pyMult.sqMagn > 0){                                    //if vector values specified
                 pyMult._mult(MyMathUtils.TWO_PI-1.0);                //change 0|1 to 0|2pi-1 vector
                 pyMult._add(1.0,1.0,1.0);                            //change 0|2pi-1 vector to 1|2pi vector
-                pdMult = myVector._elemMult(pdMult, pyMult);
+                pdMult = myVector._ewise_mult(pdMult, pyMult);
             }
             useFwdTrans = (Double.parseDouble(vals[10]) == 1.0);        //whether or not to use fwd transform on points
             try{
