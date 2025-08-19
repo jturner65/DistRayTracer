@@ -104,25 +104,25 @@ public class DistRayTracer extends GUI_AppManager {
      */
     @Override
     protected final MsgCodes getMinLogMsgCodes() {return null;}
-    
-    /**
-     * determine which main flags to show at upper left of menu 
-     */
+
     @Override
-    protected void initBaseFlags_Indiv() {
-        setBaseFlagToShow_debugMode(true);
-        setBaseFlagToShow_saveAnim(true); 
-        setBaseFlagToShow_runSim(false);
-        setBaseFlagToShow_singleStep(false);
-        setBaseFlagToShow_showRtSideMenu(true);    
-        setBaseFlagToShow_showStatusBar(true);
-        setBaseFlagToShow_showDrawableCanvas(false);
-    }
+    protected boolean hideAppFlag_DebugMode() {             return false;}
+    @Override
+    protected boolean hideAppFlag_SaveAnim() {              return false;}
+    @Override
+    protected boolean hideAppFlag_RunSim() {                return true;}
+    @Override
+    protected boolean hideAppFlag_SingleStep() {            return true;}
+    @Override
+    protected boolean hideAppFlag_showRtSideInfoDisp() {    return false;}
+    @Override
+    protected boolean hideAppFlag_showStatusBar() {         return false;}
+    @Override
+    protected boolean hideAppFlag_showCanvas() {            return true;}
 
     
     @Override
     protected void initAllDispWindows() {
-        showInfo = true;
         //titles and descs, need to be set before sidebar menu is defined
         String[] _winTitles = new String[]{"","2D Ray Tracer"},
                 _winDescr = new String[]{"", "2D ray tracing renderer."};
@@ -184,7 +184,6 @@ public class DistRayTracer extends GUI_AppManager {
     @Override
     protected void initOnce_Indiv() {
         setWinVisFlag(disp2DRayTracerIDX, true);
-        setShowStatusBar(true);
     }
     @Override
     protected void initProgram_Indiv() {}    
@@ -193,7 +192,7 @@ public class DistRayTracer extends GUI_AppManager {
     /**
      * Overriding main because handling 2d + 3d windows
      */    
-    public final void drawMePost_Indiv(float modAmtMillis, boolean is3DDraw){}
+    public final void drawMePost_Indiv(float modAmtMillis, boolean is3DDraw, boolean isGlblAppDebug){}
 
     /**
      * handle key pressed

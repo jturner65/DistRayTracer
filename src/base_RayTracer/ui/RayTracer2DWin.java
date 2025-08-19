@@ -30,9 +30,9 @@ public class RayTracer2DWin extends Base_RayTracerWin {
             
     @Override
     protected void initMe_Indiv() {        
-        uiMgr.setNewUIValue(gIDX_SceneCols, 600);uiMgr.setUIWinVals(gIDX_SceneCols);
-        uiMgr.setNewUIValue(gIDX_SceneRows, 600);uiMgr.setUIWinVals(gIDX_SceneRows);
-        startRayTrace();
+        uiMgr.forceNewUIValue(gIDX_SceneCols, 600);uiMgr.updateOwnerWithUIVal(gIDX_SceneCols);
+        uiMgr.forceNewUIValue(gIDX_SceneRows, 600);uiMgr.updateOwnerWithUIVal(gIDX_SceneRows);
+        startRayTrace(AppMgr.isGlblDebug());
     }//
     /**
      * This function implements the instantiation of a child window owned by this window, if such exists.
@@ -146,7 +146,7 @@ public class RayTracer2DWin extends Base_RayTracerWin {
     protected void setMouseReleaseState2D(){}//chkMouseOvr
 
     @Override
-    protected void drawMe_Indiv(float animTimeMod) {
+    protected void drawMe_Indiv(float animTimeMod, boolean isGlblAppDebug) {
         ri.pushMatState();
         float[] loc = getLocUpperCrnr();
         ri.translate(loc[0],loc[1],0);
@@ -159,11 +159,11 @@ public class RayTracer2DWin extends Base_RayTracerWin {
     }
 
     @Override
-    protected void drawRightSideInfoBarPriv_Indiv(float modAmtMillis) {        
+    protected void drawRightSideInfoBarPriv_Indiv(float modAmtMillis, boolean isGlblAppDebug) {        
     }
 
     @Override
-    protected void drawCustMenuObjs_Indiv() {
+    protected void drawCustMenuObjs_Indiv(boolean isGlblAppDebug) {
 
     }
 

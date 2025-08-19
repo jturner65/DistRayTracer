@@ -49,7 +49,7 @@ public class myRTFileReader {
      * @param _numRows
      * @return
      */
-    public Base_Scene readRTFile(TreeMap<String, Base_Scene> loadedScenes, String filePath, String fileName, Base_Scene _scene, int _numCols, int _numRows) {          
+    public Base_Scene readRTFile(TreeMap<String, Base_Scene> loadedScenes, String filePath, String fileName, Base_Scene _scene, int _numCols, int _numRows, boolean isGlblDebug) {          
         //build individual scene for each file        
         timeSinceStart = getTime();            //times rendering
         curNumRows = _numRows;
@@ -77,10 +77,10 @@ public class myRTFileReader {
         //if we make it this far and this is the main scene, read through strAra to build scene.        
         if(isMainFileScene){
             //build the scene described in the cli file
-            scene = buildBaseScene(strAra, fileName);
+            scene = buildBaseScene(strAra, fileName, isGlblDebug);
         }
         //populate the scene with the appropriate data from the scene list        
-        scene = parseStringArray(loadedScenes, strAra, scene, isMainFileScene, filePath, fileName);
+        scene = parseStringArray(loadedScenes, strAra, scene, isMainFileScene, filePath, fileName, isGlblDebug);
         return scene;
     }//interpreter method
     
@@ -90,10 +90,10 @@ public class myRTFileReader {
      * @param fileName
      * @return
      */
-    private Base_Scene buildBaseScene(String[] fileStrings, String fileName) {
+    private Base_Scene buildBaseScene(String[] fileStrings, String fileName, boolean isGlblDebug) {
         //default scene, if not specified in file
         Base_Scene scene = new myFOVScene(pa, win, fileName, curNumCols, curNumRows, 60.0);
-        if (Base_RayTracerWin.AppMgr.isDebugMode()) {    _debugFileStrings(fileStrings);    }
+        if (isGlblDebug) {    _debugFileStrings(fileStrings);    }
         boolean done = false;
         String sceneType = "fov";
         for(int i=0;i<fileStrings.length;++i){ 
@@ -153,7 +153,7 @@ public class myRTFileReader {
      * @param fileName
      * @return
      */
-    public Base_Scene parseStringArray(TreeMap<String, Base_Scene> loadedScenes, String[] fileStrings, Base_Scene scene, boolean isMainFileScene, String filePath, String fileName) {
+    public Base_Scene parseStringArray(TreeMap<String, Base_Scene> loadedScenes, String[] fileStrings, Base_Scene scene, boolean isMainFileScene, String filePath, String fileName, boolean isGlblDebug) {
         boolean finalized = false;
         String vertType = "triangle";            //assume default object type is triangle
         int myVertCount = 0;        
@@ -163,7 +163,7 @@ public class myRTFileReader {
         //reinitializes the image so that any previous values from other images are not saved
         //if (str == null) {win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Error! Failed to read the file.");}
         //debug display file
-        if (Base_RayTracerWin.AppMgr.isDebugMode()) {    _debugFileStrings(fileStrings);    }
+        if (isGlblDebug) {    _debugFileStrings(fileStrings);    }
         for (int i=0; i<fileStrings.length; ++i) { 
             //Skip comments and empty lines
             if((fileStrings[i].startsWith("#")) || (fileStrings[i].strip().length() == 0)) {continue;}
@@ -198,7 +198,7 @@ public class myRTFileReader {
                     else{win.getMsgObj().dispErrorMessage("myRTFileReader", "parseStringArray", "Can't render unknown/incomplete scene with empty fileName");}
                     break;}        
                 case "read" : {//read another scene file - nested to load multiple files
-                    readRTFile(loadedScenes, filePath, tokenAra[1], scene, curNumCols, curNumRows);
+                    readRTFile(loadedScenes, filePath, tokenAra[1], scene, curNumCols, curNumRows, isGlblDebug);
                     break;}                        
                 
                 //timer stuff

@@ -15,6 +15,7 @@ import base_RayTracer.utils.myRTColor;
 import base_RayTracer.utils.myRTFileReader;
 import base_Render_Interface.IGraphicsAppInterface;
 import base_UI_Objects.GUI_AppManager;
+import base_UI_Objects.baseApp.GUI_AppUIFlags;
 import base_UI_Objects.windowUI.base.Base_DispWindow;
 import base_UI_Objects.windowUI.drawnTrajectories.DrawnSimpleTraj;
 import base_UI_Objects.windowUI.uiData.UIDataUpdater;
@@ -149,13 +150,13 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
      * Initialize any UI control flags appropriate for all boids window application
      */
     @Override
-    protected final void initDispFlags() {
+    protected final void initDispFlags(GUI_AppUIFlags appUIFlags) {
         //this window is runnable
         dispFlags.setIsRunnable(true);
         //this window uses a customizable camera
         dispFlags.setUseCustCam(true);
         // capable of using right side menu
-        dispFlags.setHasRtSideMenu(true);    
+        dispFlags.setHasRtSideInfoDisp(true);    
     }
     
     @Override
@@ -165,7 +166,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
         //Initialize permuation table
         initPermTable();
         //call first ray trace
-        startRayTrace();
+        startRayTrace(AppMgr.isGlblDebug());
     }
     
     
@@ -288,7 +289,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
         switch(idx){
             case shootRaysIDX : {//build new image
                 if (val) {
-                    startRayTrace();
+                    startRayTrace(AppMgr.isGlblDebug());
                     addPrivSwitchToClear(idx);
                 }
                 break;}
@@ -305,8 +306,8 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
         if(s!=null) {s.flipNormal();}
     }
     
-    public void startRayTrace() {    
-        Base_Scene tmp = rdr.readRTFile(loadedScenes, cliFilesDir, currSceneName, null, sceneCols, sceneRows);//pass null as scene so that we don't add to an existing scene
+    public void startRayTrace(boolean isGlblDebug) {    
+        Base_Scene tmp = rdr.readRTFile(loadedScenes, cliFilesDir, currSceneName, null, sceneCols, sceneRows, isGlblDebug);//pass null as scene so that we don't add to an existing scene
         msgObj.dispMessage("RayTracerExperiment", "startRayTrace", "Done with readRTFile", MsgCodes.info1);
         //returns null means not found
         if(null==tmp) {currSceneName = "";}
@@ -571,34 +572,34 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
     // Drawing
 
     @Override
-    protected final void drawMe(float animTimeMod) {
-        drawMe_Indiv(animTimeMod);
+    protected final void drawMe(float animTimeMod, boolean isGlblAppDebug) {
+        drawMe_Indiv(animTimeMod, isGlblAppDebug);
     }//drawMe
-    protected abstract void drawMe_Indiv(float animTimeMod);
+    protected abstract void drawMe_Indiv(float animTimeMod, boolean isGlblAppDebug);
 
     @Override
-    protected final void drawOnScreenStuffPriv(float modAmtMillis) {}    
+    protected final void drawOnScreenStuffPriv(float modAmtMillis, boolean isGlblAppDebug) {}    
 
     @Override
     //draw 2d constructs over 3d area on screen - draws behind left menu section
     //modAmtMillis is in milliseconds
-    protected final void drawRightSideInfoBarPriv(float modAmtMillis) {
+    protected final void drawRightSideInfoBarPriv(float modAmtMillis, boolean isGlblAppDebug) {
         ri.pushMatState();
         //display current simulation variables - call sim world through sim exec
-        drawRightSideInfoBarPriv_Indiv(modAmtMillis);
+        drawRightSideInfoBarPriv_Indiv(modAmtMillis, isGlblAppDebug);
         ri.popMatState();                    
     }//drawOnScreenStuff
     
-    protected abstract void drawRightSideInfoBarPriv_Indiv(float modAmtMillis);    
+    protected abstract void drawRightSideInfoBarPriv_Indiv(float modAmtMillis, boolean isGlblAppDebug);    
     
     @Override
-    protected final void drawCustMenuObjs(float animTimeMod) {
+    protected final void drawCustMenuObjs(float animTimeMod, boolean isGlblAppDebug) {
         ri.pushMatState();
         //draw any custom menu stuff here
-        drawCustMenuObjs_Indiv();        
+        drawCustMenuObjs_Indiv(isGlblAppDebug);        
         ri.popMatState();        
     }//drawCustMenuObjs
-    protected abstract void drawCustMenuObjs_Indiv();
+    protected abstract void drawCustMenuObjs_Indiv(boolean isGlblAppDebug);
     
     
     @Override

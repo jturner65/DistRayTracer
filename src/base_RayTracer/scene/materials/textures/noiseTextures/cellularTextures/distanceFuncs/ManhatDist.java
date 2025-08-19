@@ -5,7 +5,7 @@ import base_RayTracer.scene.materials.textures.noiseTextures.cellularTextures.di
 
 public class ManhatDist extends Base_DistFunc {
     @Override
-    public double calcDist(myPoint v1, myPoint v2) { return v1._L1Dist(v2);}
+    public double calcDist(myPoint v1, myPoint v2) { return v1.L1Dist(v2);}
     @Override
     public String toString(){return "Manhattan distance function";}
 }//manhatDist

@@ -41,7 +41,7 @@ public abstract class Base_Light extends Base_SceneObject{
         myVector hitNorm = new myVector(transRay.direction);
         hitNorm._mult(-1);//norm is just neg ray direction
         hitNorm._normalize();
-        double t = transRay.origin._dist(getOrigin(transRay.getTime()));
+        double t = transRay.origin.dist(getOrigin(transRay.getTime()));
         rayHit hit = transRay.objHit(this, _ray.direction, _ctAra, transRay.pointOnRay(t), new int[]{}, t);
         //rayHit hit = new rayHit(transRay, _ray.direction, this, _ctAra, hitNorm,transRay.pointOnRay(t),t, new int[]{});        
         return hit;
