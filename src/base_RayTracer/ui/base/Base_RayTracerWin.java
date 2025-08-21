@@ -9,7 +9,6 @@ import java.util.TreeMap;
 
 import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.doubles.myVector;
 import base_RayTracer.scene.base.Base_Scene;
 import base_RayTracer.utils.myRTColor;
 import base_RayTracer.utils.myRTFileReader;
@@ -763,13 +762,13 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
     protected final myPoint getMsePtAs3DPt(myPoint mseLoc){return new myPoint(mseLoc.x,mseLoc.y,0);}
 
     @Override
-    protected final boolean hndlMouseMove_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld) {
+    protected final boolean hndlMouseMove_Indiv(int mouseX, int mouseY) {
         boolean res = chkMouseMoveDragState2D(mouseX, mouseY, -1);
         return res;
     }
     
     @Override
-    protected final boolean hndlMouseDrag_Indiv(int mouseX, int mouseY, int pmouseX, int pmouseY, myPoint mouseClickIn3D, myVector mseDragInWorld, int mseBtn) {
+    protected final boolean hndlMouseDrag_Indiv(int mouseX, int mouseY, int pmouseX, int pmouseY, int mseBtn) {
         boolean res = false;
         if(!res) {
             res = chkMouseMoveDragState2D(mouseX, mouseY, mseBtn);
@@ -779,7 +778,7 @@ public abstract class Base_RayTracerWin extends Base_DispWindow {
     protected abstract boolean chkMouseMoveDragState2D(int mouseX, int mouseY, int btn);
 
     @Override
-    protected final boolean hndlMouseClick_Indiv(int mouseX, int mouseY, myPoint mseClckInWorld, int mseBtn) {
+    protected final boolean hndlMouseClick_Indiv(int mouseX, int mouseY, int mseBtn) {
         boolean res =  chkMouseClick2D(mouseX, mouseY, mseBtn);
         
         return res;}//hndlMouseClickIndiv
